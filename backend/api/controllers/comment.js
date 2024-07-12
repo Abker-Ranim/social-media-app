@@ -38,7 +38,7 @@ exports.createComment = (req, res, next) => {
 };
 
 exports.getcommentById = (req, res, next) => {
-    const id = req.params.postId;
+    const id = req.params.commentId;
     Comment.findById(id)
       .exec()
       .then((comment) => {
