@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 const userRoutes = require("./api/routes/user.js");
 const postRoutes = require("./api/routes/post.js");
 const commentRoutes = require("./api/routes/comment.js");
+const likeRoutes = require("./api/routes/like.js");
+
 
 const app = express();
 
@@ -44,7 +46,7 @@ app.use((req, res, next) => {
 app.use("/user", userRoutes);
 app.use("/post", postRoutes);
 app.use("/comment", commentRoutes);
-
+app.use("/like", likeRoutes);
 
 // Error Handling
 app.use((req, res, next) => {
