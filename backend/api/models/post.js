@@ -9,12 +9,9 @@ const postSchema = mongoose.Schema({
   },
   postOwner: {
     type: ObjectId,
-    ref: 'user'
+    ref: "user",
+    required: true,
   },
-  postComment: [{
-    type: ObjectId,
-    ref: 'comment'
-  }]
 });
 
 module.exports = mongoose.model("post", postSchema);

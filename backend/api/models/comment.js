@@ -5,11 +5,17 @@ const commentSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   content: {
     type: String,
-    required: true
+    required: true,
   },
   commentOwner: {
     type: ObjectId,
-    ref: 'user'
+    ref: "user",
+    required: true,
+  },
+  post: {
+    type: ObjectId,
+    ref: "post",
+    required: true,
   },
 });
 

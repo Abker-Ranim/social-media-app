@@ -5,15 +5,17 @@ const messageSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   content: {
     type: String,
-    required: true
+    required: true,
   },
   sender: {
     type: ObjectId,
-    ref: 'user'
+    ref: "user",
+    required: true,
   },
   receiver: {
     type: ObjectId,
-    ref: 'user'
+    ref: "user",
+    required: true,
   },
 });
 
