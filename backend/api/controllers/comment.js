@@ -16,6 +16,7 @@ exports.createComment = (req, res, next) => {
   const comment = new Comment({
     _id: new mongoose.Types.ObjectId(),
     content: req.body.content,
+    commentOwner:req.body.commentOwner,
   });
 
   comment
@@ -27,6 +28,7 @@ exports.createComment = (req, res, next) => {
         createdComment: {
           _id: result._id,
           content: result.content,
+          commentOwner:result.commentOwner,
         },
       });
     })
@@ -37,7 +39,7 @@ exports.createComment = (req, res, next) => {
 
 exports.getcommentById = (req, res, next) => {
   const id = req.params.commentId;
-  Comment.findById(id)
+  Comment.findById(id).populate('commentOwner')
     .exec()
     .then((comment) => {
       if (comment) {
@@ -53,7 +55,7 @@ exports.getcommentById = (req, res, next) => {
 
 exports.deleteComment = (req, res, next) => {
   const commentId = req.params.commentId;
-  Comment.findByIdAndDelete(commentId)
+  Comment.findByIdAndDelete(commentId).populate('commentOwner')
     .then((result) => {
       if (result) {
         res.status(200).json({

@@ -16,6 +16,8 @@ exports.createPost = (req, res, next) => {
   const post = new Post({
     _id: new mongoose.Types.ObjectId(),
     content: req.body.content,
+    postOwner: req.body.postOwner,
+    postComment: req.body.postComment
   });
 
   post
@@ -27,6 +29,8 @@ exports.createPost = (req, res, next) => {
         createdPost: {
           _id: result._id,
           content: result.content,
+          postOwner: result.postOwner,
+          postComment: req.body.postComment
         },
       });
     })
@@ -37,7 +41,7 @@ exports.createPost = (req, res, next) => {
 
 exports.getPostById = (req, res, next) => {
   const id = req.params.postId;
-  Post.findById(id)
+  Post.findById(id).populate('postOwner').populate('postComment')
     .exec()
     .then((post) => {
       if (post) {
