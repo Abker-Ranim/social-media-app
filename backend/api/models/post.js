@@ -11,9 +11,9 @@ const postSchema = mongoose.Schema({
     type: ObjectId,
     ref: 'user'
   },
-  followers: [{
+  postComment: [{
     type: ObjectId,
-    ref: 'user'
+    ref: 'comment'
   }]
 });
 
