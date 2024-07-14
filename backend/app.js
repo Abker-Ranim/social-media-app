@@ -2,16 +2,17 @@ const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+require("dotenv").config();
+
 const userRoutes = require("./api/routes/user.js");
 const postRoutes = require("./api/routes/post.js");
 const commentRoutes = require("./api/routes/comment.js");
 const messageRoutes = require("./api/routes/message.js");
 const likeRoutes = require("./api/routes/like.js");
 
-
 const app = express();
 
-const PORT = 5000;
+const PORT = process.env.PORT || 3000;
 
 // MongoDB Connection
 mongoose
@@ -49,7 +50,6 @@ app.use("/post", postRoutes);
 app.use("/comment", commentRoutes);
 app.use("/message", messageRoutes);
 app.use("/like", likeRoutes);
-
 
 // Error Handling
 app.use((req, res, next) => {
