@@ -15,7 +15,8 @@ exports.getAllLikes = (req, res, next) => {
 exports.createLike = (req, res, next) => {
     const like = new Like({
         _id: new mongoose.Types.ObjectId(),
-        content: req.body.content,
+        post: req.body.post,
+        user: req.body.user,
     });
 
     like
@@ -26,7 +27,8 @@ exports.createLike = (req, res, next) => {
                 message: "like created successfully",
                 createdlike: {
                     _id: result._id,
-                    content: result.content,
+                    post: result.post,
+                    user: result.user,
                 },
             });
         })
@@ -38,7 +40,7 @@ exports.createLike = (req, res, next) => {
 exports.deletelike = (req, res, next) => {
     const likeId = req.params.likeId;
 
-    Like.findByIdAndDelete(likeId)
+    Like.findByIdAndDelete(likeId).populate('user')
         .then(result => {
             if (result) {
                 res.status(200).json({
