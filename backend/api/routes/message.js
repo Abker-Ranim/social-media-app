@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-
+const checkAuth = require('../middleware/checkAuth');
 const messageController = require("../controllers/message");
 
-router.get("/", messageController.getAllMessages);
-router.get("/:messageId", messageController.getMessageById);
-router.post("/", messageController.createMessage);
+router.get("/", checkAuth,messageController.getAllMessages);
+router.get("/:messageId",checkAuth, messageController.getMessageById);
+router.post("/",checkAuth, messageController.createMessage);
 
 module.exports = router;
