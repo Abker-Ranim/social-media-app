@@ -64,7 +64,7 @@ exports.updatePost = (req, res, next) => {
         return res.status(404).json({ message: "Post not found" });
       }
 
-      if (post.postOwner.toString() !== req.userData.userId) {
+      if (post.postOwner.toString() !== req.userData.id) {
         return res.status(403).json({ message: "You are not authorized to update this post" });
       }
 
@@ -103,7 +103,7 @@ exports.deletePost = (req, res, next) => {
       }
 
 
-      if (post.postOwner.toString() !== req.userData.userId) {
+      if (post.postOwner.toString() !== req.userData.id) {
         return res.status(403).json({ message: "You are not authorized to delete this post" });
       }
 
@@ -124,3 +124,4 @@ exports.deletePost = (req, res, next) => {
       });
     });
 };
+

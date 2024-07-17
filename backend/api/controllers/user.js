@@ -71,6 +71,7 @@ exports.loginUser = (req, res, next) => {
         if (result) {
           const token = jwt.sign(
             {
+              id: user[0]._id,
               firstName: user[0].firstName,
               lastName: user[0].lastName,
               email: user[0].email,
