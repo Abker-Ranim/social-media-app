@@ -46,21 +46,11 @@ exports.createLike = async (req, res, next) => {
             message: "User not found"
         });
     }
-    Like.findOne({ post: postId, user: id })
-        .then(existingLike => {
-            if (existingLike) {
-                return res.status(409).json({
-                    message: "User has already liked this post"
-                });
-            }
-
-            const like = new Like({
-                _id: new mongoose.Types.ObjectId(),
-                post: postId,
-                user: id,
-            });
-
-            return like.save();
+    let existingLike = null
+    await Like.findOne({ post: postId, user: id })
+        .then(Like => {
+            existingLike = Like;
+            console.log(existingLike);
         })
         .catch(err => {
             console.error("Error finding like:", err);
@@ -68,25 +58,32 @@ exports.createLike = async (req, res, next) => {
                 error: err.message
             });
         })
-        .then(result => {
-            if (result) {
-                res.status(201).json({
-                    message: "Like created successfully",
-                    createdLike: {
-                        _id: result._id,
-                        post: result.post,
-                        user: result.user,
-                    },
-                });
-            }
-        })
-        .catch(err => {
-            console.error("Error creating like:", err);
-            res.status(500).json({
-                error: err.message
-            });
+    if (existingLike == null) {
+        const like = new Like({
+            _id: new mongoose.Types.ObjectId(),
+            post: postId,
+            user: id,
         });
-};
+
+        const result = await like.save();
+        res.status(201).json({
+            message: "Like created successfully",
+            createdLike: {
+                _id: result._id,
+                post: result.post,
+                user: result.user,
+            },
+        });
+
+
+    }
+    else {
+        return res.status(409).json({
+            message: "Like already exists"
+        });
+    }
+    ;
+}
 
 exports.getNumberOfLikesByPost = (req, res, next) => {
     const postId = req.params.postId;
@@ -138,8 +135,7 @@ exports.getLikesByPost = (req, res, next) => {
 exports.deleteLike = (req, res, next) => {
     let postId = req.params.postId;
     let id = req.userData.id;
-   
-    // Vérifier si les identifiants sont valides
+
     if (!mongoose.Types.ObjectId.isValid(postId)) {
         return res.status(400).json({
             message: "Invalid post ID"
@@ -152,7 +148,7 @@ exports.deleteLike = (req, res, next) => {
         });
     }
 
-    Like.findOneAndDelete({ post: postId, user: id })
+    Like.findByIdAndDelete({ post: postId, user: id })
         .then(deletedLike => {
             if (!deletedLike) {
                 return res.status(404).json({
