@@ -136,16 +136,23 @@ exports.getLikesByPost = (req, res, next) => {
 };
 
 exports.deleteLike = (req, res, next) => {
-    const postId = req.params.postId;
-    const id = req.params.id;
-
-    if (!mongoose.Types.ObjectId.isValid(postId) || !mongoose.Types.ObjectId.isValid(id)) {
+    let postId = req.params.postId;
+    let id = req.userData.id;
+   
+    // Vérifier si les identifiants sont valides
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
         return res.status(400).json({
-            message: "Invalid post or user ID"
+            message: "Invalid post ID"
         });
     }
 
-    Like.findByIdAndDelete({ post: postId, user: id })
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({
+            message: "Invalid user ID"
+        });
+    }
+
+    Like.findOneAndDelete({ post: postId, user: id })
         .then(deletedLike => {
             if (!deletedLike) {
                 return res.status(404).json({
