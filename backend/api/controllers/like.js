@@ -4,12 +4,14 @@ const User = require("../models/user");
 const mongoose = require("mongoose");
 
 exports.createLike = async (req, res, next) => {
-    const { post: postId, user: id } = req.body;
+    const postId = req.body.post;
+    const userId = req.userData.id;
 
 
-    if (!mongoose.Types.ObjectId.isValid(postId) || !mongoose.Types.ObjectId.isValid(id)) {
+
+    if (!mongoose.Types.ObjectId.isValid(postId) ) {
         return res.status(400).json({
-            message: "Invalid post or user ID"
+            message: "Invalid post "
         });
     }
     let exixstingPost = null;
@@ -29,25 +31,8 @@ exports.createLike = async (req, res, next) => {
             message: "Post not found"
         });
     }
-    let exixstingUser = null;
-    await User.findById(id)
-        .then(user => {
-            exixstingUser = user;
-            console.log(exixstingUser);
-        })
-        .catch(err => {
-            console.error("Error finding user:", err);
-            return res.status(500).json({
-                error: err.message
-            });
-        })
-    if (exixstingUser == null) {
-        return res.status(404).json({
-            message: "User not found"
-        });
-    }
     let existingLike = null
-    await Like.findOne({ post: postId, user: id })
+    await Like.findOne({ post: postId, user: userId })
         .then(Like => {
             existingLike = Like;
             console.log(existingLike);
@@ -62,7 +47,7 @@ exports.createLike = async (req, res, next) => {
         const like = new Like({
             _id: new mongoose.Types.ObjectId(),
             post: postId,
-            user: id,
+            user: userId,
         });
 
         const result = await like.save();
@@ -148,7 +133,7 @@ exports.deleteLike = (req, res, next) => {
         });
     }
 
-    Like.findByIdAndDelete({ post: postId, user: id })
+    Like.findOneAndDelete({ post: postId, user: id })
         .then(deletedLike => {
             if (!deletedLike) {
                 return res.status(404).json({
