@@ -16,7 +16,7 @@ exports.createPost = (req, res, next) => {
   const post = new Post({
     _id: new mongoose.Types.ObjectId(),
     content: req.body.content,
-    postOwner: req.body.postOwner,
+    postOwner: req.userData.id,
   });
 
   post
