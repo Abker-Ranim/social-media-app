@@ -11,19 +11,19 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: url('src/assets/background.png') no-repeat;
+    background: url('src/assets/back.png') no-repeat;
     background-size: cover;
     background-position: center;
 }
 
 .wrapper {
     width: 420px;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: #121e61;
     color: aliceblue;
     border-radius: 10px;
     padding: 30px 40px;
-   
-    backdrop-filter: blur(30px);
+    margin-left: 400px;
+    
 }
 
 .wrapper h1 {
@@ -90,7 +90,7 @@ body {
     border: none;
     outline: none;
     border-radius: 40px;
-    box-shadow: 0 0 10px rgb(0, 0, 1);
+    box-shadow: 0 0 10px rgb(171, 171, 174);
     cursor: pointer;
     font-size: 16px;
     color: #333;
