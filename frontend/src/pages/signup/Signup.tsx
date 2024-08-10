@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { FaLock, FaLockOpen } from "react-icons/fa";
+import { FaUser } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md";
 import { Link } from "react-router-dom";
-import "./login.css";
+import "./signup.css";
 
-const Login = () => {
+const Signup = () => {
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [checked, setChecked] = useState(false);
+
     const [errorMsg, setErrorMsg] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
@@ -18,9 +21,11 @@ const Login = () => {
     const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const user = {
+            firstName,
+            lastName,
             email,
             password,
-            remember: checked,
+        
         };
         console.log(user);
         
@@ -31,7 +36,27 @@ const Login = () => {
        <div className="container">
          <div className="login">
             <form onSubmit={handleLogin}>
-                <h1>Login</h1>
+                <h1>Signup</h1>
+                <div className="input-box">
+                    <input
+                        type="firstName"
+                        placeholder="firstName"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        required
+                    />
+                    <FaUser className="icon" />
+                </div>
+                <div className="input-box">
+                    <input
+                        type="lastName"
+                        placeholder="lastName"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        required
+                    />
+                    <FaUser className="icon" />
+                </div>
                 <div className="input-box">
                     <input
                         type="email"
@@ -55,28 +80,13 @@ const Login = () => {
                     </span>
                 </div>
                 {errorMsg && <p className="error">{errorMsg}</p>}
-                <div className="remember-forgot">
-                    <div className="remember">
-                        <input
-                            type="checkbox"
-                            id="remeber"
-                            checked={checked}
-                            onChange={(e) => setChecked(e.target.checked)}
-                        />
-                        <label htmlFor="remeber">
-                            Remember me
-                        </label>
-                    </div>
-                    <a href="#" onClick={() => alert("Réinitialiser le mot de passe")}>Forgot password ?</a>
-                </div>
-                <button type="submit">Login</button>
+                <button type="submit">Singup</button>
                 <div className="register-link">
-                    <p>Don't have an account ? <Link to="/signup" >Register</Link></p>
+                    <p>Already have an account ? <Link to="/" >Login</Link></p>
                 </div>
             </form>
         </div>
        </div>
     );
 }
-
-export default Login;
+export default Signup;
