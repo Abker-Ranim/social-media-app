@@ -27,7 +27,8 @@ const Login = () => {
     }
 
     return (
-        <div className="login">
+       <div className="container">
+         <div className="login">
             <form onSubmit={handleLogin}>
                 <h1>Login</h1>
                 <div className="input-box">
@@ -73,6 +74,7 @@ const Login = () => {
                 </div>
             </form>
         </div>
+       </div>
     );
 }
 
