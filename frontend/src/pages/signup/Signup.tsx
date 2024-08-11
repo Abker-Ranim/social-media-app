@@ -10,7 +10,6 @@ const Signup = () => {
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
     const [errorMsg, setErrorMsg] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
@@ -29,7 +28,7 @@ const Signup = () => {
         };
         console.log(user);
         
-        setErrorMsg("Invalid Email or Password"); 
+        setErrorMsg("account already exists"); 
     }
 
     return (
@@ -40,7 +39,7 @@ const Signup = () => {
                 <div className="input-box">
                     <input
                         type="firstName"
-                        placeholder="firstName"
+                        placeholder="First Name"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                         required
@@ -50,7 +49,7 @@ const Signup = () => {
                 <div className="input-box">
                     <input
                         type="lastName"
-                        placeholder="lastName"
+                        placeholder="Last Name"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                         required
@@ -82,7 +81,7 @@ const Signup = () => {
                 {errorMsg && <p className="error">{errorMsg}</p>}
                 <button type="submit">Singup</button>
                 <div className="register-link">
-                    <p>Already have an account ? <Link to="/" >Login</Link></p>
+                    <p>Already have an account ? <Link to="/login" >Login</Link></p>
                 </div>
             </form>
         </div>
