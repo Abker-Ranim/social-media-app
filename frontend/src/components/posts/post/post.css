@@ -1,16 +1,14 @@
 .post {
-    max-width: 600px;
-    width: 100%; 
-    margin: 20px auto;
-    color: black;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    border-radius: 8px;
+    margin: 30px 30px;
+    width: 100%;
+    max-width: 1300px;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
     background-color: #ffffff;
-    font-family: Arial, sans-serif;
-    position: relative;
+    overflow: hidden;
     z-index: 20;
-    margin-top: 70px;
+    padding: 20px;
+
 }
 
 .post_user_details {
