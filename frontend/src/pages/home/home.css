@@ -1,0 +1,24 @@
+
+.app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; 
+    padding-top: 50px;
+}
+
+.main-content {
+    display: flex; 
+    flex: 1; 
+}
+
+.sidebar {
+    width: 25%; 
+}
+
+.posts {
+    width: 50%; 
+}
+
+.right {
+    width: 25%; 
+}
