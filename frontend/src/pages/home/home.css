@@ -1,24 +1,22 @@
-
 .app {
-    display: flex;
-    flex-direction: column;
-    height: 100vh; 
-    padding-top: 50px;
+  display: flex;
+  flex-direction: column;
 }
 
 .main-content {
-    display: flex; 
-    flex: 1; 
+  display: flex;
+  gap: 20px;
+  padding: 20px;
 }
 
 .sidebar {
-    width: 25%; 
+  width: 25%;
 }
 
 .posts {
-    width: 50%; 
+  width: 50%;
 }
 
 .right {
-    width: 25%; 
+  width: 25%;
 }
