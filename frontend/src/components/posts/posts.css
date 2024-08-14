@@ -1,40 +1,39 @@
 .posts {
-    display: flex;
-    flex-direction: column;
-    gap: 20px; 
-    align-items: center; 
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  width: 100%;
+}
 
-}
-.new_post{
-    min-height: 200px; 
-    border-radius: 10px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-    background-color: #ffffff;
-    overflow: hidden;
-    padding: 20px; 
+.new_post {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: start;
+  gap: 10px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  background-color: #ffffff;
+
+  .user_details {
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-.new_post_profile_image img
- {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    overflow: hidden;
-    margin-right: 10px;
-    object-fit: cover;
-    background-color: blue;
-    img{
-        width: 100%;
-    height: 100%;
-    object-fit: cover;
+    align-items: center;
+    gap: 10px;
+
+    img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
     }
-}
+  }
 
-.new_post_textbox textarea {
+  .new_post_textbox {
     width: 100%;
+    height: 100px;
     border: none;
     resize: none;
     outline: none;
@@ -42,9 +41,9 @@
     font-size: 14px;
     border-radius: 5px;
     background-color: #f5f5f5;
-}
+  }
 
-.new_post_buttons button {
+  button {
     background-color: #007bff;
     color: #ffffff;
     border: none;
@@ -54,14 +53,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  button:hover {
+    background-color: #0056b3;
+  }
 }
 
-.new_post_buttons button:hover {
-    background-color: #0056b3;
-}
 .post_list {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
