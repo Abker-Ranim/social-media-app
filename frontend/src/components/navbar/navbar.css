@@ -17,7 +17,7 @@ nav {
 }
 
 .navbar_left b {
-  color: #121e61;
+  color: var(--primary-color);
   font-size: 1.6rem;
   letter-spacing: 1.5px;
   font-family: "Montserrat", sans-serif;
@@ -69,9 +69,9 @@ nav {
 }
 
 .navbar_profile_button {
-  border: 1px solid #121e61;
+  border: 1px solid var(--primary-color);
   cursor: pointer;
-  background-color: #121e61;
+  background-color:var(--primary-color);
   color: white;
   border-radius: 20px;
   height: 40px;

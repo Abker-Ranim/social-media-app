@@ -14,7 +14,7 @@
 
 .login {
     width: 27%;
-    background-color: #121e61;
+    background-color: var(--primary-color);
     color: white;
     border-radius: 10px;
     padding: 30px 40px;
