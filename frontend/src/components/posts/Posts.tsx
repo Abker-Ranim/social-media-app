@@ -1,8 +1,23 @@
+import { useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 import Post from "./post/Post";
 import "./posts.css";
 
 const Posts = () => {
+  const [posts, setPosts] = useState<string[]>([]);
+  const [newPostContent, setNewPostContent] = useState("");
+
+  const handleNewPostChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setNewPostContent(e.target.value);
+  };
+
+  const handlePostSubmit = () => {
+    if (newPostContent.trim()) {
+      setPosts([...posts, newPostContent]);
+      setNewPostContent(""); 
+    }
+  };
+
   return (
     <div className="posts">
       <div className="new_post">
@@ -16,19 +31,21 @@ const Posts = () => {
 
         <textarea
           className="new_post_textbox"
-          placeholder="what's in your mind..?"
+          placeholder="What's in your mind..?"
+          value={newPostContent}
+          onChange={handleNewPostChange}
         ></textarea>
 
-        <button>
+        <button className="navbar_profile_button" onClick={handlePostSubmit}>
           <FaPlus />
+          <span className="text">Post</span>
         </button>
       </div>
 
       <div className="post_list">
-        <Post />
-        <Post />
-        <Post />
-        <Post />
+        {posts.map((content, index) => (
+          <Post key={index} content={content} />
+        ))}
       </div>
     </div>
   );
