@@ -34,8 +34,8 @@ app.use(bodyParser.json());
 // CORS Handling
 app.use(cors({
   origin: [process.env.CLIENT_URL],
-  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE','OPTIONS'],
-  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Access-Control-Allow-Origin', 'Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
   credentials: true,
 }));
 

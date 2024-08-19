@@ -2,10 +2,13 @@ import { useState } from "react";
 import { FaLock, FaLockOpen } from "react-icons/fa";
 import { FaUser } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./signup.css";
+import { signup } from "../../services/user";
 
 const Signup = () => {
+    const navigate = useNavigate();
+    
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
@@ -17,7 +20,7 @@ const Signup = () => {
         setShowPassword(!showPassword);
     }
 
-    const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const user = {
             firstName,
@@ -28,7 +31,19 @@ const Signup = () => {
         };
         console.log(user);
         
-        setErrorMsg("account already exists"); 
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+        if (!passwordRegex.test(password)) {
+            setErrorMsg("Password must contain at least 8 characters, one letter, and one number"); 
+        } else {
+            try {
+                await signup(user);
+                navigate("/login");
+            } catch (error) {
+                console.error(error);
+                setErrorMsg("Email already exists");
+            }
+        }
+
     }
 
     return (
