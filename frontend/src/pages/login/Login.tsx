@@ -6,16 +6,16 @@ import { useNavigate } from "react-router-dom";
 import { login } from "../../services/user";
 import toast, { Toaster } from "react-hot-toast";
 
-
 import "./login.css";
 
 const Login = () => {
+    const navigate = useNavigate();
+    
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [checked, setChecked] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const navigate = useNavigate();
 
     const handleIconClick = () => {
         setShowPassword(!showPassword);

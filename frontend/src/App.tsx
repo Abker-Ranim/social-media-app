@@ -3,7 +3,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Home from './pages/home/Home';
 import Login from './pages/login/Login';
 import Signup from './pages/signup/Signup';
-import AppLoader from './services/apploader';
+import ProtectedRoute from './services/ProtectedRoute';
+import { AuthProvider } from './services/AuthProvider';
 
 const router = createBrowserRouter([
     {
@@ -16,13 +17,19 @@ const router = createBrowserRouter([
     },
     {
         path: '/',
-        element: <AppLoader><Home /></AppLoader> 
+        element: (
+            <ProtectedRoute>
+                <Home />
+            </ProtectedRoute>
+        ) 
     },
 ]);
 
 const App: React.FC = () => {
     return (
-        <RouterProvider router={router} />
+        <AuthProvider >
+            <RouterProvider router={router} />
+        </AuthProvider>
     );
 };
 
