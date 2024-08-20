@@ -52,6 +52,7 @@ exports.signupUser = (req, res, next) => {
 };
 
 exports.loginUser = (req, res, next) => {
+  const { email, password, remember } = req.body;
   User.find({ email: req.body.email })
     .exec()
     .then((user) => {
@@ -69,6 +70,7 @@ exports.loginUser = (req, res, next) => {
         }
 
         if (result) {
+          const expiresIn = remember ? "7d" : "30s";
           const token = jwt.sign(
             {
               id: user[0]._id,
@@ -77,9 +79,7 @@ exports.loginUser = (req, res, next) => {
               email: user[0].email,
             },
             process.env.JWT_KEY,
-            {
-              expiresIn: "1h",
-            }
+            { expiresIn: expiresIn }
           );
           return res.status(200).json({
             message: "Auth success",
