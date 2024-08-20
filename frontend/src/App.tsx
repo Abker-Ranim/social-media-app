@@ -1,29 +1,29 @@
+import React from 'react';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Home from './pages/home/Home';
 import Login from './pages/login/Login';
 import Signup from './pages/signup/Signup';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import AppLoader from './services/apploader';
 
-function App() {
-  const router = createBrowserRouter([
-
+const router = createBrowserRouter([
     {
-      path: '/login',
-      element: <Login />
+        path: '/login',
+        element: <Login /> 
     },
     {
-      path: '/signup',
-      element: <Signup />
+        path: '/signup',
+        element: <Signup /> 
     },
     {
-      path: '/',
-      element: <Home />
+        path: '/',
+        element: <AppLoader><Home /></AppLoader> 
     },
-  ])
-  return (
-    <>
-      <RouterProvider router={router} />
-    </>
-  )
-}
+]);
 
-export default App
+const App: React.FC = () => {
+    return (
+        <RouterProvider router={router} />
+    );
+};
+
+export default App;
