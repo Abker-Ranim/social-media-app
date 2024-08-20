@@ -5,6 +5,7 @@ import { MdEmail } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import "./signup.css";
 import { signup } from "../../services/user";
+import toast, { Toaster } from "react-hot-toast";
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -37,10 +38,17 @@ const Signup = () => {
         } else {
             try {
                 await signup(user);
-                navigate("/login");
+                toast.success('User created Successfully!');
+                setTimeout(() => {
+                    navigate("/login");
+                }, 500);
+                
+
             } catch (error) {
                 console.error(error);
                 setErrorMsg("Email already exists");
+                toast.error('This is an error!');
+
             }
         }
 
@@ -48,6 +56,8 @@ const Signup = () => {
 
     return (
        <div className="container">
+              <Toaster />
+
          <div className="login">
             <form onSubmit={handleLogin}>
                 <h1>Signup</h1>
