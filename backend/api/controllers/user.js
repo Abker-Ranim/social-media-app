@@ -53,7 +53,7 @@ exports.signupUser = (req, res, next) => {
 
 exports.loginUser = (req, res, next) => {
   const { email, password, remember } = req.body;
-  User.find({ email: req.body.email })
+  User.find({ email: email })
     .exec()
     .then((user) => {
       if (user.length < 1) {
@@ -62,7 +62,7 @@ exports.loginUser = (req, res, next) => {
         });
       }
 
-      bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+      bcrypt.compare(password, user[0].password, (err, result) => {
         if (err) {
           return res.status(401).json({
             message: "Auth failed",
@@ -93,3 +93,7 @@ exports.loginUser = (req, res, next) => {
       });
     });
 };
+
+exports.getCurrentUser = (req, res, next) => {
+  res.status(200).json(req.userData);
+}
