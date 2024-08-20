@@ -3,6 +3,9 @@ import { FaLock, FaLockOpen } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { login } from "../../services/user";
+import toast, { Toaster } from "react-hot-toast";
+
 
 import "./login.css";
 
@@ -18,24 +21,45 @@ const Login = () => {
         setShowPassword(!showPassword);
     }
 
-    const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const user = {
-            email,
-            password,
-            remember: checked,
-        };
-        console.log(user);
+        const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            const user = {
+                email,
+                password,
+                remember: checked,
+            };
+            console.log(user);
 
-        if (email === "test@example.com" && password === "password") {
-            navigate("/home");
-        } else {
-            setErrorMsg("Invalid Email or Password");
-        }
-    }
+            try {
+                const response = await login({ email, password });
+                console.log(response);
+
+                if (response.data.token) {
+                    if (user.remember) {
+                        localStorage.setItem("token", response.data.token); 
+                    } else {
+                        sessionStorage.setItem("token", response.data.token); 
+                    }
+                    toast.success('Login Successful!');
+
+                    setTimeout(() => {
+                        navigate("/");
+                    }, 500);
+                } else {
+                    setErrorMsg("Login failed. Please try again.");
+                    toast.error(' Login failed!');
+                }
+            } catch (error) {
+                console.error(error);
+                setErrorMsg("Invalid Email or Password");
+                toast.error('Login failed!');
+            }
+        };
 
     return (
         <div className="container">
+            <Toaster />
+
             <div className="login">
                 <form onSubmit={handleLogin}>
                     <h1>Login</h1>
