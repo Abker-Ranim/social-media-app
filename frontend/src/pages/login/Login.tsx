@@ -21,40 +21,25 @@ const Login = () => {
         setShowPassword(!showPassword);
     }
 
-        const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
-            const user = {
-                email,
-                password,
-                remember: checked,
-            };
-            console.log(user);
-
-            try {
-                const response = await login({ email, password });
-                console.log(response);
-
-                if (response.data.token) {
-                    if (user.remember) {
-                        localStorage.setItem("token", response.data.token); 
-                    } else {
-                        sessionStorage.setItem("token", response.data.token); 
-                    }
-                    toast.success('Login Successful!');
-
-                    setTimeout(() => {
-                        navigate("/");
-                    }, 500);
-                } else {
-                    setErrorMsg("Login failed. Please try again.");
-                    toast.error(' Login failed!');
-                }
-            } catch (error) {
-                console.error(error);
-                setErrorMsg("Invalid Email or Password");
-                toast.error('Login failed!');
-            }
+    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const user = {
+            email,
+            password,
+            remember: checked,
         };
+        
+        try {
+            await login(user);
+            navigate("/");
+        } catch (error: any) {
+            toast.error('Login failed!');
+            if (error. response && error.response.status === 401) 
+                setErrorMsg("Invalid Email or Password.");
+            else 
+                setErrorMsg("Login failed. Please try again later.");
+        }
+    };
 
     return (
         <div className="container">
