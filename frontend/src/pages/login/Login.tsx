@@ -34,7 +34,7 @@ const Login = () => {
             navigate("/");
         } catch (error: any) {
             toast.error('Login failed!');
-            if (error. response && error.response.status === 401) 
+            if (error.response && error.response.status === 401) 
                 setErrorMsg("Invalid Email or Password.");
             else 
                 setErrorMsg("Login failed. Please try again later.");

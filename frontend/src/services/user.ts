@@ -24,7 +24,6 @@ export const login = async (body: LoginData): Promise<any> => {
     if (response.status === 200) {
         localStorage.setItem("token", response.data.token);
     }
-    return response;
 };
 
 export const getCurrentUser = async (): Promise<User> => {
