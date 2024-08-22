@@ -6,6 +6,8 @@ export type NewPost = {
   id?: string;
   content: string;
   postOwner?: string;
+  createdAt: string;
+
 };
 
 export const createPost = async (body: NewPost) => {

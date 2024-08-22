@@ -1,19 +1,59 @@
 import "./post.css";
 import { useState, useRef } from "react";
 import { FaHeart, FaRegComment } from "react-icons/fa";
+import { createLike, deleteLike, Like } from "../../../services/like";
+import axios from "axios";
+import { formatDistanceToNow } from 'date-fns';
 
 interface PostProps {
   content: string;
+  postId: string;
+  createdAt: string;
 }
 
-const Post = ({ content }: PostProps) => {
+const Post = ({ content, postId ,createdAt}: PostProps) => {
   const [liked, setLiked] = useState(false);
   const [comments, setComments] = useState<string[]>([]);
   const [commentText, setCommentText] = useState("");
   const commentInputRef = useRef<HTMLInputElement>(null);
 
-  const handleLikeClick = () => {
-    setLiked(!liked);
+  const date = createdAt ? new Date(createdAt) : new Date();
+  const isValidDate = !isNaN(date.getTime());
+  const formattedDate = isValidDate
+    ? formatDistanceToNow(date, { addSuffix: true })
+    : 'Date invalide';
+
+
+  const handleLikeClick = async () => {
+    if (!liked) {
+      const likeData: Like = {
+        post: postId,
+      };
+
+      try {
+        const response = await createLike(likeData);
+        console.log("Post liked successfully", response);
+        setLiked(true);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.error("Server response:", error.response?.data);
+        } else {
+          console.error("Unexpected error:", error);
+        }
+      }
+    } else {
+      try {
+        const response = await deleteLike(postId);
+        console.log("Post unliked successfully", response);
+        setLiked(false);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.error("Server response:", error.response?.data);
+        } else {
+          console.error("Unexpected error:", error);
+        }
+      }
+    }
   };
 
   const handleCommentIconClick = () => {
@@ -29,9 +69,10 @@ const Post = ({ content }: PostProps) => {
   const handleCommentSubmit = () => {
     if (commentText.trim()) {
       setComments([...comments, commentText]);
-      setCommentText(""); 
+      setCommentText("");
     }
   };
+
 
   return (
     <div className="post">
@@ -40,10 +81,9 @@ const Post = ({ content }: PostProps) => {
           src="https://images.pexels.com/photos/27525165/pexels-photo-27525165/free-photo-of-lumineux-leger-paysage-gens.jpeg"
           alt="User"
         />
-
         <div className="user_name">
           <h4>Ranim</h4>
-          <span>Just now</span>
+          <span>{formattedDate}</span>
         </div>
       </div>
     

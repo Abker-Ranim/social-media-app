@@ -27,10 +27,19 @@ const Posts = () => {
       const newPost: NewPost = {
         content: newPostContent,
       };
-
+  
       try {
         const response = await createPost(newPost);
-        setPosts(prevPosts => [...prevPosts, response.data.createdPost]);
+        if (response.data && response.data.createdPost) {
+          const { createdPost } = response.data;
+                    
+          const createdAtDate = new Date(createdPost.createdAt);
+          if (isNaN(createdAtDate.getTime())) {
+            console.error("Invalid date:", createdPost.createdAt);
+          }
+          
+          setPosts(prevPosts => [...prevPosts, createdPost]);
+        }
         setNewPostContent("");
       } catch (error) {
         console.error("Failed to create post:", error);
@@ -39,7 +48,7 @@ const Posts = () => {
       console.warn("Post content is empty");
     }
   };
-
+  
   return (
     <div className="posts">
       <div className="new_post">
@@ -66,8 +75,12 @@ const Posts = () => {
 
       <div className="post_list">
         {posts.map((post, index) => (
-          <Post key={index} content={post.content} />
-        ))}
+          <Post
+            key={index}
+            content={post.content}
+            postId={post.id || ""}
+            createdAt={post.createdAt || ''}
+          />))}
       </div>
     </div>
   );
