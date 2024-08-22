@@ -2,7 +2,6 @@ import "./post.css";
 import { useState, useRef } from "react";
 import { FaHeart, FaRegComment } from "react-icons/fa";
 import { createLike, deleteLike, Like } from "../../../services/like";
-import axios from "axios";
 import { formatDistanceToNow } from 'date-fns';
 
 interface PostProps {
@@ -11,17 +10,13 @@ interface PostProps {
   createdAt: string;
 }
 
-const Post = ({ content, postId ,createdAt}: PostProps) => {
+const Post = ({ content, postId, createdAt}: PostProps) => {
   const [liked, setLiked] = useState(false);
   const [comments, setComments] = useState<string[]>([]);
   const [commentText, setCommentText] = useState("");
   const commentInputRef = useRef<HTMLInputElement>(null);
 
-  const date = createdAt ? new Date(createdAt) : new Date();
-  const isValidDate = !isNaN(date.getTime());
-  const formattedDate = isValidDate
-    ? formatDistanceToNow(date, { addSuffix: true })
-    : 'Date invalide';
+  const formattedDate = formatDistanceToNow(createdAt, { addSuffix: true });
 
 
   const handleLikeClick = async () => {
@@ -31,27 +26,17 @@ const Post = ({ content, postId ,createdAt}: PostProps) => {
       };
 
       try {
-        const response = await createLike(likeData);
-        console.log("Post liked successfully", response);
+        await createLike(likeData);
         setLiked(true);
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.error("Server response:", error.response?.data);
-        } else {
-          console.error("Unexpected error:", error);
-        }
+        console.error(error);
       }
     } else {
       try {
-        const response = await deleteLike(postId);
-        console.log("Post unliked successfully", response);
+        await deleteLike(postId);
         setLiked(false);
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.error("Server response:", error.response?.data);
-        } else {
-          console.error("Unexpected error:", error);
-        }
+        console.error(error);
       }
     }
   };
@@ -119,7 +104,7 @@ const Post = ({ content, postId ,createdAt}: PostProps) => {
           onChange={handleCommentChange}
           ref={commentInputRef} 
         />
-        <button onClick={handleCommentSubmit}>Post</button>
+        <button onClick={handleCommentSubmit}>Send</button>
       </div>
     </div>
   );

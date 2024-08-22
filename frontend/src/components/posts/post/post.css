@@ -89,7 +89,6 @@
 .comment_input {
   display: flex;
   align-items: center;
-  margin-top: 15px;
 }
 
 .comment_input input {

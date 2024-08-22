@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
-import { createPost, getPosts, NewPost } from "../../services/post";
+import { createPost, getPosts, Post as PostType } from "../../services/post";
 import "./posts.css";
 import Post from "./post/Post";
 
 const Posts = () => {
-  const [posts, setPosts] = useState<NewPost[]>([]);
+  const [posts, setPosts] = useState<PostType[]>([]);
   const [newPostContent, setNewPostContent] = useState("");
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const Posts = () => {
 
   const handlePostSubmit = async () => {
     if (newPostContent.trim()) {
-      const newPost: NewPost = {
+      const newPost = {
         content: newPostContent,
       };
   
@@ -33,10 +33,10 @@ const Posts = () => {
         if (response.data && response.data.createdPost) {
           const { createdPost } = response.data;
                     
-          const createdAtDate = new Date(createdPost.createdAt);
-          if (isNaN(createdAtDate.getTime())) {
-            console.error("Invalid date:", createdPost.createdAt);
-          }
+          // const createdAtDate = new Date(createdPost.createdAt);
+          // if (isNaN(createdAtDate.getTime())) {
+          //   console.error("Invalid date:", createdPost.createdAt);
+          // }
           
           setPosts(prevPosts => [...prevPosts, createdPost]);
         }
@@ -74,13 +74,18 @@ const Posts = () => {
       </div>
 
       <div className="post_list">
-        {posts.map((post, index) => (
-          <Post
-            key={index}
-            content={post.content}
-            postId={post.id || ""}
-            createdAt={post.createdAt || ''}
-          />))}
+        {
+          posts
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .map((post, index) => (
+            <Post
+              key={index}
+              content={post.content}
+              postId={post._id || ""}
+              createdAt={post.createdAt || ""}
+            />
+          ))
+        }
       </div>
     </div>
   );

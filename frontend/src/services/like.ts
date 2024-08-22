@@ -3,7 +3,7 @@ import axios from "../api/axios";
 const url = "/like";
 
 export type Like = {
-  id?: string;
+  _id?: string;
   post: string;
   user?: string;
 };
