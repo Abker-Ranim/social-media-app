@@ -37,6 +37,14 @@
   margin-top: 15px;
   display: flex;
   gap: 15px;
+
+  .icon_info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .5rem;
+    font-weight: 600;
+  }
 }
 
 .action_icon {

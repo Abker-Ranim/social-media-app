@@ -6,12 +6,16 @@ import { formatDistanceToNow } from 'date-fns';
 
 interface PostProps {
   content: string;
-  postId: string;
+  _id: string;
   createdAt: string;
+  liked?: boolean;
+  likesCount: number;
+  commentsCount: number;
 }
 
-const Post = ({ content, postId, createdAt}: PostProps) => {
-  const [liked, setLiked] = useState(false);
+const Post = ({ content, _id, createdAt, liked, commentsCount, likesCount }: PostProps) => {
+  const [counts, setCounts] = useState({ likes: likesCount, comments: commentsCount });
+  const [like, setLike] = useState(liked);
   const [comments, setComments] = useState<string[]>([]);
   const [commentText, setCommentText] = useState("");
   const commentInputRef = useRef<HTMLInputElement>(null);
@@ -20,21 +24,23 @@ const Post = ({ content, postId, createdAt}: PostProps) => {
 
 
   const handleLikeClick = async () => {
-    if (!liked) {
+    if (!like) {
       const likeData: Like = {
-        post: postId,
+        post: _id,
       };
 
       try {
         await createLike(likeData);
-        setLiked(true);
+        setLike(true);
+        setCounts({ ...counts, likes: counts.likes + 1 });
       } catch (error) {
         console.error(error);
       }
     } else {
       try {
-        await deleteLike(postId);
-        setLiked(false);
+        await deleteLike(_id);
+        setLike(false);
+        setCounts({ ...counts, likes: counts.likes - 1 });
       } catch (error) {
         console.error(error);
       }
@@ -77,14 +83,20 @@ const Post = ({ content, postId, createdAt}: PostProps) => {
       </div>
       
       <div className="post_actions">
-        <FaHeart
-          className={`action_icon like_icon ${liked ? 'liked' : ''}`}
-          onClick={handleLikeClick}
-        />
-        <FaRegComment
-          className="action_icon comment_icon"
-          onClick={handleCommentIconClick}
-        />
+        <div className="icon_info">
+          <FaHeart
+            className={`action_icon like_icon ${like ? 'liked' : ''}`}
+            onClick={handleLikeClick}
+          />
+          <span>{counts.likes}</span>
+        </div>
+        <div className="icon_info">
+          <FaRegComment
+            className="action_icon comment_icon"
+            onClick={handleCommentIconClick}
+          />
+          <span>{counts.comments}</span>
+        </div>
       </div>
 
       <div className="post_comments">

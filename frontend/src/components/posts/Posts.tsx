@@ -81,8 +81,11 @@ const Posts = () => {
             <Post
               key={index}
               content={post.content}
-              postId={post._id || ""}
-              createdAt={post.createdAt || ""}
+              _id={post._id}
+              createdAt={post.createdAt}
+              liked={post.liked}
+              likesCount={post.likesCount}
+              commentsCount={post.commentsCount}
             />
           ))
         }

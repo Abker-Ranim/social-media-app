@@ -7,6 +7,9 @@ export type Post = {
   content: string;
   postOwner: string;
   createdAt: string;
+  likesCount: number;
+  commentsCount: number;
+  liked?: boolean;
 };
 
 export const createPost = async (body: any) => {
