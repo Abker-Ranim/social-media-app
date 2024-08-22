@@ -3,6 +3,7 @@ import { useState, useRef } from "react";
 import { FaHeart, FaRegComment } from "react-icons/fa";
 import { createLike, deleteLike, Like } from "../../../services/like";
 import { formatDistanceToNow } from 'date-fns';
+import { createComment, getCommentsByPostId } from "../../../services/comment";
 
 interface PostProps {
   content: string;
@@ -12,16 +13,22 @@ interface PostProps {
   likesCount: number;
   commentsCount: number;
 }
+interface Comment {
+  _id?: string;
+  content: string;
+  commentOwner?: string;
+  post: string;
+}
 
 const Post = ({ content, _id, createdAt, liked, commentsCount, likesCount }: PostProps) => {
   const [counts, setCounts] = useState({ likes: likesCount, comments: commentsCount });
   const [like, setLike] = useState(liked);
-  const [comments, setComments] = useState<string[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [commentText, setCommentText] = useState("");
+  const [showComments, setShowComments] = useState(false);
   const commentInputRef = useRef<HTMLInputElement>(null);
 
   const formattedDate = formatDistanceToNow(createdAt, { addSuffix: true });
-
 
   const handleLikeClick = async () => {
     if (!like) {
@@ -57,10 +64,31 @@ const Post = ({ content, _id, createdAt, liked, commentsCount, likesCount }: Pos
     setCommentText(e.target.value);
   };
 
-  const handleCommentSubmit = () => {
+  const handleCommentSubmit = async () => {
     if (commentText.trim()) {
-      setComments([...comments, commentText]);
-      setCommentText("");
+      try {
+        const newComment = { content: commentText, post: _id };
+        const response = await createComment(newComment);
+        setComments([...comments, response.data]);
+        setCounts({ ...counts, comments: counts.comments + 1 });
+        setCommentText("");
+      } catch (error) {
+        console.error("Failed to create comment:", error);
+      }
+    }
+  };
+
+
+  const toggleComments = async () => {
+    setShowComments(!showComments);
+  
+    if (!showComments) {
+      try {
+        const fetchedComments = await getCommentsByPostId(_id);
+        setComments(fetchedComments);
+      } catch (error) {
+        console.error("Failed to fetch comments:", error);
+      }
     }
   };
 
@@ -77,11 +105,11 @@ const Post = ({ content, _id, createdAt, liked, commentsCount, likesCount }: Pos
           <span>{formattedDate}</span>
         </div>
       </div>
-    
+
       <div className="post_content_details">
         <p>{content}</p>
       </div>
-      
+
       <div className="post_actions">
         <div className="icon_info">
           <FaHeart
@@ -99,14 +127,21 @@ const Post = ({ content, _id, createdAt, liked, commentsCount, likesCount }: Pos
         </div>
       </div>
 
-      <div className="post_comments">
-        {comments.map((comment, index) => (
-          <div key={index} className="comment">
-            <span className="comment_user">User</span>
-            <span className="comment_text">{comment}</span>
-          </div>
-        ))}
-      </div>
+      <button className="toggle_comments_button" onClick={toggleComments}>
+        {showComments ? "Toggle Comments" : "Show Comments "}
+      </button>
+
+      {showComments && (
+        <div className="post_comments">
+          {comments.map((comment, index) => (
+            <div key={index} className="comment">
+              <span className="comment_user">User</span>
+              <span className="comment_text">{comment.content}</span>
+            </div>
+          ))}
+
+        </div>
+      )}
 
       <div className="comment_input">
         <input
@@ -114,7 +149,7 @@ const Post = ({ content, _id, createdAt, liked, commentsCount, likesCount }: Pos
           placeholder="Write a comment..."
           value={commentText}
           onChange={handleCommentChange}
-          ref={commentInputRef} 
+          ref={commentInputRef}
         />
         <button onClick={handleCommentSubmit}>Send</button>
       </div>
