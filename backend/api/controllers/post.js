@@ -1,15 +1,25 @@
+const Like = require("../models/like");
 const Post = require("../models/post");
+const Comment = require("../models/comment");
 const mongoose = require("mongoose");
 
-exports.getAllPosts = (req, res, next) => {
-  Post.find()
-    .exec()
-    .then((posts) => {
-      res.status(200).json(posts);
-    })
-    .catch((err) => {
-      res.status(500).json(err);
-    });
+exports.getAllPosts = async (req, res, next) => {
+  try {
+    const posts = await Post.find()
+      .populate('postOwner', 'firstName lastName')
+      .exec();
+
+    const newPosts = await Promise.all(posts.map(async (post) => {
+      const likesCount = await Like.countDocuments({ post: post._id });
+      const commentsCount = await Comment.countDocuments({ post: post._id });
+      const liked = await Like.findOne({ post: post._id, user: req.userData.id }) !== null;
+      return { ...post._doc, likesCount, commentsCount, liked };
+    }));
+
+    res.status(200).json(newPosts);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
 exports.createPost = (req, res, next) => {
