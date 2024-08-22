@@ -31,14 +31,7 @@ const Posts = () => {
       try {
         const response = await createPost(newPost);
         if (response.data && response.data.createdPost) {
-          const { createdPost } = response.data;
-                    
-          // const createdAtDate = new Date(createdPost.createdAt);
-          // if (isNaN(createdAtDate.getTime())) {
-          //   console.error("Invalid date:", createdPost.createdAt);
-          // }
-          
-          setPosts(prevPosts => [...prevPosts, createdPost]);
+          setPosts(prevPosts => [...prevPosts, response.data.createdPost]);
         }
         setNewPostContent("");
       } catch (error) {

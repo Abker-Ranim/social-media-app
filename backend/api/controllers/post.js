@@ -35,11 +35,7 @@ exports.createPost = (req, res, next) => {
       console.log(result);
       res.status(201).json({
         message: "Post created successfully",
-        createdPost: {
-          _id: result._id,
-          content: result.content,
-          postOwner: result.postOwner,
-        },
+        createdPost: result,
       });
     })
     .catch((err) => {
