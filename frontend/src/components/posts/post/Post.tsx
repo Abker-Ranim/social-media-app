@@ -3,7 +3,7 @@ import { useState, useRef } from "react";
 import { FaHeart, FaRegComment } from "react-icons/fa";
 import { createLike, deleteLike, Like } from "../../../services/like";
 import { formatDistanceToNow } from 'date-fns';
-import { createComment, getCommentsByPostId } from "../../../services/comment";
+import { Comment, createComment, getCommentsByPostId } from "../../../services/comment";
 
 interface PostProps {
   content: string;
@@ -12,12 +12,6 @@ interface PostProps {
   liked?: boolean;
   likesCount: number;
   commentsCount: number;
-}
-interface Comment {
-  _id?: string;
-  content: string;
-  commentOwner?: string;
-  post: string;
 }
 
 const Post = ({ content, _id, createdAt, liked, commentsCount, likesCount }: PostProps) => {
@@ -28,7 +22,7 @@ const Post = ({ content, _id, createdAt, liked, commentsCount, likesCount }: Pos
   const [showComments, setShowComments] = useState(false);
   const commentInputRef = useRef<HTMLInputElement>(null);
 
-  const formattedDate = formatDistanceToNow(createdAt, { addSuffix: true });
+  const postDate = formatDistanceToNow(createdAt, { addSuffix: true });
 
   const handleLikeClick = async () => {
     if (!like) {
@@ -68,13 +62,23 @@ const Post = ({ content, _id, createdAt, liked, commentsCount, likesCount }: Pos
     if (commentText.trim()) {
       try {
         const newComment = { content: commentText, post: _id };
-        const response = await createComment(newComment);
-        setComments([...comments, response.data]);
+        await createComment(newComment);
+        await fetchComments();
         setCounts({ ...counts, comments: counts.comments + 1 });
         setCommentText("");
+        setShowComments(true);
       } catch (error) {
         console.error("Failed to create comment:", error);
       }
+    }
+  };
+
+  const fetchComments = async () => {
+    try {
+      const fetchedComments = await getCommentsByPostId(_id);
+      setComments(fetchedComments);
+    } catch (error) {
+      console.error("Failed to fetch comments:", error);
     }
   };
 
@@ -83,12 +87,7 @@ const Post = ({ content, _id, createdAt, liked, commentsCount, likesCount }: Pos
     setShowComments(!showComments);
   
     if (!showComments) {
-      try {
-        const fetchedComments = await getCommentsByPostId(_id);
-        setComments(fetchedComments);
-      } catch (error) {
-        console.error("Failed to fetch comments:", error);
-      }
+      await fetchComments();
     }
   };
 
@@ -102,7 +101,7 @@ const Post = ({ content, _id, createdAt, liked, commentsCount, likesCount }: Pos
         />
         <div className="user_name">
           <h4>Ranim</h4>
-          <span>{formattedDate}</span>
+          <span>{postDate}</span>
         </div>
       </div>
 
@@ -128,18 +127,28 @@ const Post = ({ content, _id, createdAt, liked, commentsCount, likesCount }: Pos
       </div>
 
       <button className="toggle_comments_button" onClick={toggleComments}>
-        {showComments ? "Toggle Comments" : "Show Comments "}
+        {showComments ? "Hide Comments" : "Show Comments "}
       </button>
 
-      {showComments && (
+      {showComments && comments.length > 0 && (
         <div className="post_comments">
-          {comments.map((comment, index) => (
+          {comments
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .map((comment, index) => (
             <div key={index} className="comment">
-              <span className="comment_user">User</span>
-              <span className="comment_text">{comment.content}</span>
+              <img
+                src="https://images.pexels.com/photos/27525165/pexels-photo-27525165/free-photo-of-lumineux-leger-paysage-gens.jpeg"
+                alt="User"
+              />
+              <div className="info">
+                <div className="content">
+                  <span className="user">{comment.commentOwner.firstName + " " + comment.commentOwner.lastName}</span>
+                  <p className="text">{comment.content}</p>
+                </div>
+                <span className="date">{formatDistanceToNow(comment.createdAt)}</span>
+              </div>
             </div>
           ))}
-
         </div>
       )}
 

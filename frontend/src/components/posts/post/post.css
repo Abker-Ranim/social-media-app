@@ -32,6 +32,7 @@
   line-height: 1.6;
   color: #a4a7a9;
   word-break: break-all;
+  white-space: pre-wrap;
 }
 .post_actions {
   margin-top: 15px;
@@ -74,25 +75,54 @@
 }
 
 .post_comments {
-  margin-top: 15px;
   padding-top: 10px;
   border-top: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .comment {
-  margin-bottom: 10px;
   display: flex;
-  align-items: center;
+
+  img {
+    min-width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .info {
+    margin-left: 10px;
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 10px;
+      border-radius: 10px;
+      background-color: #eeeef0;
+      /* max-width: calc(100% - 50px); */
+
+      .user {
+        font-weight: bold;
+        margin-right: 5px;
+      }
+      .text {
+        color: #333;
+        word-break: break-all;
+        white-space: pre-wrap;
+      }
+    }
+
+    .date {
+      font-size: 12px;
+      margin-left: 10px;
+      color: #a4a7a9;
+    }
+  }
 }
 
-.comment_user {
-  font-weight: bold;
-  margin-right: 5px;
-}
-
-.comment_text {
-  color: #333;
-}
 
 .comment_input {
   display: flex;

@@ -29,30 +29,35 @@ exports.createComment = async (req, res, next) => {
       message: "Post not found"
     });
   }
-  const comment = new Comment({
-    _id: new mongoose.Types.ObjectId(),
-    content: req.body.content,
-    commentOwner: commentOwner,
-    post: postId,
-  });
-
-  comment
-    .save()
-    .then((result) => {
-      console.log(result);
-      res.status(201).json({
-        message: "Comment created successfully",
-        createdComment: {
-          _id: result._id,
-          content: result.content,
-          commentOwner: result.commentOwner,
-          post: result.post,
-        },
-      });
-    })
-    .catch((err) => {
-      res.status(500).json(err);
+  
+  try {
+    const comment = new Comment({
+      _id: new mongoose.Types.ObjectId(),
+      content: req.body.content,
+      commentOwner: commentOwner,
+      post: req.body.post,
     });
+
+    const result = await comment.save();
+
+    const populatedComment = await Comment.findById(result._id).populate('commentOwner', 'firstName lastName');
+
+    res.status(201).json({
+      message: "Comment created successfully",
+      createdComment: {
+        _id: populatedComment._id,
+        content: populatedComment.content,
+        commentOwner: {
+          _id: populatedComment.commentOwner._id,
+          firstName: populatedComment.commentOwner.firstName,
+          lastName: populatedComment.commentOwner.lastName,
+        },
+        post: populatedComment.post,
+      },
+    });
+  } catch (err) {
+    res.status(500).json(err);
+  }
 };
 
 exports.getCommentsByPost = (req, res, next) => {
