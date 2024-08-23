@@ -1,9 +1,9 @@
 import { createContext, useState, ReactNode, useContext } from "react";
-import { User } from "./user";
+import { User } from "../services/user";
 
 interface AuthContextType {
-    user: User | undefined;
-    setUser: (user: User | undefined) => void;
+    auth: User | undefined;
+    setAuth: (auth: User | undefined) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -13,10 +13,10 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-    const [user, setUser] = useState<User | undefined>();
+    const [auth, setAuth] = useState<User | undefined>();
 
     return (
-        <AuthContext.Provider value={{ user, setUser }}>
+        <AuthContext.Provider value={{ auth, setAuth }}>
             {children}
         </AuthContext.Provider>
     );

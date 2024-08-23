@@ -71,19 +71,21 @@ exports.loginUser = (req, res, next) => {
 
         if (result) {
           const expiresIn = remember ? "7d" : "30s";
+          const loggedInUser = {
+            id: user[0]._id,
+            firstName: user[0].firstName,
+            lastName: user[0].lastName,
+            email: user[0].email,
+          }
           const token = jwt.sign(
-            {
-              id: user[0]._id,
-              firstName: user[0].firstName,
-              lastName: user[0].lastName,
-              email: user[0].email,
-            },
+            loggedInUser,
             process.env.JWT_KEY,
             { expiresIn: expiresIn }
           );
           return res.status(200).json({
             message: "Auth success",
             token: token,
+            user: loggedInUser,
           });
         }
 

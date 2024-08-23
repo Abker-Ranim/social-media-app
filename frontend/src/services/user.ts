@@ -7,7 +7,7 @@ export type User = {
     firstName: string;
     lastName: string;
     email: string;
-    password: string;
+    password?: string;
 }
 
 interface LoginData {
@@ -24,6 +24,7 @@ export const login = async (body: LoginData): Promise<any> => {
     if (response.status === 200) {
         localStorage.setItem("token", response.data.token);
     }
+    return response.data;
 };
 
 export const getCurrentUser = async (): Promise<User> => {

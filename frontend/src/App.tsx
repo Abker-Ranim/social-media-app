@@ -1,36 +1,40 @@
 import React from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Outlet } from 'react-router-dom';
 import Home from './pages/home/Home';
 import Login from './pages/login/Login';
 import Signup from './pages/signup/Signup';
 import ProtectedRoute from './services/ProtectedRoute';
-import { AuthProvider } from './services/AuthProvider';
+import { AuthProvider } from './context/AuthProvider';
 
-const router = createBrowserRouter([
-    {
-        path: '/login',
-        element: <Login /> 
-    },
-    {
-        path: '/signup',
-        element: <Signup /> 
-    },
-    {
-        path: '/',
-        element: (
-            <ProtectedRoute>
-                <Home />
-            </ProtectedRoute>
-        ) 
-    },
-]);
-
-const App: React.FC = () => {
+export const App: React.FC = () => {
     return (
         <AuthProvider >
-            <RouterProvider router={router} />
+            <Outlet />
         </AuthProvider>
     );
 };
 
-export default App;
+export const router = createBrowserRouter([
+    {
+        path: '/',
+        element: <App />,
+        children: [
+            {
+                path: 'login',
+                element: <Login /> 
+            },
+            {
+                path: 'signup',
+                element: <Signup /> 
+            },
+            {
+                path: '',
+                element: (
+                    <ProtectedRoute>
+                        <Home />
+                    </ProtectedRoute>
+                ) 
+            },
+        ]
+    }
+]);

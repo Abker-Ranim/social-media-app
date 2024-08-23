@@ -5,10 +5,12 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../services/user";
 import toast, { Toaster } from "react-hot-toast";
+import { useAuth } from "../../context/AuthProvider";
 
 import "./login.css";
 
 const Login = () => {
+    const { setAuth } = useAuth();
     const navigate = useNavigate();
     
     const [email, setEmail] = useState("");
@@ -30,7 +32,8 @@ const Login = () => {
         };
         
         try {
-            await login(user);
+            const response = await login(user);
+            setAuth(response.user);
             navigate("/");
         } catch (error: any) {
             toast.error('Login failed!');
