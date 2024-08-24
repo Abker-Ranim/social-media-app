@@ -11,7 +11,7 @@ export type Comment = {
     createdAt: string;
 };
 
-export const createComment = async (body: {content: string, post: string}) => {
+export const createComment = async (body: { content: string, post: string }) => {
     const token = localStorage.getItem("token");
 
     const response = await axios.post(`${url}`, body, {
@@ -33,4 +33,24 @@ export const getCommentsByPostId = async (id: string) => {
     });
 
     return response.data;
+};
+export const updateComment = async (id: string, content: string) => {
+    const token = localStorage.getItem("token");
+    const response = await axios.put(`${url}/${id}`, { content }, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    return response;
+};
+
+export const deleteComment = async (id: string) => {
+    const token = localStorage.getItem("token");
+    const response = await axios.delete(`${url}/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    return response;
+
 };

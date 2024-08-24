@@ -8,12 +8,37 @@
   flex-direction: column;
   gap: 10px;
 }
+.post_options {
+  position: relative;
+  cursor: pointer;
+  margin-left: auto;
+}
 
+.options_menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.options_menu div {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.options_menu div:hover {
+  background-color: #e9ecef;
+}
 .post_user_details {
   display: flex;
   align-items: center;
   gap: 10px;
   width: 100%;
+  
 
   img {
     width: 50px;
@@ -101,7 +126,7 @@
       gap: 5px;
       padding: 10px;
       border-radius: 10px;
-      background-color: #eeeef0;
+      background-color: #e9ecef;
       /* max-width: calc(100% - 50px); */
 
       .user {

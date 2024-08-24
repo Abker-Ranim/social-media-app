@@ -34,3 +34,26 @@ export const getPosts = async (): Promise<Post[]> => {
 
   return response.data;
 };
+export const updatePost = async (id: string , content: string) => {
+  const token = localStorage.getItem("token");
+
+  const response = await axios.put(`${url}/${id}`, {content} ,{
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response;
+};
+export const deletePost = async (id: string ) => {
+  const token = localStorage.getItem("token");
+
+  const response = await axios.delete(`${url}/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+};
+
