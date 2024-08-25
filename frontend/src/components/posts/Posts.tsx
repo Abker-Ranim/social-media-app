@@ -13,7 +13,6 @@ const Posts = () => {
       try {
         const fetchedPosts = await getPosts();
         setPosts(fetchedPosts);
-        console.log(fetchedPosts)
       } catch (error) {
         console.error("Failed to fetch posts:", error);
       }
@@ -24,10 +23,7 @@ const Posts = () => {
 
   const handlePostSubmit = async () => {
     if (newPostContent.trim()) {
-      const newPost = {
-        content: newPostContent,
-      };
-  
+      const newPost = { content: newPostContent };
       try {
         const response = await createPost(newPost);
         if (response.data && response.data.createdPost) {
@@ -41,7 +37,11 @@ const Posts = () => {
       console.warn("Post content is empty");
     }
   };
-  
+
+  const handleDeletePost = (_id: string) => {
+    setPosts(prevPosts => prevPosts.filter(post => post._id !== _id));
+  };
+
   return (
     <div className="posts">
       <div className="new_post">
@@ -67,21 +67,20 @@ const Posts = () => {
       </div>
 
       <div className="post_list">
-        {
-          posts
+        {posts
           .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-          .map((post, index) => (
+          .map(post => (
             <Post
-              key={index}
+              key={post._id}
               content={post.content}
               _id={post._id}
               createdAt={post.createdAt}
               liked={post.liked}
               likesCount={post.likesCount}
               commentsCount={post.commentsCount}
+              onDelete={handleDeletePost}
             />
-          ))
-        }
+          ))}
       </div>
     </div>
   );
