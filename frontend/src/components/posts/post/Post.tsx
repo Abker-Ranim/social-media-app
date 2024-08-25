@@ -1,6 +1,6 @@
 import "./post.css";
 import { useState, useRef } from "react";
-import { FaHeart, FaRegComment, FaEllipsisH } from "react-icons/fa";
+import { FaHeart, FaRegComment, FaEllipsisH, FaPaperPlane, FaTrashAlt, FaEdit } from "react-icons/fa";
 import { createLike, deleteLike, Like } from "../../../services/like";
 import { formatDistanceToNow } from 'date-fns';
 import { Comment, createComment, getCommentsByPostId, updateComment, deleteComment } from "../../../services/comment";
@@ -13,9 +13,10 @@ interface PostProps {
   liked?: boolean;
   likesCount: number;
   commentsCount: number;
+  onDelete: (_id: string) => void;
 }
 
-const Post = ({ content: initialContent, _id, createdAt, liked, commentsCount, likesCount }: PostProps) => {
+const Post = ({ content: initialContent, _id, createdAt, liked, commentsCount, likesCount, onDelete }: PostProps) => {
   const [content, setContent] = useState(initialContent);
   const [counts, setCounts] = useState({ likes: likesCount, comments: commentsCount });
   const [like, setLike] = useState(liked);
@@ -106,6 +107,7 @@ const Post = ({ content: initialContent, _id, createdAt, liked, commentsCount, l
     if (confirmDeletion) {
       try {
         await deletePost(_id);
+        onDelete(_id);
       } catch (error) {
         console.error("Failed to delete post:", error);
       }
@@ -158,8 +160,8 @@ const Post = ({ content: initialContent, _id, createdAt, liked, commentsCount, l
           <FaEllipsisH onClick={() => setShowOptions(prev => !prev)} />
           {showOptions && (
             <div className="options_menu">
-              <div onClick={handleEditPost}>Modifier</div>
-              <div onClick={handleDeletePost}>Supprimer</div>
+              <div onClick={handleEditPost}>Update</div>
+              <div onClick={handleDeletePost}>delete</div>
             </div>
           )}
         </div>
@@ -207,15 +209,16 @@ const Post = ({ content: initialContent, _id, createdAt, liked, commentsCount, l
                   </div>
                   <span className="date">{formatDistanceToNow(new Date(comment.createdAt))}</span>
                   <div className="comment_options">
-                    <button onClick={() => comment._id && handleEditComment(comment._id, comment.content)}>Modifier</button>
-                    <button onClick={() => comment._id && handleDeleteComment(comment._id)}>Supprimer</button>
+                    <button className="edit" onClick={() => comment._id && handleEditComment(comment._id, comment.content)}> <FaEdit /></button>
+                   
+                    <button className="delete" onClick={() => comment._id && handleDeleteComment(comment._id)}><FaTrashAlt /></button>
+                    
                   </div>
                 </div>
               </div>
             ))}
         </div>
       )}
-
       <div className="comment_input">
         <input
           type="text"
@@ -224,7 +227,9 @@ const Post = ({ content: initialContent, _id, createdAt, liked, commentsCount, l
           onChange={handleCommentChange}
           ref={commentInputRef}
         />
-        <button onClick={handleCommentSubmit}>send</button>
+        <button onClick={handleCommentSubmit}>
+          <FaPaperPlane />
+        </button>
       </div>
     </div>
   );
