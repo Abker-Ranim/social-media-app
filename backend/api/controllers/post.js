@@ -1,22 +1,32 @@
+const Like = require("../models/like");
 const Post = require("../models/post");
+const Comment = require("../models/comment");
 const mongoose = require("mongoose");
 
-exports.getAllPosts = (req, res, next) => {
-  Post.find()
-    .exec()
-    .then((posts) => {
-      res.status(200).json(posts);
-    })
-    .catch((err) => {
-      res.status(500).json(err);
-    });
+exports.getAllPosts = async (req, res, next) => {
+  try {
+    const posts = await Post.find()
+      .populate('postOwner', 'firstName lastName')
+      .exec();
+
+    const newPosts = await Promise.all(posts.map(async (post) => {
+      const likesCount = await Like.countDocuments({ post: post._id });
+      const commentsCount = await Comment.countDocuments({ post: post._id });
+      const liked = await Like.findOne({ post: post._id, user: req.userData._id }) !== null;
+      return { ...post._doc, likesCount, commentsCount, liked };
+    }));
+
+    res.status(200).json(newPosts);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
 exports.createPost = (req, res, next) => {
   const post = new Post({
     _id: new mongoose.Types.ObjectId(),
     content: req.body.content,
-    postOwner: req.userData.id,
+    postOwner: req.userData._id,
   });
 
   post
@@ -27,12 +37,17 @@ exports.createPost = (req, res, next) => {
         message: "Post created successfully",
         createdPost: {
           _id: result._id,
+          createdAt: result.createdAt,
+          postOwner: req.userData,
           content: result.content,
-          postOwner: result.postOwner,
+          liked: false,
+          likesCount: 0,
+          commentsCount: 0,
         },
       });
     })
     .catch((err) => {
+      console.log(err)
       res.status(500).json(err);
     });
 };
@@ -64,7 +79,7 @@ exports.updatePost = (req, res, next) => {
         return res.status(404).json({ message: "Post not found" });
       }
 
-      if (post.postOwner.toString() !== req.userData.id) {
+      if (post.postOwner.toString() !== req.userData._id) {
         return res.status(403).json({ message: "You are not authorized to update this post" });
       }
 
@@ -103,7 +118,7 @@ exports.deletePost = (req, res, next) => {
       }
 
 
-      if (post.postOwner.toString() !== req.userData.id) {
+      if (post.postOwner.toString() !== req.userData._id) {
         return res.status(403).json({ message: "You are not authorized to delete this post" });
       }
 

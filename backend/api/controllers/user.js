@@ -52,7 +52,8 @@ exports.signupUser = (req, res, next) => {
 };
 
 exports.loginUser = (req, res, next) => {
-  User.find({ email: req.body.email })
+  const { email, password, remember } = req.body;
+  User.find({ email: email })
     .exec()
     .then((user) => {
       if (user.length < 1) {
@@ -61,7 +62,7 @@ exports.loginUser = (req, res, next) => {
         });
       }
 
-      bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+      bcrypt.compare(password, user[0].password, (err, result) => {
         if (err) {
           return res.status(401).json({
             message: "Auth failed",
@@ -69,21 +70,22 @@ exports.loginUser = (req, res, next) => {
         }
 
         if (result) {
+          const expiresIn = remember ? "30d" : "1d";
+          const loggedInUser = {
+            _id: user[0]._id,
+            firstName: user[0].firstName,
+            lastName: user[0].lastName,
+            email: user[0].email,
+          }
           const token = jwt.sign(
-            {
-              id: user[0]._id,
-              firstName: user[0].firstName,
-              lastName: user[0].lastName,
-              email: user[0].email,
-            },
+            loggedInUser,
             process.env.JWT_KEY,
-            {
-              expiresIn: "1h",
-            }
+            { expiresIn: expiresIn }
           );
           return res.status(200).json({
             message: "Auth success",
             token: token,
+            user: loggedInUser,
           });
         }
 
@@ -93,3 +95,7 @@ exports.loginUser = (req, res, next) => {
       });
     });
 };
+
+exports.getCurrentUser = (req, res, next) => {
+  res.status(200).json(req.userData);
+}

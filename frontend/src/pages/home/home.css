@@ -1,0 +1,22 @@
+.app {
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+.sidebar {
+  width: 25%;
+}
+
+.posts {
+  width: 50%;
+}
+
+.right {
+  width: 25%;
+}

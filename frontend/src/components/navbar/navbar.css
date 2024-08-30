@@ -1,0 +1,114 @@
+nav {
+  width: 100%;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 10px 0;
+  /* position: fixed; */
+  top: 0;
+}
+
+.navbar_left b {
+  color: var(--primary-color);
+  font-size: 1.6rem;
+  letter-spacing: 1.5px;
+  font-family: "Montserrat", sans-serif;
+}
+
+.navbar_right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.navbar_profile_search {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  background-color: #eef1f7;
+  border-radius: 20px;
+  padding: 10px;
+  box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+
+  input {
+    margin-left: 10px;
+    border: none;
+    background-color: transparent;
+    width: 200px;
+    color: #333;
+    font-size: 14px;
+    font-family: "Roboto", sans-serif;
+  }
+}
+.navbar_profile_search:hover {
+  background-color: #e0e4eb;
+}
+.navbar_profile_search input:focus {
+  outline: none;
+}
+.navbar_profile_search input::placeholder {
+  color: #acb7c4;
+  font-size: 14px;
+}
+
+.gray {
+  color: #acb7c4;
+}
+
+.small {
+  font-size: 18px;
+}
+
+.navbar_profile_button {
+  border: 1px solid var(--primary-color);
+  cursor: pointer;
+  background-color:var(--primary-color);
+  color: white;
+  border-radius: 20px;
+  height: 40px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+  font-family: "Roboto", sans-serif;
+}
+.navbar_profile_button:hover {
+  background-color: #1a2a8a;
+  transform: translateY(-2px);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+}
+.navbar_profile_button:active {
+  transform: translateY(0);
+}
+
+.navbar_profile_image {
+  width: 40px;
+  height: 40px;
+  background-color: #e0e0e0;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow 0.3s ease;
+
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+  }
+}
+.navbar_profile_image:hover {
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+}

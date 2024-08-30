@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 
 exports.createComment = async (req, res, next) => {
   const postId = req.body.post;
-  const commentOwner = req.userData.id;
+  const commentOwner = req.userData._id;
 
   if (!mongoose.Types.ObjectId.isValid(postId)) {
     return res.status(400).json({
@@ -29,30 +29,35 @@ exports.createComment = async (req, res, next) => {
       message: "Post not found"
     });
   }
-  const comment = new Comment({
-    _id: new mongoose.Types.ObjectId(),
-    content: req.body.content,
-    commentOwner: commentOwner,
-    post: postId,
-  });
-
-  comment
-    .save()
-    .then((result) => {
-      console.log(result);
-      res.status(201).json({
-        message: "Comment created successfully",
-        createdComment: {
-          _id: result._id,
-          content: result.content,
-          commentOwner: result.commentOwner,
-          post: result.post,
-        },
-      });
-    })
-    .catch((err) => {
-      res.status(500).json(err);
+  
+  try {
+    const comment = new Comment({
+      _id: new mongoose.Types.ObjectId(),
+      content: req.body.content,
+      commentOwner: commentOwner,
+      post: req.body.post,
     });
+
+    const result = await comment.save();
+
+    const populatedComment = await Comment.findById(result._id).populate('commentOwner', 'firstName lastName');
+
+    res.status(201).json({
+      message: "Comment created successfully",
+      createdComment: {
+        _id: populatedComment._id,
+        content: populatedComment.content,
+        commentOwner: {
+          _id: populatedComment.commentOwner._id,
+          firstName: populatedComment.commentOwner.firstName,
+          lastName: populatedComment.commentOwner.lastName,
+        },
+        post: populatedComment.post,
+      },
+    });
+  } catch (err) {
+    res.status(500).json(err);
+  }
 };
 
 exports.getCommentsByPost = (req, res, next) => {
@@ -79,8 +84,7 @@ exports.getCommentsByPost = (req, res, next) => {
     });
 };
 exports.deleteComment = (req, res, next) => {
-  const postId = req.body.postId;
-  const userId = req.userData.id;
+  const userId = req.userData._id;
   const commentId = req.params.commentId
 
 
@@ -89,15 +93,7 @@ exports.deleteComment = (req, res, next) => {
       message: "Invalid comment ID"
     });
   }
-
-  if (!mongoose.Types.ObjectId.isValid(postId)) {
-    return res.status(400).json({
-      message: "Invalid post ID"
-    });
-  }
-
-
-  Comment.findOneAndDelete({ post: postId, commentOwner: userId, _id: commentId })
+  Comment.findOneAndDelete({ commentOwner: userId, _id: commentId })
     .then(deletedComment => {
       if (!deletedComment) {
         return res.status(404).json({
@@ -120,29 +116,25 @@ exports.deleteComment = (req, res, next) => {
 };
 
 exports.updateComment = (req, res, next) => {
-  const postId = req.body.postId;
-  const userId = req.userData.id;
+  const userId = req.userData._id;
   const commentId = req.params.commentId;
   const newContent = req.body.content;
 
-  console.log("Post ID:", postId);
   console.log("Comment ID:", commentId);
   console.log("Comment Owner ID:", userId);
-
-  if (!mongoose.Types.ObjectId.isValid(postId)) {
-    return res.status(400).json({
-      message: "Invalid post ID"
-    });
-  }
 
   if (!mongoose.Types.ObjectId.isValid(commentId)) {
     return res.status(400).json({
       message: "Invalid comment ID"
     });
   }
-
+  if (!newContent || newContent.trim() === "") {
+    return res.status(400).json({
+      message: "Comment content cannot be empty"
+    });
+  }
   Comment.findOneAndUpdate(
-    { _id: commentId, post: postId, commentOwner: userId },
+    { _id: commentId,  commentOwner: userId },
     { $set: { content: newContent } },
     { new: true }
   )
