@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 
 exports.createLike = async (req, res, next) => {
     const postId = req.body.post;
-    const userId = req.userData.id;
+    const userId = req.userData._id;
 
 
 
@@ -119,7 +119,7 @@ exports.getLikesByPost = (req, res, next) => {
 
 exports.deleteLike = (req, res, next) => {
     let postId = req.params.postId;
-    let id = req.userData.id;
+    let id = req.userData._id;
 
     if (!mongoose.Types.ObjectId.isValid(postId)) {
         return res.status(400).json({

@@ -4,7 +4,7 @@ import { User } from "./user";
 const url = "/comment";
 
 export type Comment = {
-    _id?: string;
+    _id: string;
     content: string;
     commentOwner: User;
     post: string;

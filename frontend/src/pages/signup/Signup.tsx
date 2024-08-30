@@ -5,7 +5,7 @@ import { MdEmail } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import "./signup.css";
 import { signup } from "../../services/user";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -56,8 +56,6 @@ const Signup = () => {
 
     return (
        <div className="container">
-              <Toaster />
-
          <div className="login">
             <form onSubmit={handleLogin}>
                 <h1>Signup</h1>

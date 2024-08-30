@@ -12,7 +12,7 @@ exports.getAllPosts = async (req, res, next) => {
     const newPosts = await Promise.all(posts.map(async (post) => {
       const likesCount = await Like.countDocuments({ post: post._id });
       const commentsCount = await Comment.countDocuments({ post: post._id });
-      const liked = await Like.findOne({ post: post._id, user: req.userData.id }) !== null;
+      const liked = await Like.findOne({ post: post._id, user: req.userData._id }) !== null;
       return { ...post._doc, likesCount, commentsCount, liked };
     }));
 
@@ -26,7 +26,7 @@ exports.createPost = (req, res, next) => {
   const post = new Post({
     _id: new mongoose.Types.ObjectId(),
     content: req.body.content,
-    postOwner: req.userData.id,
+    postOwner: req.userData._id,
   });
 
   post
@@ -35,10 +35,19 @@ exports.createPost = (req, res, next) => {
       console.log(result);
       res.status(201).json({
         message: "Post created successfully",
-        createdPost: result,
+        createdPost: {
+          _id: result._id,
+          createdAt: result.createdAt,
+          postOwner: req.userData,
+          content: result.content,
+          liked: false,
+          likesCount: 0,
+          commentsCount: 0,
+        },
       });
     })
     .catch((err) => {
+      console.log(err)
       res.status(500).json(err);
     });
 };
@@ -70,7 +79,7 @@ exports.updatePost = (req, res, next) => {
         return res.status(404).json({ message: "Post not found" });
       }
 
-      if (post.postOwner.toString() !== req.userData.id) {
+      if (post.postOwner.toString() !== req.userData._id) {
         return res.status(403).json({ message: "You are not authorized to update this post" });
       }
 
@@ -109,7 +118,7 @@ exports.deletePost = (req, res, next) => {
       }
 
 
-      if (post.postOwner.toString() !== req.userData.id) {
+      if (post.postOwner.toString() !== req.userData._id) {
         return res.status(403).json({ message: "You are not authorized to delete this post" });
       }
 

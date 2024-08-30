@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 
 exports.createComment = async (req, res, next) => {
   const postId = req.body.post;
-  const commentOwner = req.userData.id;
+  const commentOwner = req.userData._id;
 
   if (!mongoose.Types.ObjectId.isValid(postId)) {
     return res.status(400).json({
@@ -84,7 +84,7 @@ exports.getCommentsByPost = (req, res, next) => {
     });
 };
 exports.deleteComment = (req, res, next) => {
-  const userId = req.userData.id;
+  const userId = req.userData._id;
   const commentId = req.params.commentId
 
 
@@ -116,7 +116,7 @@ exports.deleteComment = (req, res, next) => {
 };
 
 exports.updateComment = (req, res, next) => {
-  const userId = req.userData.id;
+  const userId = req.userData._id;
   const commentId = req.params.commentId;
   const newContent = req.body.content;
 

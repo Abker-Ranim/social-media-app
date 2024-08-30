@@ -3,6 +3,7 @@ import { FaPlus } from "react-icons/fa";
 import { createPost, getPosts, Post as PostType } from "../../services/post";
 import "./posts.css";
 import Post from "./post/Post";
+import toast from "react-hot-toast";
 
 const Posts = () => {
   const [posts, setPosts] = useState<PostType[]>([]);
@@ -27,10 +28,12 @@ const Posts = () => {
       try {
         const response = await createPost(newPost);
         if (response.data && response.data.createdPost) {
+          toast.success("Post Created Successfully");
           setPosts(prevPosts => [...prevPosts, response.data.createdPost]);
         }
         setNewPostContent("");
       } catch (error) {
+        toast.error("Error Creating Post. Please try again later.")
         console.error("Failed to create post:", error);
       }
     } else {

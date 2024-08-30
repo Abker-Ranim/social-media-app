@@ -5,10 +5,12 @@ import Login from './pages/login/Login';
 import Signup from './pages/signup/Signup';
 import ProtectedRoute from './services/ProtectedRoute';
 import { AuthProvider } from './context/AuthProvider';
+import { Toaster } from 'react-hot-toast';
 
 export const App: React.FC = () => {
     return (
         <AuthProvider >
+            <Toaster />
             <Outlet />
         </AuthProvider>
     );

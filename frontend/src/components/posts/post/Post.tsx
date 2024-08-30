@@ -1,10 +1,21 @@
 import "./post.css";
-import { useState, useRef } from "react";
-import { FaHeart, FaRegComment, FaEllipsisH, FaPaperPlane, FaTrashAlt, FaEdit } from "react-icons/fa";
+import { useState, useRef, useEffect } from "react";
+import {
+  FaHeart,
+  FaRegComment,
+  FaEllipsisH,
+  FaPaperPlane,
+} from "react-icons/fa";
 import { createLike, deleteLike, Like } from "../../../services/like";
-import { formatDistanceToNow } from 'date-fns';
-import { Comment, createComment, getCommentsByPostId, updateComment, deleteComment } from "../../../services/comment";
+import { formatDistanceToNow } from "date-fns";
+import {
+  Comment as CommentType,
+  createComment,
+  getCommentsByPostId,
+} from "../../../services/comment";
 import { updatePost, deletePost } from "../../../services/post";
+import toast from "react-hot-toast";
+import Comment from "./Comment";
 
 interface PostProps {
   content: string;
@@ -16,34 +27,76 @@ interface PostProps {
   onDelete: (_id: string) => void;
 }
 
-const Post = ({ content: initialContent, _id, createdAt, liked, commentsCount, likesCount, onDelete }: PostProps) => {
+const Post = ({
+  content: initialContent,
+  _id,
+  createdAt,
+  liked,
+  commentsCount,
+  likesCount,
+  onDelete,
+}: PostProps) => {
   const [content, setContent] = useState(initialContent);
-  const [counts, setCounts] = useState({ likes: likesCount, comments: commentsCount });
+  const [counts, setCounts] = useState({
+    likes: likesCount,
+    comments: commentsCount,
+  });
   const [like, setLike] = useState(liked);
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [comments, setComments] = useState<CommentType[]>([]);
   const [commentText, setCommentText] = useState("");
   const [showComments, setShowComments] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
-  const commentInputRef = useRef<HTMLInputElement>(null);
+  const [updatingPost, setUpdatingPost] = useState(false);
+  const [updatedPost, setUpdatedPost] = useState(content);
 
-  const postDate = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
+  const commentInputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowOptions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [setShowOptions]);
+
+  const postDate = formatDistanceToNow(new Date(createdAt), {
+    addSuffix: true,
+  });
 
   const handleLikeClick = async () => {
     if (!like) {
       const likeData: Like = { post: _id };
       try {
         await createLike(likeData);
+        toast.success("Post Liked");
         setLike(true);
-        setCounts(prevCounts => ({ ...prevCounts, likes: prevCounts.likes + 1 }));
+        setCounts((prevCounts) => ({
+          ...prevCounts,
+          likes: prevCounts.likes + 1,
+        }));
       } catch (error) {
+        toast.error("Error Creating Like. Please try again later.");
         console.error("Failed to create like:", error);
       }
     } else {
       try {
         await deleteLike(_id);
+        toast.success("Post Disliked");
         setLike(false);
-        setCounts(prevCounts => ({ ...prevCounts, likes: prevCounts.likes - 1 }));
+        setCounts((prevCounts) => ({
+          ...prevCounts,
+          likes: prevCounts.likes - 1,
+        }));
       } catch (error) {
+        toast.error("Error Deleting Like. Please try again later.");
         console.error("Failed to delete like:", error);
       }
     }
@@ -65,10 +118,15 @@ const Post = ({ content: initialContent, _id, createdAt, liked, commentsCount, l
         const newComment = { content: commentText, post: _id };
         await createComment(newComment);
         await fetchComments();
-        setCounts(prevCounts => ({ ...prevCounts, comments: prevCounts.comments + 1 }));
+        toast.success("Comment Created Successfully");
+        setCounts((prevCounts) => ({
+          ...prevCounts,
+          comments: prevCounts.comments + 1,
+        }));
         setCommentText("");
         setShowComments(true);
       } catch (error) {
+        toast.error("Error Creating Comment. Please try again later.");
         console.error("Failed to create comment:", error);
       }
     }
@@ -79,70 +137,69 @@ const Post = ({ content: initialContent, _id, createdAt, liked, commentsCount, l
       const fetchedComments = await getCommentsByPostId(_id);
       setComments(fetchedComments);
     } catch (error) {
+      toast.error("Error Fetching Comments. Please try again later.");
       console.error("Failed to fetch comments:", error);
     }
   };
 
   const toggleComments = async () => {
-    setShowComments(prevShowComments => !prevShowComments);
-    if (!showComments) {
+    setShowComments((prevShowComments) => !prevShowComments);
+    if (comments.length === 0) {
       await fetchComments();
     }
   };
 
   const handleEditPost = async () => {
-    const updatedContent = prompt("Enter new content:", content);
-    if (updatedContent && updatedContent.trim() !== "") {
+    if (updatedPost.trim() !== content && updatedPost.trim() !== "") {
       try {
-        await updatePost(_id, updatedContent);
-        setContent(updatedContent);
+        await updatePost(_id, updatedPost);
+        toast.success("Post Updated Successfully");
+        setContent(updatedPost);
+        setUpdatingPost(false);
       } catch (error) {
+        toast.error("Error Updating Post. Please try again later.");
         console.error("Failed to update post:", error);
       }
+    } else {
+      setUpdatingPost(false);
+    }
+  };
+
+  const handleCancelEditPost = () => {
+    const confirm = window.confirm(
+      "Are you sure you want to cancel updating? Any unsaved changes will be lost."
+    );
+    if (confirm) {
+      setUpdatedPost(content);
+      setUpdatingPost(false);
     }
   };
 
   const handleDeletePost = async () => {
-    const confirmDeletion = window.confirm("Are you sure you want to delete this post?");
+    setShowOptions(false);
+    const confirmDeletion = window.confirm(
+      "Are you sure you want to delete this post?"
+    );
     if (confirmDeletion) {
       try {
         await deletePost(_id);
+        toast.success("Post Deleted Successfully");
         onDelete(_id);
       } catch (error) {
+        toast.error("Error Deleting Post. Please try again later.");
         console.error("Failed to delete post:", error);
       }
     }
   };
 
-  const handleEditComment = async (commentId: string, currentContent: string) => {
-    const updatedContent = prompt("Enter new content:", currentContent);
-    if (updatedContent && updatedContent.trim() !== "") {
-      try {
-        await updateComment(commentId, updatedContent);
-        setComments(prevComments =>
-          prevComments.map(comment =>
-            comment._id === commentId ? { ...comment, content: updatedContent } : comment
-          )
-        );
-      } catch (error) {
-        console.error("Failed to update comment:", error);
-      }
-    }
-  };
-
-  const handleDeleteComment = async (commentId: string) => {
-    const confirmDeletion = window.confirm("Are you sure you want to delete this comment?");
-    if (confirmDeletion) {
-      try {
-        await deleteComment(commentId);
-        setComments(prevComments =>
-          prevComments.filter(comment => comment._id !== commentId)
-        );
-        setCounts(prevCounts => ({ ...prevCounts, comments: prevCounts.comments - 1 }));
-      } catch (error) {
-        console.error("Failed to delete comment:", error);
-      }
-    }
+  const handleDeleteComment = (_id: string) => {
+    setComments((prevComments) =>
+      prevComments.filter((comment) => comment._id !== _id)
+    );
+    setCounts((prevCounts) => ({
+      ...prevCounts,
+      comments: prevCounts.comments - 1,
+    }));
   };
 
   return (
@@ -157,10 +214,17 @@ const Post = ({ content: initialContent, _id, createdAt, liked, commentsCount, l
           <span>{postDate}</span>
         </div>
         <div className="post_options">
-          <FaEllipsisH onClick={() => setShowOptions(prev => !prev)} />
+          <FaEllipsisH onClick={() => setShowOptions((prev) => !prev)} />
           {showOptions && (
-            <div className="options_menu">
-              <div onClick={handleEditPost}>Update</div>
+            <div className="options_menu" ref={dropdownRef}>
+              <div
+                onClick={() => {
+                  setUpdatingPost(true);
+                  setShowOptions(false);
+                }}
+              >
+                Update
+              </div>
               <div onClick={handleDeletePost}>delete</div>
             </div>
           )}
@@ -168,13 +232,32 @@ const Post = ({ content: initialContent, _id, createdAt, liked, commentsCount, l
       </div>
 
       <div className="post_content_details">
-        <p>{content}</p>
+        {updatingPost ? (
+          <div className="edit_post">
+            <textarea
+              className="post_content"
+              value={updatedPost}
+              onChange={(e) => setUpdatedPost(e.target.value)}
+              autoFocus
+            />
+            <div className="buttons">
+              <button className="save" onClick={handleEditPost}>
+                Save
+              </button>
+              <button className="cancel" onClick={handleCancelEditPost}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <p>{content}</p>
+        )}
       </div>
 
       <div className="post_actions">
         <div className="icon_info">
           <FaHeart
-            className={`action_icon like_icon ${like ? 'liked' : ''}`}
+            className={`action_icon like_icon ${like ? "liked" : ""}`}
             onClick={handleLikeClick}
           />
           <span>{counts.likes}</span>
@@ -195,27 +278,20 @@ const Post = ({ content: initialContent, _id, createdAt, liked, commentsCount, l
       {showComments && comments.length > 0 && (
         <div className="post_comments">
           {comments
-            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-            .map(comment => (
-              <div key={comment._id} className="comment">
-                <img
-                  src="https://images.pexels.com/photos/27525165/pexels-photo-27525165/free-photo-of-lumineux-leger-paysage-gens.jpeg"
-                  alt="User"
-                />
-                <div className="info">
-                  <div className="content">
-                    <span className="user">{comment.commentOwner.firstName + " " + comment.commentOwner.lastName}</span>
-                    <p className="text">{comment.content}</p>
-                  </div>
-                  <span className="date">{formatDistanceToNow(new Date(comment.createdAt))}</span>
-                  <div className="comment_options">
-                    <button className="edit" onClick={() => comment._id && handleEditComment(comment._id, comment.content)}> <FaEdit /></button>
-                   
-                    <button className="delete" onClick={() => comment._id && handleDeleteComment(comment._id)}><FaTrashAlt /></button>
-                    
-                  </div>
-                </div>
-              </div>
+            .sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+            )
+            .map((comment) => (
+              <Comment
+                key={comment._id}
+                content={comment.content}
+                _id={comment._id}
+                createdAt={comment.createdAt}
+                onDelete={handleDeleteComment}
+                commentOwner={comment.commentOwner}
+              />
             ))}
         </div>
       )}

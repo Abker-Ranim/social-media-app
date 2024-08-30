@@ -4,7 +4,7 @@ import { MdEmail } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../services/user";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthProvider";
 
 import "./login.css";
@@ -46,8 +46,6 @@ const Login = () => {
 
     return (
         <div className="container">
-            <Toaster />
-
             <div className="login">
                 <form onSubmit={handleLogin}>
                     <h1>Login</h1>

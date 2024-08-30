@@ -72,7 +72,7 @@ exports.loginUser = (req, res, next) => {
         if (result) {
           const expiresIn = remember ? "30d" : "1d";
           const loggedInUser = {
-            id: user[0]._id,
+            _id: user[0]._id,
             firstName: user[0].firstName,
             lastName: user[0].lastName,
             email: user[0].email,
