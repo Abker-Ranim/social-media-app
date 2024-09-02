@@ -7,6 +7,8 @@ require("dotenv").config();
 const http = require("http");
 const socketIO = require("socket.io");
 
+const { authSocket, socketServer } = require("./socketServer");
+
 const userRoutes = require("./api/routes/user.js");
 const postRoutes = require("./api/routes/post.js");
 const commentRoutes = require("./api/routes/comment.js");
@@ -75,28 +77,38 @@ app.use((error, req, res, next) => {
   });
 });
 
-// Création du serveur HTTP
-const server = http.createServer(app);
+// Socket.IO Configuration
+// const io = socketIO(server);
 
-// Configuration de Socket.IO
-const io = socketIO(server);
+// io.on("connection", (socket) => {
+//   console.log("Un utilisateur est connecté");
 
-io.on("connection", (socket) => {
-  console.log("Un utilisateur est connecté");
-
-  socket.on("sendMessage", (messageData) => {
+//   socket.on("sendMessage", (messageData) => {
     
-    io.to(messageData.conversationId).emit("receiveMessage", messageData);
-  });
+//     io.to(messageData.conversationId).emit("receiveMessage", messageData);
+//   });
 
-  socket.on("joinConversation", (conversationId) => {
-    socket.join(conversationId); 
-  });
+//   socket.on("joinConversation", (conversationId) => {
+//     socket.join(conversationId); 
+//   });
 
-  socket.on("disconnect", () => {
-    console.log("Un utilisateur est déconnecté");
-  });
+//   socket.on("disconnect", () => {
+//     console.log("Un utilisateur est déconnecté");
+//   });
+// });
+const httpServer = http.createServer(app);
+
+const io = socketIO(httpServer, {
+  cors: {
+    origin: [
+      process.env.CLIENT_URL,
+      "https://social-media-app.vercel.app",
+    ],
+  },
 });
+
+io.use(authSocket);
+io.on("connection", (socket) => socketServer(socket));
 
 // Server
 app.listen(PORT, (error) => {
