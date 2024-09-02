@@ -3,20 +3,21 @@ const ObjectId = mongoose.Types.ObjectId;
 
 const messageSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
-  content: {
+  senderId: {
+    type: ObjectId,
+    ref: "User",
+    required: true,
+  },
+  receiverId: {
+    type: ObjectId,
+    ref: "User",
+    required: true,
+  },
+  message: {
     type: String,
     required: true,
   },
-  sender: {
-    type: ObjectId,
-    ref: "user",
-    required: true,
-  },
-  receiver: {
-    type: ObjectId,
-    ref: "user",
-    required: true,
-  },
-});
+},
+{ timestamps: true });
 
 module.exports = mongoose.model("message", messageSchema);
