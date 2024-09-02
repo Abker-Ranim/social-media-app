@@ -1,25 +1,23 @@
 const Conversation = require("../models/conversation");
-const mongoose = require("mongoose");
-const User = require("../models/user");
 
 exports.getConversations = async (req, res) => {
   try {
     const userId = req.userData._id;
 
     const conversations = await Conversation.find({
-      recipients: {
+      participants: {
         $in: [userId],
       },
     })
-      .populate("recipients", "-password")
+      .populate("participants", "-password")
       .sort("-updatedAt")
       .lean();
 
     for (let i = 0; i < conversations.length; i++) {
       const conversation = conversations[i];
       for (let j = 0; j < 2; j++) {
-        if (conversation.recipients[j]._id != userId) {
-          conversation.recipient = conversation.recipients[j];
+        if (conversation.participants[j]._id != userId) {
+          conversation.recipient = conversation.participants[j];
         }
       }
     }

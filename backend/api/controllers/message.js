@@ -3,65 +3,66 @@ const mongoose = require("mongoose");
 const Conversation = require("../models/conversation");
 const User = require("../models/user");
 
-
 exports.createMessage = async (req, res, next) => {
-  const conversationId = req.body.conversation;
-
-  if (!mongoose.Types.ObjectId.isValid(conversationId)) {
-    return res.status(400).json({
-      message: "Invalid conversation "
-    });
-  }
-  let exixstingConversation = null;
-  await Conversation.findById(conversationId)
-    .then(conversation => {
-      exixstingConversation = conversation;
-      console.log(exixstingConversation);
-    })
-    .catch(err => {
-      console.error("Error finding conversation:", err);
-      return res.status(500).json({
-        error: err.message
-      });
-    })
-  if (exixstingConversation == null) {
-    return res.status(404).json({
-      message: "Conversation not found"
-    });
-  }
-
   try {
-    const message = new Message({
+    const userId = req.userData._id;
+    const receiverId = req.params.id;
+    const content = req.body.content;
+    const receiver = await User.findById(receiverId);
+
+    if (!receiver) {
+      return res.status(404).json({
+        message: "Receiver not found",
+      });
+    }
+
+    let conversation = await Conversation.findOne({
+      participants: {
+        $all: [userId, receiverId],
+      },
+    });
+
+    if (!conversation) {
+      conversation = await Conversation.create({
+        _id: new mongoose.Types.ObjectId(),
+        participants: [userId, receiverId],
+      });
+    }
+
+    await Message.create({
       _id: new mongoose.Types.ObjectId(),
-      content: req.body.content,
-      sender: req.userData._id,
-      receiver: req.body.receiver,
-      conversation: req.body.conversation,
+      conversation: conversation._id,
+      sender: userId,
+      content,
     });
-
-    const result = await message.save();
-
-
-    res.status(201).json({
-      message: "message created successfully",
-    });
+    conversation.save();
+    return res.status(200).json({ message: "Message Sent Successfully" });
   } catch (err) {
-    res.status(500).json(err);
+    console.log(err)
+    return res.status(500).json(err);
   }
 };
 
-exports.getMessageById = (req, res, next) => {
-  const id = req.params.messageId;
-  Message.findById(id).populate('sender', 'firstName lastName')
-    .exec()
-    .then((message) => {
-      if (message) {
-        res.status(200).json(message);
-      } else {
-        res.status(404).json({ message: "Message not found" });
-      }
+exports.getMessages = async (req, res, next) => {
+  try {
+    const conversationId = req.params.id;
+
+    const conversation = await Conversation.findById(conversationId);
+
+    if (!conversation) {
+      throw new Error("Conversation not found");
+    }
+
+    const messages = await Message.find({
+      conversation: conversation._id,
     })
-    .catch((err) => {
-      res.status(500).json(err);
-    });
+      .populate("sender", "-password")
+      .sort("-createdAt")
+      .limit(12);
+
+    return res.status(200).json(messages);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
 };
