@@ -4,12 +4,15 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 require("dotenv").config();
+const http = require("http");
+const socketIO = require("socket.io");
 
 const userRoutes = require("./api/routes/user.js");
 const postRoutes = require("./api/routes/post.js");
 const commentRoutes = require("./api/routes/comment.js");
 const messageRoutes = require("./api/routes/message.js");
 const likeRoutes = require("./api/routes/like.js");
+const conversationRoutes = require("./api/routes/conversation.js");
 
 const app = express();
 
@@ -32,12 +35,21 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // CORS Handling
-app.use(cors({
-  origin: [process.env.CLIENT_URL],
-  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Access-Control-Allow-Origin', 'Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: [process.env.CLIENT_URL],
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: [
+      "Access-Control-Allow-Origin",
+      "Origin",
+      "X-Requested-With",
+      "Content-Type",
+      "Accept",
+      "Authorization",
+    ],
+    credentials: true,
+  })
+);
 
 // Routes
 app.use("/user", userRoutes);
@@ -45,6 +57,7 @@ app.use("/post", postRoutes);
 app.use("/comment", commentRoutes);
 app.use("/message", messageRoutes);
 app.use("/like", likeRoutes);
+app.use("/conversation", conversationRoutes);
 
 // Error Handling
 app.use((req, res, next) => {
@@ -62,6 +75,29 @@ app.use((error, req, res, next) => {
   });
 });
 
+// Création du serveur HTTP
+const server = http.createServer(app);
+
+// Configuration de Socket.IO
+const io = socketIO(server);
+
+io.on("connection", (socket) => {
+  console.log("Un utilisateur est connecté");
+
+  socket.on("sendMessage", (messageData) => {
+    
+    io.to(messageData.conversationId).emit("receiveMessage", messageData);
+  });
+
+  socket.on("joinConversation", (conversationId) => {
+    socket.join(conversationId); 
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Un utilisateur est déconnecté");
+  });
+});
+
 // Server
 app.listen(PORT, (error) => {
   if (!error)
@@ -70,4 +106,5 @@ app.listen(PORT, (error) => {
     );
   else console.log("Error occurred, server can't start", error);
 });
+
 module.exports = app;
