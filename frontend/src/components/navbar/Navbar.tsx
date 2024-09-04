@@ -3,15 +3,18 @@ import { IoIosSearch } from "react-icons/io";
 import "./navbar.css";
 import { logout } from "../../services/user";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../helpers/AuthProvider";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const { setAuth } = useAuth();
 
   const handleLogout = () => {
     logout();
+    setAuth(undefined);
     navigate("/login");
-  }
-  
+  };
+
   return (
     <nav>
       <div className="navbar">
