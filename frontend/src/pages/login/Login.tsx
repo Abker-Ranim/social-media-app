@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../services/user";
 import toast from "react-hot-toast";
-import { useAuth } from "../../context/AuthProvider";
+import { useAuth } from "../../helpers/AuthProvider";
 
 import "./login.css";
 

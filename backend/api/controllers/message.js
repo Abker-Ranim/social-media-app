@@ -1,68 +1,44 @@
 const Message = require("../models/message");
-const mongoose = require("mongoose");
 const Conversation = require("../models/conversation");
-const User = require("../models/user");
+const { getReceiverSocketId, io } = require("../../socketServer");
 
-exports.createMessage = async (req, res, next) => {
+exports.createMessage = async (req, res) => {
   try {
-    const userId = req.userData._id;
-    const receiverId = req.params.id;
-    const content = req.body.content;
-    const receiver = await User.findById(receiverId);
-
-    if (!receiver) {
-      return res.status(404).json({
-        message: "Receiver not found",
-      });
-    }
+    const { content } = req.body;
+    const { id: receiverId } = req.params;
+    const senderId = req.userData._id;
 
     let conversation = await Conversation.findOne({
-      participants: {
-        $all: [userId, receiverId],
-      },
+      participants: { $all: [senderId, receiverId] },
     });
 
     if (!conversation) {
       conversation = await Conversation.create({
-        _id: new mongoose.Types.ObjectId(),
-        participants: [userId, receiverId],
+        participants: [senderId, receiverId],
       });
     }
 
-    await Message.create({
-      _id: new mongoose.Types.ObjectId(),
-      conversation: conversation._id,
-      sender: userId,
+    const newMessage = new Message({
+      senderId,
+      receiverId,
       content,
     });
-    conversation.save();
-    return res.status(200).json({ message: "Message Sent Successfully" });
-  } catch (err) {
-    console.log(err)
-    return res.status(500).json(err);
-  }
-};
 
-exports.getMessages = async (req, res, next) => {
-  try {
-    const conversationId = req.params.id;
-
-    const conversation = await Conversation.findById(conversationId);
-
-    if (!conversation) {
-      throw new Error("Conversation not found");
+    if (newMessage) {
+      conversation.messages.push(newMessage._id);
+      conversation.lastMessage = newMessage.content;
     }
 
-    const messages = await Message.find({
-      conversation: conversation._id,
-    })
-      .populate("sender", "-password")
-      .sort("-createdAt")
-      .limit(12);
+    await Promise.all([conversation.save(), newMessage.save()]);
 
-    return res.status(200).json(messages);
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
+
+    res.status(201).json(newMessage);
   } catch (err) {
     console.log(err);
-    return res.status(500).json(err);
+    res.status(500).json(err);
   }
 };

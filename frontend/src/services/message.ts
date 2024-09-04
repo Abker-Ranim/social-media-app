@@ -1,37 +1,27 @@
 import axios from "../api/axios";
-import { Conversation } from "./conversation";
-import { User } from "./user";
 
 const url = "/message";
 
 export type Message = {
-    _id: string;
-    content: string;
-    sender: User;
-    receiver: User;
-    createdAt: string;
-    conversation: Conversation;
+  _id: string;
+  content: string;
+  senderId: string;
+  receiverId: string;
+  createdAt: string;
 };
 
-export const createMessage = async (body: { content: string }) => {
-    const token = localStorage.getItem("token");
+export const sendMessage = async (content: string, receiverId: string) => {
+  const token = localStorage.getItem("token");
 
-    const response = await axios.post(`${url}`, body, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
+  const response = await axios.post(
+    `${url}/${receiverId}`,
+    { content },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
-    return response.data;
-};
-export const getMessage =async (): Promise<[Message]>=> {
-    const token = localStorage.getItem("token");
-
-    const response = await axios.get(`${url}`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
-
-    return response.data;
+  return response.data;
 };
