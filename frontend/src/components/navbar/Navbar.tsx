@@ -1,4 +1,4 @@
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaSignOutAlt } from "react-icons/fa";
 import { IoIosSearch } from "react-icons/io";
 import "./navbar.css";
 import { logout } from "../../services/user";
@@ -11,7 +11,7 @@ const Navbar = () => {
     logout();
     navigate("/login");
   }
-  
+
   return (
     <nav>
       <div className="navbar">
@@ -33,7 +33,9 @@ const Navbar = () => {
           <div className="navbar_profile_image">
             <img src="https://images.pexels.com/photos/27525165/pexels-photo-27525165/free-photo-of-lumineux-leger-paysage-gens.jpeg" />
           </div>
-          <button onClick={handleLogout}>logout</button>
+          <button className="navbar_logout_button" onClick={handleLogout}>
+            <FaSignOutAlt />
+          </button>
         </div>
       </div>
     </nav>
