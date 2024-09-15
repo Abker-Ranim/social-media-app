@@ -23,11 +23,11 @@ export const router = createBrowserRouter([
         children: [
             {
                 path: 'login',
-                element: <Login /> 
+                element: <Login />
             },
             {
                 path: 'signup',
-                element: <Signup /> 
+                element: <Signup />
             },
             {
                 path: '',
@@ -35,8 +35,16 @@ export const router = createBrowserRouter([
                     <ProtectedRoute>
                         <Home />
                     </ProtectedRoute>
-                ) 
+                )
             },
+            {
+                path: 'profile/:userId', 
+                element: (
+                    <ProtectedRoute>
+                        <Home/>
+                    </ProtectedRoute>
+                )
+            }
         ]
     }
 ]);
