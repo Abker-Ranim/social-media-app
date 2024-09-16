@@ -44,7 +44,7 @@ const Profile: React.FC = () => {
           </div>
         </div>
       </div>
-      <Posts />
+      <Posts type={"mine"} />
     </div>
   );
 };

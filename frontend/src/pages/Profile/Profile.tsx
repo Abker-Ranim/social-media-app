@@ -1,18 +1,20 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import Navbar from "../../components/navbar/Navbar";
-import Posts from "../../components/posts/Posts";
 import Sidebar from "../../components/sidebar/Sidebar";
-import "./home.css";
+import "./profile.css";
+import UserProfile from '../userProfile/UserProfile';
 
 const Home: React.FC = () => {
+  const { userId } = useParams();
   return (
-    <div className="home">
+    <div className="profile-page">
       <Navbar />
 
       <div className="main-content">
         <Sidebar />
 
-        <Posts type={"all"} />
+        <UserProfile />
 
         <div className="right"></div>
       </div>

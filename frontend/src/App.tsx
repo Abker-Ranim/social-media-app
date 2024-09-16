@@ -6,6 +6,7 @@ import Signup from './pages/signup/Signup';
 import ProtectedRoute from './services/ProtectedRoute';
 import { AuthProvider } from './context/AuthProvider';
 import { Toaster } from 'react-hot-toast';
+import Profile from './pages/Profile/Profile';
 
 export const App: React.FC = () => {
     return (
@@ -38,10 +39,10 @@ export const router = createBrowserRouter([
                 )
             },
             {
-                path: 'profile/:userId', 
+                path: 'profile/:userId',
                 element: (
                     <ProtectedRoute>
-                        <Home/>
+                        <Profile />
                     </ProtectedRoute>
                 )
             }

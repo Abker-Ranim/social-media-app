@@ -1,19 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { GoHome } from "react-icons/go";
 import { FaRegUser } from "react-icons/fa";
 import { MdOutlinePermMedia } from "react-icons/md";
 import { IoPeopleOutline, IoSettingsOutline } from "react-icons/io5";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import "./sidebar.css";
 
 const Sidebar: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>("home"); 
-  const navigate = useNavigate();
   const userId = "ranim";
 
-  const handleTabClick = (tab: string) => { 0
-    setActiveTab(tab);
-  };
 
   return (
     <div className="sidebar">
@@ -30,27 +25,23 @@ const Sidebar: React.FC = () => {
       </div>
 
       <div className="sidebar_menu">
-        <Link
+        <NavLink
           to="/"
-          className={activeTab === "home" ? "active" : ""}
-          onClick={() => handleTabClick("home")}
+          className={({ isActive }) => isActive ? 'active' : ''}
         >
           <GoHome className="margin" />
           Home
-        </Link>
+        </NavLink>
 
-        <a
-          onClick={() => {
-            handleTabClick("profile");
-            navigate(`/profile/${userId}`);
-          }}
-          className={activeTab === "profile" ? "active" : ""}
+        <NavLink
+          to={`/profile/${userId}`}
+          className={({ isActive }) => isActive ? 'active' : ''}
         >
           <FaRegUser className="margin" />
           Profile
-        </a>
+        </NavLink>
 
-        <a
+        {/* <a
           onClick={() => handleTabClick("people")}
           className={activeTab === "people" ? "active" : ""}
         >
@@ -72,7 +63,7 @@ const Sidebar: React.FC = () => {
         >
           <IoSettingsOutline className="margin" />
           Settings
-        </a>
+        </a> */}
       </div>
     </div>
   );

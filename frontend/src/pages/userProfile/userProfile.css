@@ -3,7 +3,6 @@
   flex-direction: column;
   gap: 20px;
   align-items: center;
-  width: 100%;
 }
 
 .user-profile {
@@ -14,6 +13,7 @@
   border-radius: 10px;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
   background-color: #ffffff;
+  width: 100%;
 }
 
 .cover-photo {
@@ -147,7 +147,8 @@
 /* Responsive design */
 @media (max-width: 768px) {
   .user-profile {
-    width: calc(100% - 30px); /* 15px de marge de chaque côté sur mobile */
+    width: calc(100% - 30px);
+    /* 15px de marge de chaque côté sur mobile */
     padding: 15px;
   }
 

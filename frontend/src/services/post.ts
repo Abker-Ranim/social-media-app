@@ -1,11 +1,12 @@
 import axios from "../api/axios";
+import { User } from "./user";
 
 const url = "/post";
 
 export type Post = {
   _id: string;
   content: string;
-  postOwner: string;
+  postOwner: User;
   createdAt: string;
   likesCount: number;
   commentsCount: number;
@@ -34,6 +35,18 @@ export const getPosts = async (): Promise<Post[]> => {
 
   return response.data;
 };
+
+export const getMyPosts = async (): Promise<Post[]> => {
+  const token = localStorage.getItem("token");
+  const response = await axios.get(`${url}/myPosts`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+};
+
 export const updatePost = async (id: string , content: string) => {
   const token = localStorage.getItem("token");
 
