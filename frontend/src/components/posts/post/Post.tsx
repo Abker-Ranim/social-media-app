@@ -17,7 +17,7 @@ import { updatePost, deletePost } from "../../../services/post";
 import toast from "react-hot-toast";
 import Comment from "./Comment";
 import { User } from "../../../services/user";
-import { useAuth } from "../../../context/AuthProvider";
+import { useAuth } from "../../../helpers/AuthProvider";
 
 interface PostProps {
   content: string;
