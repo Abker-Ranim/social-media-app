@@ -1,18 +1,23 @@
-import "./sidebar.css";
+import React from "react";
 import { GoHome } from "react-icons/go";
 import { FaRegUser } from "react-icons/fa";
 import { MdOutlinePermMedia } from "react-icons/md";
 import { IoPeopleOutline, IoSettingsOutline } from "react-icons/io5";
+import { NavLink } from "react-router-dom";
+import "./sidebar.css";
 
-const Sidebar = () => {
+const Sidebar: React.FC = () => {
+  const userId = "ranim";
+
+
   return (
     <div className="sidebar">
       <div className="usernameCard">
         <img
           className="username_image"
           src="https://images.pexels.com/photos/27525165/pexels-photo-27525165/free-photo-of-lumineux-leger-paysage-gens.jpeg"
+          alt="User"
         />
-
         <div className="username_info">
           <h3 className="username">ranim abker</h3>
           <span>@ranim</span>
@@ -20,26 +25,45 @@ const Sidebar = () => {
       </div>
 
       <div className="sidebar_menu">
-        <a className="active">
+        <NavLink
+          to="/"
+          className={({ isActive }) => isActive ? 'active' : ''}
+        >
           <GoHome className="margin" />
-          home
-        </a>
-        <a>
+          Home
+        </NavLink>
+
+        <NavLink
+          to={`/profile/${userId}`}
+          className={({ isActive }) => isActive ? 'active' : ''}
+        >
           <FaRegUser className="margin" />
           Profile
-        </a>
-        <a>
+        </NavLink>
+
+        {/* <a
+          onClick={() => handleTabClick("people")}
+          className={activeTab === "people" ? "active" : ""}
+        >
           <IoPeopleOutline className="margin" />
           People
         </a>
-        <a>
+
+        <a
+          onClick={() => handleTabClick("photos")}
+          className={activeTab === "photos" ? "active" : ""}
+        >
           <MdOutlinePermMedia className="margin" />
-          photos
+          Photos
         </a>
-        <a>
+
+        <a
+          onClick={() => handleTabClick("settings")}
+          className={activeTab === "settings" ? "active" : ""}
+        >
           <IoSettingsOutline className="margin" />
-          settings
-        </a>
+          Settings
+        </a> */}
       </div>
     </div>
   );

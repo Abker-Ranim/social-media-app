@@ -1,18 +1,28 @@
 import { useState, useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
-import { createPost, getPosts, Post as PostType } from "../../services/post";
+import {
+  createPost,
+  getMyPosts,
+  getPosts,
+  Post as PostType,
+} from "../../services/post";
 import "./posts.css";
 import Post from "./post/Post";
 import toast from "react-hot-toast";
 
-const Posts = () => {
+interface IProps {
+  type: string;
+}
+
+const Posts = ({ type }: IProps) => {
   const [posts, setPosts] = useState<PostType[]>([]);
   const [newPostContent, setNewPostContent] = useState("");
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const fetchedPosts = await getPosts();
+        const fetchedPosts =
+          type === "all" ? await getPosts() : await getMyPosts();
         setPosts(fetchedPosts);
       } catch (error) {
         console.error("Failed to fetch posts:", error);
@@ -29,11 +39,11 @@ const Posts = () => {
         const response = await createPost(newPost);
         if (response.data && response.data.createdPost) {
           toast.success("Post Created Successfully");
-          setPosts(prevPosts => [...prevPosts, response.data.createdPost]);
+          setPosts((prevPosts) => [...prevPosts, response.data.createdPost]);
         }
         setNewPostContent("");
       } catch (error) {
-        toast.error("Error Creating Post. Please try again later.")
+        toast.error("Error Creating Post. Please try again later.");
         console.error("Failed to create post:", error);
       }
     } else {
@@ -42,7 +52,7 @@ const Posts = () => {
   };
 
   const handleDeletePost = (_id: string) => {
-    setPosts(prevPosts => prevPosts.filter(post => post._id !== _id));
+    setPosts((prevPosts) => prevPosts.filter((post) => post._id !== _id));
   };
 
   return (
@@ -71,8 +81,11 @@ const Posts = () => {
 
       <div className="post_list">
         {posts
-          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-          .map(post => (
+          .sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )
+          .map((post) => (
             <Post
               key={post._id}
               content={post.content}
@@ -81,6 +94,7 @@ const Posts = () => {
               liked={post.liked}
               likesCount={post.likesCount}
               commentsCount={post.commentsCount}
+              postOwner={post.postOwner}
               onDelete={handleDeletePost}
             />
           ))}

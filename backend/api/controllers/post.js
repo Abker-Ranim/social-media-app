@@ -22,6 +22,27 @@ exports.getAllPosts = async (req, res, next) => {
   }
 };
 
+exports.getMyPosts = async (req, res, next) => {
+  try {
+    const posts = await Post.find({
+      postOwner: req.userData._id
+    })
+    .populate('postOwner', 'firstName lastName')
+      .exec();
+
+    const newPosts = await Promise.all(posts.map(async (post) => {
+      const likesCount = await Like.countDocuments({ post: post._id });
+      const commentsCount = await Comment.countDocuments({ post: post._id });
+      const liked = await Like.findOne({ post: post._id, user: req.userData._id }) !== null;
+      return { ...post._doc, likesCount, commentsCount, liked };
+    }));
+
+    res.status(200).json(newPosts);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.createPost = (req, res, next) => {
   const post = new Post({
     _id: new mongoose.Types.ObjectId(),

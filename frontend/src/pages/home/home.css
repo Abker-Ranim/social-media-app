@@ -1,6 +1,10 @@
-.app {
+.home {
   display: flex;
   flex-direction: column;
+
+  .posts {
+    width: 50%;
+  }
 }
 
 .main-content {
@@ -13,9 +17,7 @@
   width: 25%;
 }
 
-.posts {
-  width: 50%;
-}
+
 
 .right {
   width: 25%;

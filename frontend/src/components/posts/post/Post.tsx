@@ -16,6 +16,8 @@ import {
 import { updatePost, deletePost } from "../../../services/post";
 import toast from "react-hot-toast";
 import Comment from "./Comment";
+import { User } from "../../../services/user";
+import { useAuth } from "../../../context/AuthProvider";
 
 interface PostProps {
   content: string;
@@ -24,6 +26,7 @@ interface PostProps {
   liked?: boolean;
   likesCount: number;
   commentsCount: number;
+  postOwner: User;
   onDelete: (_id: string) => void;
 }
 
@@ -34,8 +37,12 @@ const Post = ({
   liked,
   commentsCount,
   likesCount,
+  postOwner,
   onDelete,
 }: PostProps) => {
+  const { auth } = useAuth();
+  console.log(auth?._id, postOwner);
+
   const [content, setContent] = useState(initialContent);
   const [counts, setCounts] = useState({
     likes: likesCount,
@@ -213,22 +220,24 @@ const Post = ({
           <h4>Ranim</h4>
           <span>{postDate}</span>
         </div>
-        <div className="post_options">
-          <FaEllipsisH onClick={() => setShowOptions((prev) => !prev)} />
-          {showOptions && (
-            <div className="options_menu" ref={dropdownRef}>
-              <div
-                onClick={() => {
-                  setUpdatingPost(true);
-                  setShowOptions(false);
-                }}
-              >
-                Update
+        {postOwner._id === auth?._id && (
+          <div className="post_options">
+            <FaEllipsisH onClick={() => setShowOptions((prev) => !prev)} />
+            {showOptions && (
+              <div className="options_menu" ref={dropdownRef}>
+                <div
+                  onClick={() => {
+                    setUpdatingPost(true);
+                    setShowOptions(false);
+                  }}
+                >
+                  Update
+                </div>
+                <div onClick={handleDeletePost}>delete</div>
               </div>
-              <div onClick={handleDeletePost}>delete</div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="post_content_details">

@@ -7,6 +7,7 @@ import ProtectedRoute from "./helpers/ProtectedRoute";
 import { AuthProvider } from "./helpers/AuthProvider";
 import { Toaster } from "react-hot-toast";
 import { SocketContextProvider } from "./helpers/SocketContext";
+import Profile from './pages/Profile/Profile';
 
 export const App: React.FC = () => {
   return (
@@ -37,6 +38,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Home />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "profile/:userId",
+        element: (
+          <ProtectedRoute>
+            <Profile />
           </ProtectedRoute>
         ),
       },
