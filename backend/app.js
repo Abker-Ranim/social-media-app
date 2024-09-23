@@ -2,6 +2,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const express = require("express");
 require("dotenv").config();
 
 const { server, app } = require("./socketServer");
@@ -30,7 +31,7 @@ mongoose.Promise = global.Promise;
 app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use('/uploads', express.static('./uploads'));
+app.use("/uploads", express.static("./uploads"));
 
 // CORS Handling
 app.use(

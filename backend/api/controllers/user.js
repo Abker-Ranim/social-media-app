@@ -2,19 +2,18 @@ const User = require("../models/user");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const fs = require('fs');
-const path = require('path');
-const { unlink } = require('node:fs/promises');
-
+const fs = require("fs");
+const path = require("path");
+const { unlink } = require("node:fs/promises");
 
 async function deletefile(path) {
   try {
-      await unlink(path);
-      console.log(`successfully deleted ${path}`);
+    await unlink(path);
+    console.log(`successfully deleted ${path}`);
   } catch (error) {
-      console.error('there was an error:', error.message);
+    console.error("there was an error:", error.message);
   }
-};
+}
 
 exports.getAllUsers = (req, res, next) => {
   User.find()
@@ -89,12 +88,10 @@ exports.loginUser = (req, res, next) => {
             firstName: user[0].firstName,
             lastName: user[0].lastName,
             email: user[0].email,
-          }
-          const token = jwt.sign(
-            loggedInUser,
-            process.env.JWT_KEY,
-            { expiresIn: expiresIn }
-          );
+          };
+          const token = jwt.sign(loggedInUser, process.env.JWT_KEY, {
+            expiresIn: expiresIn,
+          });
           return res.status(200).json({
             message: "Auth success",
             token: token,
@@ -111,36 +108,34 @@ exports.loginUser = (req, res, next) => {
 
 exports.getCurrentUser = (req, res, next) => {
   res.status(200).json(req.userData);
-}
-
+};
 
 exports.updateUserImage = (req, res, next) => {
   if (!req.file) {
-      return res.status(400).json({ error: "No profile image provided." });
+    return res.status(400).json({ error: "No profile image provided." });
   }
 
   const newImagePath = req.file.path;
 
-  models.user.update(
-      { image: newImagePath },
-      {
-          where: { id_user: userId },
-          individualHooks: true,
-      }
+  User.findOneAndUpdate(
+    { _id: req.userData._id },
+    { image: newImagePath },
+    { new: false, runValidators: true, context: "query" }
   )
-  .then((data) => {
-      if (data[0] === 0) {
-          return res.status(400).json({ error: "User not found or no update needed." });
+    .then((data) => {
+      console.log(data);
+      const oldImagePath = data.image;
+      if (oldImagePath !== "../uploads/profile.jpg") {
+        deletefile(oldImagePath);
       }
 
-      const oldImagePath = data[1][0]['_previousDataValues']['imagePath'];
-      if (oldImagePath !== '../uploads/profile.jpg') {
-          deletefile(oldImagePath);
-      }
-
-      return res.status(200).json({ message: 'Profile image updated successfully' });
-  })
-  .catch((err) => {
-      return res.status(500).json({ error: "There was an error, try again later." });
-  });
+      return res.status(200).json({
+        message: "Profile image updated successfully",
+      });
+    })
+    .catch((err) => {
+      return res.status(500).json({
+        error: "There was an error, try again later.",
+      });
+    });
 };
