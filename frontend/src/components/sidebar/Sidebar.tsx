@@ -9,7 +9,6 @@ import "./sidebar.css";
 const Sidebar: React.FC = () => {
   const userId = "ranim";
 
-
   return (
     <div className="sidebar">
       <div className="usernameCard">
@@ -27,7 +26,7 @@ const Sidebar: React.FC = () => {
       <div className="sidebar_menu">
         <NavLink
           to="/"
-          className={({ isActive }) => isActive ? 'active' : ''}
+          className={({ isActive }) => (isActive ? "active" : "")}
         >
           <GoHome className="margin" />
           Home
@@ -35,35 +34,32 @@ const Sidebar: React.FC = () => {
 
         <NavLink
           to={`/profile/${userId}`}
-          className={({ isActive }) => isActive ? 'active' : ''}
+          className={({ isActive }) => (isActive ? "active" : "")}
         >
           <FaRegUser className="margin" />
           Profile
         </NavLink>
-
-        {/* <a
-          onClick={() => handleTabClick("people")}
-          className={activeTab === "people" ? "active" : ""}
+        <NavLink
+          to={`/people`}
+          className={({ isActive }) => (isActive ? "active" : "")}
         >
           <IoPeopleOutline className="margin" />
           People
-        </a>
-
-        <a
-          onClick={() => handleTabClick("photos")}
-          className={activeTab === "photos" ? "active" : ""}
+        </NavLink>
+        <NavLink
+          to={`/photos`}
+          className={({ isActive }) => (isActive ? "active" : "")}
         >
           <MdOutlinePermMedia className="margin" />
           Photos
-        </a>
-
-        <a
-          onClick={() => handleTabClick("settings")}
-          className={activeTab === "settings" ? "active" : ""}
+        </NavLink>
+        <NavLink
+          to={`/settings`}
+          className={({ isActive }) => (isActive ? "active" : "")}
         >
           <IoSettingsOutline className="margin" />
           Settings
-        </a> */}
+        </NavLink>
       </div>
     </div>
   );
