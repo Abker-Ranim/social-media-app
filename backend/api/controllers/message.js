@@ -1,56 +1,44 @@
 const Message = require("../models/message");
-const mongoose = require("mongoose");
+const Conversation = require("../models/conversation");
+const { getReceiverSocketId, io } = require("../../socketServer");
 
-exports.getAllMessages = (req, res, next) => {
-  Message.find()
-    .exec()
-    .then((messages) => {
-      res.status(200).json(messages);
-    })
-    .catch((err) => {
-      res.status(500).json(err);
+exports.createMessage = async (req, res) => {
+  try {
+    const { content } = req.body;
+    const { id: receiverId } = req.params;
+    const senderId = req.userData._id;
+
+    let conversation = await Conversation.findOne({
+      participants: { $all: [senderId, receiverId] },
     });
-};
 
-exports.createMessage = (req, res, next) => {
-  const message = new Message({
-    _id: new mongoose.Types.ObjectId(),
-    content: req.body.content,
-    sender: req.body.sender,
-    receiver: req.body.receiver
-  });
-
-  message
-    .save()
-    .then((result) => {
-      console.log(result);
-      res.status(201).json({
-        message: "Message created successfully",
-        createdMessage: {
-          _id: result._id,
-          content: result.content,
-          sender: result.sender,
-          receiver: result.receiver,
-        },
+    if (!conversation) {
+      conversation = await Conversation.create({
+        participants: [senderId, receiverId],
       });
-    })
-    .catch((err) => {
-      res.status(500).json(err);
-    });
-};
+    }
 
-exports.getMessageById = (req, res, next) => {
-  const id = req.params.messageId;
-  Message.findById(id).populate('sender')
-    .exec()
-    .then((message) => {
-      if (message) {
-        res.status(200).json(message);
-      } else {
-        res.status(404).json({ message: "Message not found" });
-      }
-    })
-    .catch((err) => {
-      res.status(500).json(err);
+    const newMessage = new Message({
+      senderId,
+      receiverId,
+      content,
     });
+
+    if (newMessage) {
+      conversation.messages.push(newMessage._id);
+      conversation.lastMessage = newMessage.content;
+    }
+
+    await Promise.all([conversation.save(), newMessage.save()]);
+
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
+
+    res.status(201).json(newMessage);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
+  }
 };

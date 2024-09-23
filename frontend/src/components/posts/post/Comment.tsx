@@ -4,7 +4,7 @@ import { FaTrashAlt, FaEdit } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
 import { updateComment, deleteComment } from "../../../services/comment";
 import toast from "react-hot-toast";
-import { useAuth } from "../../../context/AuthProvider";
+import { useAuth } from "../../../helpers/AuthProvider";
 import { User } from "../../../services/user";
 
 interface CommentProps {
