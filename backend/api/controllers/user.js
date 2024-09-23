@@ -2,6 +2,19 @@ const User = require("../models/user");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const fs = require('fs');
+const path = require('path');
+const { unlink } = require('node:fs/promises');
+
+
+async function deletefile(path) {
+  try {
+      await unlink(path);
+      console.log(`successfully deleted ${path}`);
+  } catch (error) {
+      console.error('there was an error:', error.message);
+  }
+};
 
 exports.getAllUsers = (req, res, next) => {
   User.find()
@@ -99,3 +112,35 @@ exports.loginUser = (req, res, next) => {
 exports.getCurrentUser = (req, res, next) => {
   res.status(200).json(req.userData);
 }
+
+
+exports.updateUserImage = (req, res, next) => {
+  if (!req.file) {
+      return res.status(400).json({ error: "No profile image provided." });
+  }
+
+  const newImagePath = req.file.path;
+
+  models.user.update(
+      { image: newImagePath },
+      {
+          where: { id_user: userId },
+          individualHooks: true,
+      }
+  )
+  .then((data) => {
+      if (data[0] === 0) {
+          return res.status(400).json({ error: "User not found or no update needed." });
+      }
+
+      const oldImagePath = data[1][0]['_previousDataValues']['imagePath'];
+      if (oldImagePath !== '../uploads/profile.jpg') {
+          deletefile(oldImagePath);
+      }
+
+      return res.status(200).json({ message: 'Profile image updated successfully' });
+  })
+  .catch((err) => {
+      return res.status(500).json({ error: "There was an error, try again later." });
+  });
+};
