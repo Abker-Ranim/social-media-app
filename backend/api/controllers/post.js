@@ -5,16 +5,18 @@ const mongoose = require("mongoose");
 
 exports.getAllPosts = async (req, res, next) => {
   try {
-    const posts = await Post.find()
-      .populate('postOwner', 'firstName lastName')
-      .exec();
+    const posts = await Post.find().populate("postOwner", "-password").exec();
 
-    const newPosts = await Promise.all(posts.map(async (post) => {
-      const likesCount = await Like.countDocuments({ post: post._id });
-      const commentsCount = await Comment.countDocuments({ post: post._id });
-      const liked = await Like.findOne({ post: post._id, user: req.userData._id }) !== null;
-      return { ...post._doc, likesCount, commentsCount, liked };
-    }));
+    const newPosts = await Promise.all(
+      posts.map(async (post) => {
+        const likesCount = await Like.countDocuments({ post: post._id });
+        const commentsCount = await Comment.countDocuments({ post: post._id });
+        const liked =
+          (await Like.findOne({ post: post._id, user: req.userData._id })) !==
+          null;
+        return { ...post._doc, likesCount, commentsCount, liked };
+      })
+    );
 
     res.status(200).json(newPosts);
   } catch (err) {
@@ -25,17 +27,21 @@ exports.getAllPosts = async (req, res, next) => {
 exports.getMyPosts = async (req, res, next) => {
   try {
     const posts = await Post.find({
-      postOwner: req.userData._id
+      postOwner: req.userData._id,
     })
-    .populate('postOwner', 'firstName lastName')
+      .populate("postOwner", "-password")
       .exec();
 
-    const newPosts = await Promise.all(posts.map(async (post) => {
-      const likesCount = await Like.countDocuments({ post: post._id });
-      const commentsCount = await Comment.countDocuments({ post: post._id });
-      const liked = await Like.findOne({ post: post._id, user: req.userData._id }) !== null;
-      return { ...post._doc, likesCount, commentsCount, liked };
-    }));
+    const newPosts = await Promise.all(
+      posts.map(async (post) => {
+        const likesCount = await Like.countDocuments({ post: post._id });
+        const commentsCount = await Comment.countDocuments({ post: post._id });
+        const liked =
+          (await Like.findOne({ post: post._id, user: req.userData._id })) !==
+          null;
+        return { ...post._doc, likesCount, commentsCount, liked };
+      })
+    );
 
     res.status(200).json(newPosts);
   } catch (err) {
@@ -68,14 +74,15 @@ exports.createPost = (req, res, next) => {
       });
     })
     .catch((err) => {
-      console.log(err)
+      console.log(err);
       res.status(500).json(err);
     });
 };
 
 exports.getPostById = (req, res, next) => {
   const id = req.params.postId;
-  Post.findById(id).populate('postOwner')
+  Post.findById(id)
+    .populate("postOwner")
     .exec()
     .then((post) => {
       if (post) {
@@ -101,9 +108,10 @@ exports.updatePost = (req, res, next) => {
       }
 
       if (post.postOwner.toString() !== req.userData._id) {
-        return res.status(403).json({ message: "You are not authorized to update this post" });
+        return res
+          .status(403)
+          .json({ message: "You are not authorized to update this post" });
       }
-
 
       Post.findOneAndUpdate(
         { _id: id },
@@ -116,14 +124,14 @@ exports.updatePost = (req, res, next) => {
         .catch((error) => {
           console.error(error);
           res.status(500).json({
-            error: 'An error occurred while updating the post',
+            error: "An error occurred while updating the post",
           });
         });
     })
     .catch((err) => {
       console.log(err);
       res.status(500).json({
-        error: 'An error occurred while searching for the post',
+        error: "An error occurred while searching for the post",
       });
     });
 };
@@ -138,11 +146,11 @@ exports.deletePost = (req, res, next) => {
         return res.status(404).json({ message: "Post not found" });
       }
 
-
       if (post.postOwner.toString() !== req.userData._id) {
-        return res.status(403).json({ message: "You are not authorized to delete this post" });
+        return res
+          .status(403)
+          .json({ message: "You are not authorized to delete this post" });
       }
-
 
       Post.findByIdAndDelete(postId)
         .then(() => {
@@ -150,14 +158,15 @@ exports.deletePost = (req, res, next) => {
         })
         .catch((error) => {
           console.error(error);
-          res.status(500).json({ error: 'An error occurred while deleting the post' });
+          res
+            .status(500)
+            .json({ error: "An error occurred while deleting the post" });
         });
     })
     .catch((err) => {
       console.log(err);
       res.status(500).json({
-        error: 'An error occurred while searching for the post',
+        error: "An error occurred while searching for the post",
       });
     });
 };
-
