@@ -88,6 +88,7 @@ exports.loginUser = (req, res, next) => {
             firstName: user[0].firstName,
             lastName: user[0].lastName,
             email: user[0].email,
+            image: user[0].image,
           };
           const token = jwt.sign(loggedInUser, process.env.JWT_KEY, {
             expiresIn: expiresIn,
