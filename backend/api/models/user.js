@@ -23,7 +23,7 @@ const userSchema = mongoose.Schema({
   },
   image: {
     type: String,
-    default: "../uploads/profile.jpg",
+    default: "uploads/profile.jpg",
   },
 });
 

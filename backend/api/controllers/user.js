@@ -126,7 +126,7 @@ exports.updateUserImage = (req, res, next) => {
     .then((data) => {
       console.log(data);
       const oldImagePath = data.image;
-      if (oldImagePath !== "../uploads/profile.jpg") {
+      if (oldImagePath !== "uploads/profile.jpg") {
         deletefile(oldImagePath);
       }
 
