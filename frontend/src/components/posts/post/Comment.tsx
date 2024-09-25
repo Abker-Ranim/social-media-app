@@ -6,6 +6,7 @@ import { updateComment, deleteComment } from "../../../services/comment";
 import toast from "react-hot-toast";
 import { useAuth } from "../../../helpers/AuthProvider";
 import { User } from "../../../services/user";
+import { baseURL } from "../../../api/axios";
 
 interface CommentProps {
   content: string;
@@ -70,10 +71,13 @@ const Comment = ({
 
   return (
     <div className="comment">
-      <img
-        src="https://images.pexels.com/photos/27525165/pexels-photo-27525165/free-photo-of-lumineux-leger-paysage-gens.jpeg"
-        alt="User"
-      />
+      {auth && (
+              <img
+                src={baseURL + "/" + commentOwner?.image}
+                alt="Profile"
+                style={{ cursor: "default" }}
+              />
+            )}
       <div className="info">
         <div className="content">
           <span className="user">

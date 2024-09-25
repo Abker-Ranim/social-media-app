@@ -7,9 +7,12 @@
   background-color: #ffffff;
   border: 1px solid #ccc;
   border-radius: 10px;
-  display: flex;
+  display: none;
   flex-direction: column;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  .open {
+    display: flex; 
+  }
 }
 
 .chat-header {

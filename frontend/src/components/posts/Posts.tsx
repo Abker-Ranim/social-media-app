@@ -9,14 +9,20 @@ import {
 import "./posts.css";
 import Post from "./post/Post";
 import toast from "react-hot-toast";
+import { useAuth } from "../../helpers/AuthProvider";
+import { User } from "../../services/user";
+import { baseURL } from "../../api/axios";
 
 interface IProps {
   type: string;
 }
 
 const Posts = ({ type }: IProps) => {
+  const { auth } = useAuth();
   const [posts, setPosts] = useState<PostType[]>([]);
   const [newPostContent, setNewPostContent] = useState("");
+  const [postOwner, setUser] = useState<User | undefined>(auth);
+
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -59,11 +65,14 @@ const Posts = ({ type }: IProps) => {
     <div className="posts">
       <div className="new_post">
         <div className="user_details">
-          <img
-            src="https://images.pexels.com/photos/27525165/pexels-photo-27525165/free-photo-of-lumineux-leger-paysage-gens.jpeg"
-            alt=""
-          />
-          <h3>{"Ranim"}</h3>
+        {auth && (
+              <img
+                src={baseURL + "/" + postOwner?.image}
+                alt="Profile"
+                style={{ cursor: "default" }}
+              />
+            )}
+          <h3>{postOwner?.firstName} {postOwner?.lastName}</h3>
         </div>
 
         <textarea

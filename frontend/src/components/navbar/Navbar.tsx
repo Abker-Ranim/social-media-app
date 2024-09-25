@@ -1,14 +1,17 @@
 import { FaPlus, FaSignOutAlt } from "react-icons/fa";
 import { IoIosSearch } from "react-icons/io";
 import "./navbar.css";
-import { logout } from "../../services/user";
+import { logout, User } from "../../services/user";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../helpers/AuthProvider";
+import { baseURL } from "../../api/axios";
+import { useState } from "react";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { setAuth } = useAuth();
-
+  const { auth } = useAuth();
+  const [user] = useState<User | undefined>(auth);
   const handleLogout = () => {
     logout();
     setAuth(undefined);
@@ -33,9 +36,14 @@ const Navbar = () => {
             <span className="text">Create</span>
           </button>
 
-          <div className="navbar_profile_image">
-            <img src="https://images.pexels.com/photos/27525165/pexels-photo-27525165/free-photo-of-lumineux-leger-paysage-gens.jpeg" />
-          </div>
+          {auth && (
+            <img
+              src={baseURL + "/" + user?.image}
+              alt="Profile"
+              className="navbar_profile_image"
+              style={{ cursor: "default" }}
+            />
+          )}
           <button className="navbar_logout_button" onClick={handleLogout}>
             <FaSignOutAlt />
           </button>

@@ -1,25 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import { GoHome } from "react-icons/go";
 import { FaRegUser } from "react-icons/fa";
 import { MdOutlinePermMedia } from "react-icons/md";
 import { IoPeopleOutline, IoSettingsOutline } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
 import "./sidebar.css";
+import { useAuth } from "../../helpers/AuthProvider";
+import { User } from "../../services/user";
+import { baseURL } from "../../api/axios";
 
 const Sidebar: React.FC = () => {
   const userId = "ranim";
+  const { auth } = useAuth();
+  const [user] = useState<User | undefined>(auth);
+
 
   return (
     <div className="sidebar">
       <div className="usernameCard">
-        <img
-          className="username_image"
-          src="https://images.pexels.com/photos/27525165/pexels-photo-27525165/free-photo-of-lumineux-leger-paysage-gens.jpeg"
-          alt="User"
-        />
+      {auth && (
+              <img
+                src={baseURL + "/" + user?.image}
+                alt="Profile"
+                className="username_image"
+                style={{ cursor: "default" }}
+              />
+            )}
         <div className="username_info">
-          <h3 className="username">ranim abker</h3>
-          <span>@ranim</span>
+          <h3 className="username">{user?.firstName} {user?.lastName}</h3>
+          <span>{user?.email}</span>
         </div>
       </div>
 

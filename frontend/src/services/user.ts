@@ -8,7 +8,7 @@ export type User = {
   lastName: string;
   email: string;
   password?: string;
-  image?: string;
+  image: string;
 };
 
 interface LoginData {
@@ -25,6 +25,10 @@ export const getUsers = async (): Promise<any[]> => {
   return res.data;
 };
 
+export const getUserDetails = async (id:string): Promise<User> => {
+  const res = await axios.get(`${url}/${id}`);
+  return res.data;
+};
 export const login = async (body: LoginData): Promise<any> => {
   const response = await axios.post(`${url}/login`, body);
   if (response.status === 200) {
@@ -53,4 +57,15 @@ export const logout = () => {
 
 export const getToken = () => {
   return localStorage.getItem("token");
+};
+export const updateUserImage = async (formData: FormData): Promise<User> => {
+  const token = localStorage.getItem("token");
+  const response = await axios.patch(`${url}/uploadImage`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data',
+
+    },
+  });
+  return response.data;
 };
