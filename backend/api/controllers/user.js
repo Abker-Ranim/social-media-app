@@ -44,6 +44,26 @@ exports.getUserDetails = (req, res, next) => {
     });
 };
 
+exports.searchUsers = (req, res, next) => {
+  const search = req.params.search;
+  User.find({
+    $or: [
+      { firstName: { $regex: search, $options: "i" } },
+      { lastName: { $regex: search, $options: "i" } },
+      // { email: { $regex: search, $options: "i" } },
+    ],
+  })
+    .select("firstName lastName image")
+    .limit(10)
+    .exec()
+    .then((users) => {
+      res.status(200).json(users);
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+    });
+};
+
 exports.signupUser = (req, res, next) => {
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
   if (!passwordRegex.test(req.body.password)) {

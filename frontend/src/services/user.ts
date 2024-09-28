@@ -29,6 +29,12 @@ export const getUserDetails = async (id: string): Promise<User> => {
   const res = await axios.get(`${url}/${id}`);
   return res.data;
 };
+
+export const searchUsers = async (keyword: string): Promise<User> => {
+  const res = await axios.get(`${url}/search/${keyword}`);
+  return res.data;
+};
+
 export const login = async (body: LoginData): Promise<any> => {
   const response = await axios.post(`${url}/login`, body);
   if (response.status === 200) {
