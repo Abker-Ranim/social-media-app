@@ -1,34 +1,32 @@
-import React, { useState } from "react";
+import React from "react";
 import { GoHome } from "react-icons/go";
 import { FaRegUser } from "react-icons/fa";
 import { MdOutlinePermMedia } from "react-icons/md";
 import { IoPeopleOutline, IoSettingsOutline } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
-import "./sidebar.css";
 import { useAuth } from "../../helpers/AuthProvider";
-import { User } from "../../services/user";
 import { baseURL } from "../../api/axios";
+import "./sidebar.css";
 
 const Sidebar: React.FC = () => {
-  const userId = "ranim";
   const { auth } = useAuth();
-  const [user] = useState<User | undefined>(auth);
-
 
   return (
     <div className="sidebar">
       <div className="usernameCard">
-      {auth && (
-              <img
-                src={baseURL + "/" + user?.image}
-                alt="Profile"
-                className="username_image"
-                style={{ cursor: "default" }}
-              />
-            )}
+        {auth && (
+          <img
+            src={baseURL + "/" + auth?.image}
+            alt="Profile"
+            className="username_image"
+            style={{ cursor: "default" }}
+          />
+        )}
         <div className="username_info">
-          <h3 className="username">{user?.firstName} {user?.lastName}</h3>
-          <span>{user?.email}</span>
+          <h3 className="username">
+            {auth?.firstName} {auth?.lastName}
+          </h3>
+          <span>{auth?.email}</span>
         </div>
       </div>
 
@@ -42,7 +40,7 @@ const Sidebar: React.FC = () => {
         </NavLink>
 
         <NavLink
-          to={`/profile/${userId}`}
+          to={`/profile/${auth?._id}`}
           className={({ isActive }) => (isActive ? "active" : "")}
         >
           <FaRegUser className="margin" />

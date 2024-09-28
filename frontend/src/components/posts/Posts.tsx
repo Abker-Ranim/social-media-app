@@ -21,8 +21,7 @@ const Posts = ({ type }: IProps) => {
   const { auth } = useAuth();
   const [posts, setPosts] = useState<PostType[]>([]);
   const [newPostContent, setNewPostContent] = useState("");
-  const [postOwner, setUser] = useState<User | undefined>(auth);
-
+  const [user, setUser] = useState<User | undefined>(auth);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -65,14 +64,16 @@ const Posts = ({ type }: IProps) => {
     <div className="posts">
       <div className="new_post">
         <div className="user_details">
-        {auth && (
-              <img
-                src={baseURL + "/" + postOwner?.image}
-                alt="Profile"
-                style={{ cursor: "default" }}
-              />
-            )}
-          <h3>{postOwner?.firstName} {postOwner?.lastName}</h3>
+          {auth && (
+            <img
+              src={baseURL + "/" + user?.image}
+              alt="Profile"
+              style={{ cursor: "default" }}
+            />
+          )}
+          <h3>
+            {user?.firstName} {user?.lastName}
+          </h3>
         </div>
 
         <textarea

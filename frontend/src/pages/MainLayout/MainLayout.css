@@ -1,4 +1,4 @@
-.profile-page {
+.main-layout {
   display: flex;
   flex-direction: column;
 
@@ -7,17 +7,13 @@
     gap: 20px;
     padding: 20px;
   }
-  
   .sidebar {
     width: 25%;
   }
-  
-  .profile {
+  .middle {
     width: 50%;
   }
-  
   .right {
     width: 25%;
   }
 }
-
