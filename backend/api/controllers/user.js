@@ -26,6 +26,24 @@ exports.getAllUsers = (req, res, next) => {
     });
 };
 
+exports.getUserDetails = (req, res, next) => {
+  const id = req.params.id;
+  User.findById(id)
+    .exec()
+    .then((user) => {
+      res.status(200).json({
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        image: user.image,
+      });
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+    });
+};
+
 exports.signupUser = (req, res, next) => {
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
   if (!passwordRegex.test(req.body.password)) {

@@ -3,7 +3,7 @@ import Posts from "../../components/posts/Posts";
 import "./home.css";
 
 const Home: React.FC = () => {
-  return <Posts type="all" />;
+  return <Posts />;
 };
 
 export default Home;

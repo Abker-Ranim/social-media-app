@@ -42,7 +42,6 @@ const Post = ({
   onDelete,
 }: PostProps) => {
   const { auth } = useAuth();
-  console.log(auth?._id, postOwner);
 
   const [content, setContent] = useState(initialContent);
   const [counts, setCounts] = useState({
@@ -56,7 +55,6 @@ const Post = ({
   const [showOptions, setShowOptions] = useState(false);
   const [updatingPost, setUpdatingPost] = useState(false);
   const [updatedPost, setUpdatedPost] = useState(content);
-
 
   const commentInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -214,15 +212,17 @@ const Post = ({
   return (
     <div className="post">
       <div className="post_user_details">
-      {auth && (
-              <img
-                src={baseURL + "/" + postOwner?.image}
-                alt="Profile"
-                style={{ cursor: "default" }}
-              />
-            )}
+        {auth && (
+          <img
+            src={baseURL + "/" + postOwner?.image}
+            alt="Profile"
+            style={{ cursor: "default" }}
+          />
+        )}
         <div className="user_name">
-          <h4>{postOwner?.firstName} {postOwner?.lastName}</h4>
+          <h4>
+            {postOwner?.firstName} {postOwner?.lastName}
+          </h4>
           <span>{postDate}</span>
         </div>
         {postOwner._id === auth?._id && (

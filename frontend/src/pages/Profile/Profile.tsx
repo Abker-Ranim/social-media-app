@@ -2,28 +2,37 @@ import { FaEdit, FaUserEdit, FaEnvelope, FaUserPlus } from "react-icons/fa";
 import "./Profile.css";
 import Posts from "../../components/posts/Posts.tsx";
 import Conversations from "../../components/rightbar/conversations/conversations.tsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { baseURL } from "../../api/axios.ts";
-import { User } from "../../services/user.ts";
+import { getUserDetails, User } from "../../services/user.ts";
 import { useAuth } from "../../helpers/AuthProvider.tsx";
+import { useParams } from "react-router-dom";
 
 const Profile: React.FC = () => {
   const { auth } = useAuth();
+  const { userId } = useParams();
   const [showChat, setShowChat] = useState(false);
-  const [user] = useState<User | undefined>(auth);
+  const [user, setUser] = useState<User | undefined>(auth);
 
   const toggleChat = () => {
     setShowChat(!showChat);
   };
-  // useEffect(() => {
-  //   if (id !== auth?._id) {
-  //     fetchUser()
-  //   }
-  // });
-  // const fetchUser = async () => {
-  //   const response = await getUserDetails(id);
-  //   setUser(response);
-  // };
+
+  useEffect(() => {
+    if (userId !== auth?._id) {
+      fetchUser();
+    } else {
+      setUser(auth);
+    }
+  }, [userId]);
+  const fetchUser = async () => {
+    console.log(userId);
+    if (userId) {
+      const response = await getUserDetails(userId);
+      setUser(response);
+    }
+  };
+
   return (
     <div className="profile">
       <div className="user-profile">
@@ -71,7 +80,7 @@ const Profile: React.FC = () => {
           </div>
         </div>
       </div>
-      <Posts type={"mine"} />
+      <Posts userId={user?._id} />
       {showChat && <Conversations closeChat={toggleChat} />}{" "}
     </div>
   );

@@ -36,9 +36,9 @@ export const getPosts = async (): Promise<Post[]> => {
   return response.data;
 };
 
-export const getMyPosts = async (): Promise<Post[]> => {
+export const getPostsByUser = async (userId: string): Promise<Post[]> => {
   const token = localStorage.getItem("token");
-  const response = await axios.get(`${url}/myPosts`, {
+  const response = await axios.get(`${url}/byUser/${userId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -47,18 +47,22 @@ export const getMyPosts = async (): Promise<Post[]> => {
   return response.data;
 };
 
-export const updatePost = async (id: string , content: string) => {
+export const updatePost = async (id: string, content: string) => {
   const token = localStorage.getItem("token");
 
-  const response = await axios.put(`${url}/${id}`, {content} ,{
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const response = await axios.put(
+    `${url}/${id}`,
+    { content },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   return response;
 };
-export const deletePost = async (id: string ) => {
+export const deletePost = async (id: string) => {
   const token = localStorage.getItem("token");
 
   const response = await axios.delete(`${url}/${id}`, {
@@ -69,4 +73,3 @@ export const deletePost = async (id: string ) => {
 
   return response.data;
 };
-

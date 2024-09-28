@@ -25,7 +25,7 @@ export const getUsers = async (): Promise<any[]> => {
   return res.data;
 };
 
-export const getUserDetails = async (id:string): Promise<User> => {
+export const getUserDetails = async (id: string): Promise<User> => {
   const res = await axios.get(`${url}/${id}`);
   return res.data;
 };
@@ -63,8 +63,7 @@ export const updateUserImage = async (formData: FormData): Promise<User> => {
   const response = await axios.patch(`${url}/uploadImage`, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'multipart/form-data',
-
+      "Content-Type": "multipart/form-data",
     },
   });
   return response.data;

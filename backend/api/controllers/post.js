@@ -24,10 +24,11 @@ exports.getAllPosts = async (req, res, next) => {
   }
 };
 
-exports.getMyPosts = async (req, res, next) => {
+exports.getPostsByUser = async (req, res, next) => {
   try {
+    const userId = req.params.userId;
     const posts = await Post.find({
-      postOwner: req.userData._id,
+      postOwner: userId,
     })
       .populate("postOwner", "-password")
       .exec();
@@ -37,8 +38,7 @@ exports.getMyPosts = async (req, res, next) => {
         const likesCount = await Like.countDocuments({ post: post._id });
         const commentsCount = await Comment.countDocuments({ post: post._id });
         const liked =
-          (await Like.findOne({ post: post._id, user: req.userData._id })) !==
-          null;
+          (await Like.findOne({ post: post._id, user: userId })) !== null;
         return { ...post._doc, likesCount, commentsCount, liked };
       })
     );
