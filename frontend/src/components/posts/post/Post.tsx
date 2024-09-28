@@ -18,6 +18,7 @@ import toast from "react-hot-toast";
 import Comment from "./Comment";
 import { User } from "../../../services/user";
 import { useAuth } from "../../../helpers/AuthProvider";
+import { baseURL } from "../../../api/axios";
 
 interface PostProps {
   content: string;
@@ -41,7 +42,6 @@ const Post = ({
   onDelete,
 }: PostProps) => {
   const { auth } = useAuth();
-  console.log(auth?._id, postOwner);
 
   const [content, setContent] = useState(initialContent);
   const [counts, setCounts] = useState({
@@ -212,12 +212,17 @@ const Post = ({
   return (
     <div className="post">
       <div className="post_user_details">
-        <img
-          src="https://images.pexels.com/photos/27525165/pexels-photo-27525165/free-photo-of-lumineux-leger-paysage-gens.jpeg"
-          alt="User"
-        />
+        {auth && (
+          <img
+            src={baseURL + "/" + postOwner?.image}
+            alt="Profile"
+            style={{ cursor: "default" }}
+          />
+        )}
         <div className="user_name">
-          <h4>Ranim</h4>
+          <h4>
+            {postOwner?.firstName} {postOwner?.lastName}
+          </h4>
           <span>{postDate}</span>
         </div>
         {postOwner._id === auth?._id && (

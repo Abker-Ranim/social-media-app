@@ -26,6 +26,44 @@ exports.getAllUsers = (req, res, next) => {
     });
 };
 
+exports.getUserDetails = (req, res, next) => {
+  const id = req.params.id;
+  User.findById(id)
+    .exec()
+    .then((user) => {
+      res.status(200).json({
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        image: user.image,
+      });
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+    });
+};
+
+exports.searchUsers = (req, res, next) => {
+  const search = req.params.search;
+  User.find({
+    $or: [
+      { firstName: { $regex: search, $options: "i" } },
+      { lastName: { $regex: search, $options: "i" } },
+      // { email: { $regex: search, $options: "i" } },
+    ],
+  })
+    .select("firstName lastName image")
+    .limit(10)
+    .exec()
+    .then((users) => {
+      res.status(200).json(users);
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+    });
+};
+
 exports.signupUser = (req, res, next) => {
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
   if (!passwordRegex.test(req.body.password)) {
@@ -126,7 +164,7 @@ exports.updateUserImage = (req, res, next) => {
     .then((data) => {
       console.log(data);
       const oldImagePath = data.image;
-      if (oldImagePath !== "../uploads/profile.jpg") {
+      if (oldImagePath !== "uploads/profile.jpg") {
         deletefile(oldImagePath);
       }
 

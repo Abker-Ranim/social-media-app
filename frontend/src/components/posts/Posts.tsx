@@ -2,27 +2,31 @@ import { useState, useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
 import {
   createPost,
-  getMyPosts,
   getPosts,
+  getPostsByUser,
   Post as PostType,
 } from "../../services/post";
 import "./posts.css";
 import Post from "./post/Post";
 import toast from "react-hot-toast";
+import { useAuth } from "../../helpers/AuthProvider";
+import { baseURL } from "../../api/axios";
 
 interface IProps {
-  type: string;
+  userId?: string;
 }
 
-const Posts = ({ type }: IProps) => {
+const Posts = ({ userId }: IProps) => {
+  const { auth } = useAuth();
   const [posts, setPosts] = useState<PostType[]>([]);
   const [newPostContent, setNewPostContent] = useState("");
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const fetchedPosts =
-          type === "all" ? await getPosts() : await getMyPosts();
+        const fetchedPosts = userId
+          ? await getPostsByUser(userId)
+          : await getPosts();
         setPosts(fetchedPosts);
       } catch (error) {
         console.error("Failed to fetch posts:", error);
@@ -30,7 +34,7 @@ const Posts = ({ type }: IProps) => {
     };
 
     fetchPosts();
-  }, []);
+  }, [userId]);
 
   const handlePostSubmit = async () => {
     if (newPostContent.trim()) {
@@ -57,27 +61,34 @@ const Posts = ({ type }: IProps) => {
 
   return (
     <div className="posts">
-      <div className="new_post">
-        <div className="user_details">
-          <img
-            src="https://images.pexels.com/photos/27525165/pexels-photo-27525165/free-photo-of-lumineux-leger-paysage-gens.jpeg"
-            alt=""
-          />
-          <h3>{"Ranim"}</h3>
+      {auth?._id === userId && (
+        <div className="new_post">
+          <div className="user_details">
+            {auth && (
+              <img
+                src={baseURL + "/" + auth?.image}
+                alt="Profile"
+                style={{ cursor: "default" }}
+              />
+            )}
+            <h3>
+              {auth?.firstName} {auth?.lastName}
+            </h3>
+          </div>
+
+          <textarea
+            className="new_post_textbox"
+            placeholder="What's in your mind..?"
+            value={newPostContent}
+            onChange={(e) => setNewPostContent(e.target.value)}
+          ></textarea>
+
+          <button className="navbar_profile_button" onClick={handlePostSubmit}>
+            <FaPlus />
+            <span className="text">Post</span>
+          </button>
         </div>
-
-        <textarea
-          className="new_post_textbox"
-          placeholder="What's in your mind..?"
-          value={newPostContent}
-          onChange={(e) => setNewPostContent(e.target.value)}
-        ></textarea>
-
-        <button className="navbar_profile_button" onClick={handlePostSubmit}>
-          <FaPlus />
-          <span className="text">Post</span>
-        </button>
-      </div>
+      )}
 
       <div className="post_list">
         {posts

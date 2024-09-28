@@ -4,22 +4,29 @@ import { FaRegUser } from "react-icons/fa";
 import { MdOutlinePermMedia } from "react-icons/md";
 import { IoPeopleOutline, IoSettingsOutline } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../helpers/AuthProvider";
+import { baseURL } from "../../api/axios";
 import "./sidebar.css";
 
 const Sidebar: React.FC = () => {
-  const userId = "ranim";
+  const { auth } = useAuth();
 
   return (
     <div className="sidebar">
       <div className="usernameCard">
-        <img
-          className="username_image"
-          src="https://images.pexels.com/photos/27525165/pexels-photo-27525165/free-photo-of-lumineux-leger-paysage-gens.jpeg"
-          alt="User"
-        />
+        {auth && (
+          <img
+            src={baseURL + "/" + auth?.image}
+            alt="Profile"
+            className="username_image"
+            style={{ cursor: "default" }}
+          />
+        )}
         <div className="username_info">
-          <h3 className="username">ranim abker</h3>
-          <span>@ranim</span>
+          <h3 className="username">
+            {auth?.firstName} {auth?.lastName}
+          </h3>
+          <span>{auth?.email}</span>
         </div>
       </div>
 
@@ -33,7 +40,7 @@ const Sidebar: React.FC = () => {
         </NavLink>
 
         <NavLink
-          to={`/profile/${userId}`}
+          to={`/profile/${auth?._id}`}
           className={({ isActive }) => (isActive ? "active" : "")}
         >
           <FaRegUser className="margin" />

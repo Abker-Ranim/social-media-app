@@ -7,7 +7,10 @@ import Conversation from "../conversation/conversation";
 import { useAuth } from "../../../helpers/AuthProvider";
 import { getConversations } from "../../../services/conversation";
 
-const Conversations = () => {
+interface ConversationsProps {
+  closeChat: () => void; 
+}
+const Conversations: React.FC<ConversationsProps> = ({ closeChat }) => {
   const { auth } = useAuth();
 
   const [conversations, setConversations] = useState<any[]>([]);
@@ -24,9 +27,9 @@ const Conversations = () => {
         console.error("Failed to load conversations:", err);
       }
     };
-
     fetchedConversations();
-  }, [inConversation]);
+
+  }, []);
 
   const handleClick = (conversation: any) => {
     setInConversation(true);
@@ -47,7 +50,7 @@ const Conversations = () => {
             ? user?.firstName + " " + user?.lastName
             : "Chat with Friend"}
         </h3>
-        <FaTimes className="close-chat" />
+        <FaTimes className="close-chat" onClick={closeChat} />
       </div>
       {inConversation ? (
         <Conversation receiverId={user?._id} />
@@ -59,6 +62,8 @@ const Conversations = () => {
                 new Date(b.updatedAt).getTime() -
                 new Date(a.updatedAt).getTime()
             )
+            .filter(conversation => conversation?.participants[0]?._id !== auth?._id)
+
             .map(
               (conversation, i) =>
                 conversation?.participants[0]?._id !== auth?._id && (

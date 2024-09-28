@@ -32,6 +32,7 @@ nav {
 .navbar_profile_search {
   display: flex;
   align-items: center;
+  position: relative;
   height: 40px;
   background-color: #eef1f7;
   border-radius: 20px;
@@ -47,6 +48,46 @@ nav {
     color: #333;
     font-size: 14px;
     font-family: "Roboto", sans-serif;
+  }
+
+  .navbar_search_results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    margin-top: 5px;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    background-color: #ffffff;
+    z-index: 1000;
+  }
+
+  .navbar_search_result {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .navbar_search_result:hover {
+    background-color: #f0f0f0;
+  }
+
+  .navbar_search_result_image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+
+  .navbar_search_result_name {
+    font-size: 16px;
+    color: #333;
   }
 }
 .navbar_profile_search:hover {
@@ -71,7 +112,7 @@ nav {
 .navbar_profile_button {
   border: 1px solid var(--primary-color);
   cursor: pointer;
-  background-color:var(--primary-color);
+  background-color: var(--primary-color);
   color: white;
   border-radius: 20px;
   height: 40px;

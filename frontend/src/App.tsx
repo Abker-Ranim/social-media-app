@@ -1,20 +1,21 @@
 import React from "react";
-import { createBrowserRouter, Outlet } from "react-router-dom";
-import Home from "./pages/home/Home";
-import Login from "./pages/login/Login";
-import Signup from "./pages/signup/Signup";
+import { createBrowserRouter } from "react-router-dom";
+import Home from "./pages/Home/Home";
+import Login from "./pages/Login/Login";
+import Signup from "./pages/Signup/Signup";
 import ProtectedRoute from "./helpers/ProtectedRoute";
 import { AuthProvider } from "./helpers/AuthProvider";
 import { Toaster } from "react-hot-toast";
 import { SocketContextProvider } from "./helpers/SocketContext";
-import Profile from './pages/Profile/Profile';
+import Profile from "./pages/Profile/Profile";
+import MainLayout from "./pages/MainLayout/MainLayout";
 
 export const App: React.FC = () => {
   return (
     <AuthProvider>
       <SocketContextProvider>
         <Toaster />
-        <Outlet />
+        <MainLayout />
       </SocketContextProvider>
     </AuthProvider>
   );
