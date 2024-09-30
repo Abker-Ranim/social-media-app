@@ -14,7 +14,6 @@
   }
 
   .usernameCard {
-    z-index: 20;
     padding: 20px;
     display: flex;
     align-items: center;

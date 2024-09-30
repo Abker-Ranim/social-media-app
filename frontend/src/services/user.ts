@@ -26,7 +26,7 @@ export const getUsers = async (): Promise<any[]> => {
 };
 
 export const getUserDetails = async (id: string): Promise<User> => {
-  const res = await axios.get(`${url}/${id}`);
+  const res = await axios.get(`${url}/details/${id}`);
   return res.data;
 };
 
@@ -64,6 +64,7 @@ export const logout = () => {
 export const getToken = () => {
   return localStorage.getItem("token");
 };
+
 export const updateUserImage = async (formData: FormData): Promise<User> => {
   const token = localStorage.getItem("token");
   const response = await axios.patch(`${url}/uploadImage`, formData, {
@@ -72,5 +73,16 @@ export const updateUserImage = async (formData: FormData): Promise<User> => {
       "Content-Type": "multipart/form-data",
     },
   });
+  return response.data;
+};
+
+export const refreshUser = async (): Promise<any> => {
+  const token = localStorage.getItem("token");
+  const response = await axios.get(`${url}/refresh`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  localStorage.setItem("token", response.data.token);
   return response.data;
 };
