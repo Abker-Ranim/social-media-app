@@ -8,9 +8,10 @@ import { useAuth } from "../../helpers/AuthProvider";
 
 interface ImageCropProps {
   picture: File;
+  setPicture: (pric: File | null) => void;
 }
 
-const ImageCrop: React.FC<ImageCropProps> = ({ picture }) => {
+const ImageCrop: React.FC<ImageCropProps> = ({ picture, setPicture }) => {
   const { setAuth } = useAuth();
 
   const [isModalOpen, setIsModalOpen] = useState(true);
@@ -66,6 +67,7 @@ const ImageCrop: React.FC<ImageCropProps> = ({ picture }) => {
         await updateUserImage(formData);
         const newUser = await refreshUser();
         setAuth(newUser.user);
+        setPicture(null);
         setIsModalOpen(false);
       }
     } catch (e) {
@@ -74,6 +76,7 @@ const ImageCrop: React.FC<ImageCropProps> = ({ picture }) => {
   };
 
   const onClose = () => {
+    setPicture(null);
     setIsModalOpen(false);
   };
 

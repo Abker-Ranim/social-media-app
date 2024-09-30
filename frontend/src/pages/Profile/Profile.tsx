@@ -87,7 +87,12 @@ const Profile: React.FC = () => {
                   accept="image/jpeg, image/png, image/jpg"
                 />
 
-                {profilePicture && <ImageCrop picture={profilePicture} />}
+                {profilePicture && (
+                  <ImageCrop
+                    picture={profilePicture}
+                    setPicture={setProfilePicture}
+                  />
+                )}
               </>
             )}
           </div>
