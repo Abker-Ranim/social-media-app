@@ -178,3 +178,27 @@ exports.updateUserImage = (req, res, next) => {
       });
     });
 };
+
+exports.refreshUser = (req, res, next) => {
+  const { _id, firstName, lastName, email, image } = req.userData;
+
+  User.findById(_id)
+    .exec()
+    .then((user) => {
+      const loggedInUser = {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        image: user.image,
+      };
+      const token = jwt.sign(loggedInUser, process.env.JWT_KEY, {
+        expiresIn: "1d",
+      });
+      return res.status(200).json({
+        message: "Auth success",
+        token: token,
+        user: loggedInUser,
+      });
+    });
+};

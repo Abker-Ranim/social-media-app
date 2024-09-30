@@ -19,7 +19,6 @@ const Navbar = () => {
     setAuth(undefined);
     navigate("/login");
   };
-  console.log(users);
 
   useEffect(() => {
     if (searchInput.trim() !== "") fetchUsers();
