@@ -19,7 +19,7 @@ const Profile: React.FC = () => {
   const profilePictureRef = useRef<HTMLInputElement>(null);
 
   const toggleChat = () => {
-    setShowChat(!showChat);
+    setShowChat(true);
   };
 
   useEffect(() => {
@@ -124,7 +124,7 @@ const Profile: React.FC = () => {
         </div>
       </div>
       <Posts userId={user?._id} />
-      {showChat && <Conversations closeChat={toggleChat} />}
+      {showChat && <Conversations closeChat={() => setShowChat(false)} />}
     </div>
   );
 };

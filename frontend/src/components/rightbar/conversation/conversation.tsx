@@ -6,12 +6,22 @@ import toast from "react-hot-toast";
 import { getConversation } from "../../../services/conversation";
 import { useSocketContext } from "../../../helpers/SocketContext";
 import "./conversation.css";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import { FaTimes } from "react-icons/fa";
 
 interface props {
+  user: any;
   receiverId: string;
+  closeChat: () => void;
+  setInConversation: (value: boolean) => void;
 }
 
-const Conversation = ({ receiverId }: props) => {
+const Conversation = ({
+  user,
+  receiverId,
+  closeChat,
+  setInConversation,
+}: props) => {
   const { auth } = useAuth();
   const { socket } = useSocketContext();
 
@@ -110,6 +120,15 @@ const Conversation = ({ receiverId }: props) => {
 
   return (
     <>
+      <div className="chat-header">
+        <IoMdArrowRoundBack
+          className="return"
+          onClick={() => setInConversation(false)}
+        />
+
+        <h3>{user?.firstName + " " + user?.lastName}</h3>
+        <FaTimes className="close-chat" onClick={closeChat} />
+      </div>
       <div className="chat-messages">
         {messages
           .sort(
