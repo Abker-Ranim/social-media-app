@@ -61,7 +61,7 @@ const Posts = ({ userId }: IProps) => {
 
   return (
     <div className="posts">
-      {auth?._id === userId && (
+      {auth?._id === userId || userId===undefined && (
         <div className="new_post">
           <div className="user_details">
             {auth && (

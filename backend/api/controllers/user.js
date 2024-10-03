@@ -37,6 +37,7 @@ exports.getUserDetails = (req, res, next) => {
         lastName: user.lastName,
         email: user.email,
         image: user.image,
+        cover: user.cover,
       });
     })
     .catch((err) => {
@@ -127,6 +128,7 @@ exports.loginUser = (req, res, next) => {
             lastName: user[0].lastName,
             email: user[0].email,
             image: user[0].image,
+            cover: user[0].cover,
           };
           const token = jwt.sign(loggedInUser, process.env.JWT_KEY, {
             expiresIn: expiresIn,
@@ -199,6 +201,35 @@ exports.refreshUser = (req, res, next) => {
         message: "Auth success",
         token: token,
         user: loggedInUser,
+      });
+    });
+};
+exports.updateUserCover = (req, res, next) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No profile Cover provided." });
+  }
+
+  const newCoverPath = req.file.path;
+
+  User.findOneAndUpdate(
+    { _id: req.userData._id },
+    { cover: newCoverPath },
+    { new: false, runValidators: true, context: "query" }
+  )
+    .then((data) => {
+      console.log(data);
+      const oldCoverPath = data.cover;
+      if (oldCoverPath !== "uploads/cover.png") {
+        deletefile(oldCoverPath);
+      }
+
+      return res.status(200).json({
+        message: "Profile Cover updated successfully",
+      });
+    })
+    .catch((err) => {
+      return res.status(500).json({
+        error: "There was an error, try again later.",
       });
     });
 };

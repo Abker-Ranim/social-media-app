@@ -9,6 +9,7 @@ export type User = {
   email: string;
   password?: string;
   image: string;
+  cover:string;
 };
 
 interface LoginData {
@@ -84,5 +85,15 @@ export const refreshUser = async (): Promise<any> => {
     },
   });
   localStorage.setItem("token", response.data.token);
+  return response.data;
+};
+export const updateUserCover = async (formData: FormData): Promise<User> => {
+  const token = localStorage.getItem("token");
+  const response = await axios.patch(`${url}/uploadCover`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data;
 };

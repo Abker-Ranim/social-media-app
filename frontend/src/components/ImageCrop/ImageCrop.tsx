@@ -3,15 +3,17 @@ import Cropper from "react-easy-crop";
 import CustomModal from "../Popup/Popup";
 import "./ImageCrop.css";
 import { getCroppedImg } from "./Helper";
-import { refreshUser, updateUserImage } from "../../services/user";
+import { refreshUser, updateUserImage, updateUserCover } from "../../services/user";
 import { useAuth } from "../../helpers/AuthProvider";
 
 interface ImageCropProps {
-  picture: File;
-  setPicture: (pric: File | null) => void;
+  profilePicture: File | null;
+  coverPicture: File | null;
+  setProfilePicture: (pic: File | null) => void;
+  setCoverPicture: (pic: File | null) => void;
 }
 
-const ImageCrop: React.FC<ImageCropProps> = ({ picture, setPicture }) => {
+const ImageCrop: React.FC<ImageCropProps> = ({ profilePicture, coverPicture, setProfilePicture, setCoverPicture }) => {
   const { setAuth } = useAuth();
 
   const [isModalOpen, setIsModalOpen] = useState(true);
@@ -20,8 +22,10 @@ const ImageCrop: React.FC<ImageCropProps> = ({ picture, setPicture }) => {
   const [rotation, setRotation] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [isCoverImage, setIsCoverImage] = useState(false); 
 
   useEffect(() => {
+    const picture = isCoverImage ? coverPicture : profilePicture;
     if (picture) {
       const reader = new FileReader();
       reader.onload = () => {
@@ -29,7 +33,7 @@ const ImageCrop: React.FC<ImageCropProps> = ({ picture, setPicture }) => {
       };
       reader.readAsDataURL(picture);
     }
-  }, [picture]);
+  }, [profilePicture, coverPicture, isCoverImage]);
 
   const onCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
     setCroppedAreaPixels(croppedAreaPixels);
@@ -54,20 +58,21 @@ const ImageCrop: React.FC<ImageCropProps> = ({ picture, setPicture }) => {
 
   const onSave = async () => {
     try {
-      const croppedImage = await getCroppedImg(
-        imageSrc,
-        croppedAreaPixels,
-        rotation
-      );
+      const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels, rotation);
       const image = urlToFile(croppedImage);
-
       const formData = new FormData();
+
       if (image) {
-        formData.append("userImage", image);
-        await updateUserImage(formData);
+        formData.append(isCoverImage ? "coverImage" : "userImage", image);
+        if (isCoverImage) {
+          await updateUserCover(formData);
+        } else {
+          await updateUserImage(formData);
+        }
         const newUser = await refreshUser();
         setAuth(newUser.user);
-        setPicture(null);
+        setProfilePicture(null);
+        setCoverPicture(null);
         setIsModalOpen(false);
       }
     } catch (e) {
@@ -76,7 +81,8 @@ const ImageCrop: React.FC<ImageCropProps> = ({ picture, setPicture }) => {
   };
 
   const onClose = () => {
-    setPicture(null);
+    setProfilePicture(null);
+    setCoverPicture(null);
     setIsModalOpen(false);
   };
 
@@ -89,8 +95,8 @@ const ImageCrop: React.FC<ImageCropProps> = ({ picture, setPicture }) => {
             crop={crop}
             rotation={rotation}
             zoom={zoom}
-            aspect={1}
-            cropShape="round"
+            aspect={isCoverImage ? 16 / 9 : 1} 
+            cropShape={isCoverImage ? "rect" : "round"}
             showGrid={false}
             onCropChange={setCrop}
             onRotationChange={setRotation}
@@ -131,7 +137,7 @@ const ImageCrop: React.FC<ImageCropProps> = ({ picture, setPicture }) => {
             {" "}
             Cancel{" "}
           </button>
-        </div>{" "}
+        </div>
       </CustomModal>
     </div>
   );

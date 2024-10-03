@@ -12,5 +12,6 @@ router.post("/login", userController.loginUser);
 router.get("/current", checkAuth, userController.getCurrentUser);
 router.get("/refresh", checkAuth, userController.refreshUser);
 router.patch("/uploadImage", checkAuth, multer, userController.updateUserImage);
+router.patch("/uploadCover", checkAuth, multer, userController.updateUserCover);
 
 module.exports = router;
