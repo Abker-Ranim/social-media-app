@@ -8,7 +8,8 @@ export type User = {
   lastName: string;
   email: string;
   password?: string;
-  image: string;
+  profilePicture: string;
+  coverPicture: string;
 };
 
 interface LoginData {
@@ -65,9 +66,12 @@ export const getToken = () => {
   return localStorage.getItem("token");
 };
 
-export const updateUserImage = async (formData: FormData): Promise<User> => {
+export const updateUserImage = async (
+  formData: FormData,
+  type: "profile" | "cover"
+): Promise<User> => {
   const token = localStorage.getItem("token");
-  const response = await axios.patch(`${url}/uploadImage`, formData, {
+  const response = await axios.patch(`${url}/uploadImage/${type}`, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",

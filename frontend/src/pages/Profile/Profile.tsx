@@ -15,8 +15,9 @@ const Profile: React.FC = () => {
   const [showChat, setShowChat] = useState(false);
   const [user, setUser] = useState<User | undefined>(auth);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
-
+  const [coverPicture, setCoverPicture] = useState<File | null>(null);
   const profilePictureRef = useRef<HTMLInputElement>(null);
+  const coverPictureRef = useRef<HTMLInputElement>(null);
 
   const toggleChat = () => {
     setShowChat(true);
@@ -29,6 +30,7 @@ const Profile: React.FC = () => {
       setUser(auth);
     }
   }, [userId, auth]);
+
   const fetchUser = async () => {
     if (userId) {
       const response = await getUserDetails(userId);
@@ -36,6 +38,9 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleCoverPictureEdit = () => {
+    coverPictureRef.current?.click();
+  };
   const handleProfilePictureEdit = () => {
     profilePictureRef.current?.click();
   };
@@ -43,33 +48,57 @@ const Profile: React.FC = () => {
   const handleImageChange = (e: any) => {
     setProfilePicture(e.target.files[0]);
   };
-
+  const handleCoverPictureChange = (e: any) => {
+    setCoverPicture(e.target.files[0]);
+  };
   return (
     <div className="profile">
       <div className="user-profile">
         <div className="cover-photo">
-          <img
-            alt="Cover"
-            src="https://images.pexels.com/photos/27525165/pexels-photo-27525165/free-photo-of-lumineux-leger-paysage-gens.jpeg"
-            className="cover-image"
-          />
+          {auth && (
+            <img
+              src={baseURL + "/" + user?.coverPicture}
+              alt="Profile"
+              className="cover-image"
+              style={{ cursor: "default" }}
+            />
+          )}
           {auth?._id === userId && (
-            <button className="edit-cover-btn" title="Edit Cover Picture">
-              <FaEdit />
-            </button>
+            <>
+              <button
+                className="edit-cover-btn"
+                title="Edit Cover Picture"
+                onClick={handleCoverPictureEdit}
+              >
+                <FaEdit />
+              </button>
+              <input
+                type="file"
+                ref={coverPictureRef}
+                onChange={handleCoverPictureChange}
+                style={{ display: "none" }}
+                accept="image/jpeg, image/png, image/jpg"
+              />
+              {coverPicture && (
+                <ImageCrop
+                  type="cover"
+                  image={coverPicture}
+                  setImage={setCoverPicture}
+                />
+              )}
+            </>
           )}
         </div>
         <div className="profile-info">
           <div className="profile-photo-container">
             {auth && (
               <img
-                src={baseURL + "/" + user?.image}
+                src={baseURL + "/" + user?.profilePicture}
                 alt="Profile"
                 className="profile-photo"
                 style={{ cursor: "default" }}
               />
             )}
-
             {auth?._id === userId && (
               <>
                 <button
@@ -86,11 +115,11 @@ const Profile: React.FC = () => {
                   style={{ display: "none" }}
                   accept="image/jpeg, image/png, image/jpg"
                 />
-
                 {profilePicture && (
                   <ImageCrop
-                    picture={profilePicture}
-                    setPicture={setProfilePicture}
+                    type="profile"
+                    image={profilePicture}
+                    setImage={setProfilePicture}
                   />
                 )}
               </>

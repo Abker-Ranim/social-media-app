@@ -214,7 +214,7 @@ const Post = ({
       <div className="post_user_details">
         {auth && (
           <img
-            src={baseURL + "/" + postOwner?.image}
+            src={baseURL + "/" + postOwner?.profilePicture}
             alt="Profile"
             style={{ cursor: "default" }}
           />

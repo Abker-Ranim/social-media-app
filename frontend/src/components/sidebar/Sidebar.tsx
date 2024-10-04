@@ -16,7 +16,7 @@ const Sidebar: React.FC = () => {
       <div className="usernameCard">
         {auth && (
           <img
-            src={baseURL + "/" + auth?.image}
+            src={baseURL + "/" + auth?.profilePicture}
             alt="Profile"
             className="username_image"
             style={{ cursor: "default" }}

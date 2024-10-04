@@ -21,9 +21,13 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  image: {
+  profilePicture: {
     type: String,
     default: "uploads/profile.jpg",
+  },
+  coverPicture: {
+    type: String,
+    default: "uploads/cover.png",
   },
 });
 
