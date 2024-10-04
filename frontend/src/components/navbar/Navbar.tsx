@@ -60,7 +60,7 @@ const Navbar = () => {
                     onClick={() => handleProfileClick(user._id)}
                   >
                     <img
-                      src={baseURL + "/" + user.image}
+                      src={baseURL + "/" + user.profilePicture}
                       alt="Profile"
                       className="navbar_search_result_image"
                     />
@@ -80,7 +80,7 @@ const Navbar = () => {
 
           {auth && (
             <img
-              src={baseURL + "/" + auth?.image}
+              src={baseURL + "/" + auth?.profilePicture}
               alt="Profile"
               className="navbar_profile_image"
               style={{ cursor: "default" }}

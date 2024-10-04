@@ -11,7 +11,11 @@ router.post("/signup", userController.signupUser);
 router.post("/login", userController.loginUser);
 router.get("/current", checkAuth, userController.getCurrentUser);
 router.get("/refresh", checkAuth, userController.refreshUser);
-router.patch("/uploadImage", checkAuth, multer, userController.updateUserImage);
-router.patch("/uploadCover", checkAuth, multer, userController.updateUserCover);
+router.patch(
+  "/uploadImage/:type",
+  checkAuth,
+  multer,
+  userController.updateUserImage
+);
 
 module.exports = router;

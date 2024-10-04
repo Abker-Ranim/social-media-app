@@ -57,7 +57,7 @@ const Profile: React.FC = () => {
         <div className="cover-photo">
           {auth && (
             <img
-              src={baseURL + "/" + user?.cover}
+              src={baseURL + "/" + user?.coverPicture}
               alt="Profile"
               className="cover-image"
               style={{ cursor: "default" }}
@@ -81,10 +81,9 @@ const Profile: React.FC = () => {
               />
               {coverPicture && (
                 <ImageCrop
-                profilePicture={null} 
-                coverPicture={coverPicture}
-                setProfilePicture={setProfilePicture}
-                setCoverPicture={setCoverPicture}
+                  type="cover"
+                  image={coverPicture}
+                  setImage={setCoverPicture}
                 />
               )}
             </>
@@ -94,7 +93,7 @@ const Profile: React.FC = () => {
           <div className="profile-photo-container">
             {auth && (
               <img
-                src={baseURL + "/" + user?.image}
+                src={baseURL + "/" + user?.profilePicture}
                 alt="Profile"
                 className="profile-photo"
                 style={{ cursor: "default" }}
@@ -118,10 +117,9 @@ const Profile: React.FC = () => {
                 />
                 {profilePicture && (
                   <ImageCrop
-                  profilePicture={profilePicture}
-                  coverPicture={null} 
-                  setProfilePicture={setProfilePicture}
-                  setCoverPicture={setCoverPicture} 
+                    type="profile"
+                    image={profilePicture}
+                    setImage={setProfilePicture}
                   />
                 )}
               </>

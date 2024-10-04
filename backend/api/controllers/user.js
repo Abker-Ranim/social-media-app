@@ -36,8 +36,8 @@ exports.getUserDetails = (req, res, next) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        image: user.image,
-        cover: user.cover,
+        profilePicture: user.profilePicture,
+        coverPicture: user.coverPicture,
       });
     })
     .catch((err) => {
@@ -54,7 +54,7 @@ exports.searchUsers = (req, res, next) => {
       // { email: { $regex: search, $options: "i" } },
     ],
   })
-    .select("firstName lastName image")
+    .select("firstName lastName profilePicture")
     .limit(10)
     .exec()
     .then((users) => {
@@ -127,8 +127,8 @@ exports.loginUser = (req, res, next) => {
             firstName: user[0].firstName,
             lastName: user[0].lastName,
             email: user[0].email,
-            image: user[0].image,
-            cover: user[0].cover,
+            profilePicture: user[0].profilePicture,
+            coverPicture: user[0].coverPicture,
           };
           const token = jwt.sign(loggedInUser, process.env.JWT_KEY, {
             expiresIn: expiresIn,
@@ -156,17 +156,29 @@ exports.updateUserImage = (req, res, next) => {
     return res.status(400).json({ error: "No profile image provided." });
   }
 
-  const newImagePath = req.file.path;
+  const type = req.params.type;
 
-  User.findOneAndUpdate(
-    { _id: req.userData._id },
-    { image: newImagePath },
-    { new: false, runValidators: true, context: "query" }
-  )
+  if (type !== "cover" && type !== "profile") {
+    return res.status(400).json({ error: "Invalid type." });
+  }
+
+  const newImagePath =
+    type === "cover"
+      ? { coverPicture: req.file.path }
+      : { profilePicture: req.file.path };
+
+  User.findOneAndUpdate({ _id: req.userData._id }, newImagePath, {
+    new: false,
+    runValidators: true,
+    context: "query",
+  })
     .then((data) => {
-      console.log(data);
-      const oldImagePath = data.image;
-      if (oldImagePath !== "uploads/profile.jpg") {
+      const oldImagePath =
+        type === "cover" ? data.coverPicture : data.profilePicture;
+      if (
+        (type === "profile" && oldImagePath !== "uploads/profile.jpg") ||
+        (type === "cover" && oldImagePath !== "uploads/cover.jpg")
+      ) {
         deletefile(oldImagePath);
       }
 
@@ -182,9 +194,7 @@ exports.updateUserImage = (req, res, next) => {
 };
 
 exports.refreshUser = (req, res, next) => {
-  const { _id, firstName, lastName, email, image } = req.userData;
-
-  User.findById(_id)
+  User.findById(req.userData._id)
     .exec()
     .then((user) => {
       const loggedInUser = {
@@ -192,7 +202,8 @@ exports.refreshUser = (req, res, next) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        image: user.image,
+        profilePicture: user.profilePicture,
+        coverPicture: user.coverPicture,
       };
       const token = jwt.sign(loggedInUser, process.env.JWT_KEY, {
         expiresIn: "1d",
@@ -201,35 +212,6 @@ exports.refreshUser = (req, res, next) => {
         message: "Auth success",
         token: token,
         user: loggedInUser,
-      });
-    });
-};
-exports.updateUserCover = (req, res, next) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "No profile Cover provided." });
-  }
-
-  const newCoverPath = req.file.path;
-
-  User.findOneAndUpdate(
-    { _id: req.userData._id },
-    { cover: newCoverPath },
-    { new: false, runValidators: true, context: "query" }
-  )
-    .then((data) => {
-      console.log(data);
-      const oldCoverPath = data.cover;
-      if (oldCoverPath !== "uploads/cover.png") {
-        deletefile(oldCoverPath);
-      }
-
-      return res.status(200).json({
-        message: "Profile Cover updated successfully",
-      });
-    })
-    .catch((err) => {
-      return res.status(500).json({
-        error: "There was an error, try again later.",
       });
     });
 };

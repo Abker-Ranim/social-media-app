@@ -61,34 +61,38 @@ const Posts = ({ userId }: IProps) => {
 
   return (
     <div className="posts">
-      {auth?._id === userId || userId===undefined && (
-        <div className="new_post">
-          <div className="user_details">
-            {auth && (
-              <img
-                src={baseURL + "/" + auth?.image}
-                alt="Profile"
-                style={{ cursor: "default" }}
-              />
-            )}
-            <h3>
-              {auth?.firstName} {auth?.lastName}
-            </h3>
+      {auth?._id === userId ||
+        (userId === undefined && (
+          <div className="new_post">
+            <div className="user_details">
+              {auth && (
+                <img
+                  src={baseURL + "/" + auth?.profilePicture}
+                  alt="Profile"
+                  style={{ cursor: "default" }}
+                />
+              )}
+              <h3>
+                {auth?.firstName} {auth?.lastName}
+              </h3>
+            </div>
+
+            <textarea
+              className="new_post_textbox"
+              placeholder="What's in your mind..?"
+              value={newPostContent}
+              onChange={(e) => setNewPostContent(e.target.value)}
+            ></textarea>
+
+            <button
+              className="navbar_profile_button"
+              onClick={handlePostSubmit}
+            >
+              <FaPlus />
+              <span className="text">Post</span>
+            </button>
           </div>
-
-          <textarea
-            className="new_post_textbox"
-            placeholder="What's in your mind..?"
-            value={newPostContent}
-            onChange={(e) => setNewPostContent(e.target.value)}
-          ></textarea>
-
-          <button className="navbar_profile_button" onClick={handlePostSubmit}>
-            <FaPlus />
-            <span className="text">Post</span>
-          </button>
-        </div>
-      )}
+        ))}
 
       <div className="post_list">
         {posts
