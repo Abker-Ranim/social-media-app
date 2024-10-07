@@ -49,34 +49,40 @@ exports.getPostsByUser = async (req, res, next) => {
   }
 };
 
-exports.createPost = (req, res, next) => {
-  const post = new Post({
-    _id: new mongoose.Types.ObjectId(),
-    content: req.body.content,
-    postOwner: req.userData._id,
-  });
+exports.createPost = async (req, res, next) => {
+  try {
+    
+    let imageUrl = null;
 
-  post
-    .save()
-    .then((result) => {
-      console.log(result);
-      res.status(201).json({
-        message: "Post created successfully",
-        createdPost: {
-          _id: result._id,
-          createdAt: result.createdAt,
-          postOwner: req.userData,
-          content: result.content,
-          liked: false,
-          likesCount: 0,
-          commentsCount: 0,
-        },
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json(err);
+    if (req.file) {
+      imageUrl = `/uploads/${req.file.filename}`; 
+    }
+
+    const post = new Post({
+      _id: new mongoose.Types.ObjectId(),
+      content: req.body.content,
+      postOwner: req.userData._id,
+      imageUrl: req.file.path,
     });
+
+    const result = await post.save();
+
+    res.status(201).json({
+      message: "Post created successfully",
+      createdPost: {
+        _id: result._id,
+        createdAt: result.createdAt,
+        postOwner: req.userData,
+        content: result.content,
+        imageUrl: result.imageUrl,
+        liked: false,
+        likesCount: 0,
+        commentsCount: 0,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
 exports.getPostById = (req, res, next) => {

@@ -28,6 +28,7 @@ interface PostProps {
   likesCount: number;
   commentsCount: number;
   postOwner: User;
+  imageUrl:string;
   onDelete: (_id: string) => void;
 }
 
@@ -39,6 +40,7 @@ const Post = ({
   commentsCount,
   likesCount,
   postOwner,
+  imageUrl,
   onDelete,
 }: PostProps) => {
   const { auth } = useAuth();
@@ -264,7 +266,10 @@ const Post = ({
             </div>
           </div>
         ) : (
+          <>  
           <p>{content}</p>
+          {imageUrl && <img src={baseURL + "/" + imageUrl} alt="Post" className="post_image" />}
+          </>
         )}
       </div>
 

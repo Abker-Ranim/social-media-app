@@ -215,3 +215,75 @@ exports.refreshUser = (req, res, next) => {
       });
     });
 };
+
+exports.followUser = async (req, res, next) => {
+  try {
+    const currentUserId = req.userData._id; 
+    const userToFollowId = req.params.id;
+
+    const userToFollow = await User.findById(userToFollowId);
+    if (!userToFollow) {
+      return res.status(404).json({ message: "Utilisateur à suivre non trouvé." });
+    }
+    if (userToFollowId === currentUserId) {
+      return res.status(400).json({ message: "Vous ne pouvez pas vous suivre vous-même." });
+    }
+
+    if (userToFollow.followers.includes(currentUserId)) {
+      return res.status(400).json({ message: "Vous suivez déjà cet utilisateur." });
+    }
+
+  const updatedCurrentUser = await User.findByIdAndUpdate(
+  currentUserId, 
+  { $push: { following: userToFollowId } },
+  { new: true }
+)
+
+const updatedUserToFollow = await User.findByIdAndUpdate(
+  userToFollowId, 
+  { $push: { followers: currentUserId } },
+  { new: true }
+);
+
+    res.status(200).json({ message: "Following user successfully." });
+  } catch (error) {
+    res.status(500).json({ message: "Error following user." });
+  }
+};
+
+exports.unfollowUser = async (req, res, next) => {
+  try {
+    const currentUserId = req.userData._id; 
+    const userToUnfollowId = req.params.id;
+
+    const userToUnfollow = await User.findById(userToUnfollowId);
+    if (!userToUnfollow) {
+      return res.status(404).json({ message: "Utilisateur à ne plus suivre non trouvé." });
+    }
+
+    if (userToUnfollowId === currentUserId) {
+      return res.status(400).json({ message: "Vous ne pouvez pas vous désabonner vous-même." });
+    }
+
+    if (!userToUnfollow.followers.includes(currentUserId)) {
+      return res.status(400).json({ message: "Vous ne suivez pas cet utilisateur." });
+    }
+
+    const updatedCurrentUser = await User.findByIdAndUpdate(
+      currentUserId,
+      { $pull: { following: userToUnfollowId } },
+      { new: true }
+    );
+
+    const updatedUserToUnfollow = await User.findByIdAndUpdate(
+      userToUnfollowId,
+      { $pull: { followers: currentUserId } },
+      { new: true }
+    );
+
+    res.status(200).json({ message: "Désabonnement réussi." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Erreur lors de la désinscription de l'utilisateur." });
+  }
+};

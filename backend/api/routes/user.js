@@ -11,11 +11,9 @@ router.post("/signup", userController.signupUser);
 router.post("/login", userController.loginUser);
 router.get("/current", checkAuth, userController.getCurrentUser);
 router.get("/refresh", checkAuth, userController.refreshUser);
-router.patch(
-  "/uploadImage/:type",
-  checkAuth,
-  multer,
-  userController.updateUserImage
-);
+router.patch("/uploadImage/:type",  checkAuth,multer, userController.updateUserImage);
+router.post("/follow/:id",checkAuth, userController.followUser);
+router.delete("/unfollow/:id",checkAuth, userController.unfollowUser);
+
 
 module.exports = router;

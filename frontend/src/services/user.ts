@@ -3,13 +3,16 @@ import axios from "../api/axios";
 const url = "/user";
 
 export type User = {
-  _id?: string;
+  includes(_id: string | undefined): import("react").SetStateAction<boolean>;
+  _id: string;
   firstName: string;
   lastName: string;
   email: string;
   password?: string;
   profilePicture: string;
   coverPicture: string;
+  followers :User;
+  following:User;
 };
 
 interface LoginData {
@@ -88,5 +91,27 @@ export const refreshUser = async (): Promise<any> => {
     },
   });
   localStorage.setItem("token", response.data.token);
+  return response.data;
+};
+export const followUser = async (id: string) => {
+  const token = localStorage.getItem("token");
+
+  const response = await axios.post(`${url}/follow/${id}`,{}, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+};
+export const unfollowUser = async (id: string) => {
+  const token = localStorage.getItem("token");
+
+  const response = await axios.delete(`${url}/unfollow/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
   return response.data;
 };

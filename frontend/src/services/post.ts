@@ -7,6 +7,7 @@ export type Post = {
   _id: string;
   content: string;
   postOwner: User;
+  imageUrl:string;
   createdAt: string;
   likesCount: number;
   commentsCount: number;
