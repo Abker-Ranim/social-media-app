@@ -9,6 +9,7 @@ import { Toaster } from "react-hot-toast";
 import { SocketContextProvider } from "./helpers/SocketContext";
 import Profile from "./pages/Profile/Profile";
 import MainLayout from "./pages/MainLayout/MainLayout";
+import People from "./pages/People/Peoples";
 
 export const App: React.FC = () => {
   return (
@@ -47,6 +48,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Profile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "people",
+        element: (
+          <ProtectedRoute>
+            <People />
           </ProtectedRoute>
         ),
       },

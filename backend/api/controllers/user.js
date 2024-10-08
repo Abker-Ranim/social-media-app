@@ -223,20 +223,14 @@ exports.followUser = async (req, res, next) => {
 
     const userToFollow = await User.findById(userToFollowId);
     if (!userToFollow) {
-      return res
-        .status(404)
-        .json({ message: "Utilisateur à suivre non trouvé." });
+      return res.status(404).json({ message: "User to follow not found." });
     }
     if (userToFollowId === currentUserId) {
-      return res
-        .status(400)
-        .json({ message: "Vous ne pouvez pas vous suivre vous-même." });
+      return res.status(400).json({ message: "You cannot follow yourself." });
     }
 
     if (userToFollow.followers.includes(currentUserId)) {
-      return res
-        .status(400)
-        .json({ message: "Vous suivez déjà cet utilisateur." });
+      return res.status(400).json({ message: "You are already following this user." });
     }
 
     await User.findByIdAndUpdate(
@@ -264,21 +258,15 @@ exports.unfollowUser = async (req, res, next) => {
 
     const userToUnfollow = await User.findById(userToUnfollowId);
     if (!userToUnfollow) {
-      return res
-        .status(404)
-        .json({ message: "Utilisateur à ne plus suivre non trouvé." });
+      return res.status(404).json({ message: "User to unfollow not found." });
     }
 
     if (userToUnfollowId === currentUserId) {
-      return res
-        .status(400)
-        .json({ message: "Vous ne pouvez pas vous désabonner vous-même." });
+      return res.status(400).json({ message: "You cannot unfollow yourself." });
     }
 
     if (!userToUnfollow.followers.includes(currentUserId)) {
-      return res
-        .status(400)
-        .json({ message: "Vous ne suivez pas cet utilisateur." });
+      return res.status(400).json({ message: "You are not following this user." });
     }
 
     await User.findByIdAndUpdate(
@@ -293,11 +281,48 @@ exports.unfollowUser = async (req, res, next) => {
       { new: true }
     );
 
-    res.status(200).json({ message: "Désabonnement réussi." });
+    res.status(200).json({ message: "Unfollowed user successfully." });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({ message: "Erreur lors de la désinscription de l'utilisateur." });
+    res.status(500).json({ message: "Error unfollowing user." });
+  }
+};
+
+exports.getFollowersByUser = async (req, res, next) => {
+  try {
+    const userId = req.userData._id;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        message: "Invalid user ID",
+      });
+    }
+
+    const followers = await User.find({ following: userId })
+    .select("firstName lastName email profilePicture") 
+    .exec();
+
+    res.status(200).json(followers);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+exports.getFollowingByUser = async (req, res, next) => {
+  try {
+    const userId = req.userData._id;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        message: "Invalid user ID",
+      });
+    }
+
+    const following = await User.find({ followers: userId })
+    .select("firstName lastName email profilePicture") 
+    .exec();
+
+    res.status(200).json(following);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };

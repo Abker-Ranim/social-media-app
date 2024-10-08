@@ -1,10 +1,21 @@
-import { FaEdit, FaUserEdit, FaEnvelope, FaUserPlus } from "react-icons/fa";
+import {
+  FaEdit,
+  FaUserEdit,
+  FaEnvelope,
+  FaUserPlus,
+  FaUserCheck,
+} from "react-icons/fa";
 import "./Profile.css";
 import Posts from "../../components/posts/Posts.tsx";
 import Conversations from "../../components/rightbar/conversations/conversations.tsx";
 import { useEffect, useRef, useState } from "react";
 import { baseURL } from "../../api/axios.ts";
-import { followUser, getUserDetails, unfollowUser, User } from "../../services/user.ts";
+import {
+  followUser,
+  getUserDetails,
+  unfollowUser,
+  User,
+} from "../../services/user.ts";
 import { useAuth } from "../../helpers/AuthProvider.tsx";
 import { useParams } from "react-router-dom";
 import ImageCrop from "../../components/ImageCrop/ImageCrop.tsx";
@@ -33,19 +44,18 @@ const Profile: React.FC = () => {
     }
   }, [userId, auth]);
 
-const fetchUser = async () => {
-  if (userId) {
-    const response = await getUserDetails(userId);
-    setUser(response);
+  const fetchUser = async () => {
+    if (userId) {
+      const response = await getUserDetails(userId);
+      setUser(response);
 
-    if (response.followers && Array.isArray(response.followers)) {
-      setIsFollowing(response.followers.includes(auth?._id));
-    } else {
-      setIsFollowing(false); 
+      if (response.followers && Array.isArray(response.followers)) {
+        setIsFollowing(response.followers.includes(auth?._id));
+      } else {
+        setIsFollowing(false);
+      }
     }
-  }
-};
-
+  };
 
   const handleCoverPictureEdit = () => {
     coverPictureRef.current?.click();
@@ -63,29 +73,29 @@ const fetchUser = async () => {
   const handleFollowClick = async () => {
     if (!isFollowing) {
       try {
-        if (userId) { 
-          await followUser(userId); 
-          setIsFollowing(true); 
-          toast.success("Vous suivez cet utilisateur."); 
+        if (userId) {
+          await followUser(userId);
+          setIsFollowing(true);
+          toast.success("Vous suivez cet utilisateur.");
         }
       } catch (error) {
         console.error("Failed to follow user:", error);
-        toast.error("Échec du suivi de l'utilisateur."); 
+        toast.error("Échec du suivi de l'utilisateur.");
       }
     } else {
       try {
-        if (userId) { 
-          await unfollowUser(userId); 
-          setIsFollowing(false); 
-          toast.success("Vous ne suivez plus cet utilisateur."); 
+        if (userId) {
+          await unfollowUser(userId);
+          setIsFollowing(false);
+          toast.success("Vous ne suivez plus cet utilisateur.");
         }
       } catch (error) {
         console.error("Failed to unfollow user:", error);
-        toast.error("Échec de la désinscription de l'utilisateur."); // Notification d'erreur
+        toast.error("Échec de la désinscription de l'utilisateur.");
       }
     }
   };
-  
+
   return (
     <div className="profile">
       <div className="user-profile">
@@ -170,10 +180,10 @@ const fetchUser = async () => {
             {auth?._id !== userId && (
               <button
                 className="follow-btn"
-                title="Follow User"
+                title={isFollowing ? "Unfollow User" : "Follow User"}
                 onClick={handleFollowClick}
               >
-                <FaUserPlus />
+                {isFollowing ? <FaUserCheck /> : <FaUserPlus />}
               </button>
             )}
             <button

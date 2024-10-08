@@ -115,3 +115,23 @@ export const unfollowUser = async (id: string) => {
 
   return response.data;
 };
+
+export const getFollowersByUser = async () => {
+  const token = localStorage.getItem("token");
+  const response = await axios.get(`${url}/followers`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+export const getFollowingByUser = async () => {
+  const token = localStorage.getItem("token");
+  const response = await axios.get(`${url}/following`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};

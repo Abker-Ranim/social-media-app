@@ -14,6 +14,9 @@ router.get("/refresh", checkAuth, userController.refreshUser);
 router.patch("/uploadImage/:type",  checkAuth,multer, userController.updateUserImage);
 router.post("/follow/:id",checkAuth, userController.followUser);
 router.delete("/unfollow/:id",checkAuth, userController.unfollowUser);
+router.get("/followers",checkAuth, userController.getFollowersByUser);
+router.get("/following",checkAuth, userController.getFollowingByUser);
+
 
 
 module.exports = router;
