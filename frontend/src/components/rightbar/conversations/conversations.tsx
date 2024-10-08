@@ -5,6 +5,7 @@ import "./conversations.css";
 import Conversation from "../conversation/conversation";
 import { useAuth } from "../../../helpers/AuthProvider";
 import { getConversations } from "../../../services/conversation";
+import { baseURL } from "../../../api/axios";
 
 interface ConversationsProps {
   closeChat: () => void;
@@ -70,7 +71,11 @@ const Conversations: React.FC<ConversationsProps> = ({ closeChat }) => {
                       onClick={() => handleClick(conversation)}
                     >
                       <img
-                        src="https://images.pexels.com/photos/27525165/pexels-photo-27525165/free-photo-of-lumineux-leger-paysage-gens.jpeg"
+                        src={
+                          baseURL +
+                          "/" +
+                          conversation?.participants[0]?.profilePicture
+                        }
                         alt="User"
                       />
                       <div className="user_info">

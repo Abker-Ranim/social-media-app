@@ -1,7 +1,7 @@
 {
-  "name": "cpc-platform",
+  "name": "social-media-app",
   "version": "1.0.0",
-  "description": "Platform for CPC club",
+  "description": "Social Media App",
   "main": "server.js",
   "scripts": {
     "frontend-install": "cd frontend && npm install",
@@ -10,7 +10,7 @@
     "frontend": "npm run dev --prefix frontend",
     "dev": "concurrently \"npm run backend\" \"npm run frontend\""
   },
-  "author": "Yassine Ben Abdelaziz",
+  "author": "Ranim Abker",
   "license": "ISC",
   "dependencies": {
     "concurrently": "^3.5.1"
