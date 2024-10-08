@@ -3,23 +3,28 @@ import { GoHome } from "react-icons/go";
 import { FaRegUser } from "react-icons/fa";
 import { MdOutlinePermMedia } from "react-icons/md";
 import { IoPeopleOutline, IoSettingsOutline } from "react-icons/io5";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../helpers/AuthProvider";
 import { baseURL } from "../../api/axios";
 import "./sidebar.css";
 
 const Sidebar: React.FC = () => {
-  const { auth } = useAuth();
+  const navigate = useNavigate();
 
+  const { auth } = useAuth();
+  const handleProfileClick = () => {
+    navigate(`/profile/${auth?._id}`);
+  };
   return (
     <div className="sidebar">
-      <div className="usernameCard">
+      <div className="usernameCard"
+      onClick={handleProfileClick}>
         {auth && (
           <img
             src={baseURL + "/" + auth?.profilePicture}
             alt="Profile"
             className="username_image"
-            style={{ cursor: "default" }}
+            style={{ cursor: "pointer" }}
           />
         )}
         <div className="username_info">

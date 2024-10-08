@@ -1,4 +1,4 @@
-import { FaPlus, FaSignOutAlt } from "react-icons/fa";
+import {  FaSignOutAlt } from "react-icons/fa";
 import { IoIosSearch } from "react-icons/io";
 import "./navbar.css";
 import { logout, searchUsers } from "../../services/user";
@@ -72,20 +72,18 @@ const Navbar = () => {
               </div>
             )}
           </div>
-
-          <button className="navbar_profile_button">
-            <FaPlus />
-            <span className="text">Create</span>
-          </button>
-
+          <div
+          onClick={handleProfileClick}>
           {auth && (
             <img
               src={baseURL + "/" + auth?.profilePicture}
               alt="Profile"
               className="navbar_profile_image"
-              style={{ cursor: "default" }}
+              style={{ cursor: "pointer" }}
+              
             />
           )}
+          </div>
           <button className="navbar_logout_button" onClick={handleLogout}>
             <FaSignOutAlt />
           </button>
