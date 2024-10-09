@@ -21,5 +21,6 @@ router.post("/follow/:id", checkAuth, userController.followUser);
 router.delete("/unfollow/:id", checkAuth, userController.unfollowUser);
 router.get("/followers", checkAuth, userController.getFollowers);
 router.get("/following", checkAuth, userController.getFollowing);
+router.get("/followList/:id", checkAuth, userController.getFollowList);
 
 module.exports = router;

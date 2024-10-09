@@ -5,9 +5,10 @@ interface PopupProps {
   isOpen: boolean;
   onRequestClose?: () => void;
   children: React.ReactNode;
+  width?: string;
 }
 
-const customStyles = {
+let customStyles = {
   content: {
     top: "50%",
     left: "50%",
@@ -17,10 +18,20 @@ const customStyles = {
     transform: "translate(-50%, -50%)",
     width: "80%",
     maxWidth: "600px",
+    padding: "0",
   },
 };
 
-const Popup: React.FC<PopupProps> = ({ isOpen, onRequestClose, children }) => {
+const Popup: React.FC<PopupProps> = ({
+  isOpen,
+  onRequestClose,
+  children,
+  width,
+}) => {
+  if (width) {
+    customStyles.content.width = width;
+  }
+
   return (
     <Modal
       isOpen={isOpen}

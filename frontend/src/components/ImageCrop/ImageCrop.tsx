@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Cropper from "react-easy-crop";
-import CustomModal from "../Popup/Popup";
+import Popup from "../Popup/Popup";
 import "./ImageCrop.css";
 import { getCroppedImg } from "./Helper";
 import { refreshUser, updateUserImage } from "../../services/user";
@@ -85,7 +85,7 @@ const ImageCrop: React.FC<ImageCropProps> = ({ type, image, setImage }) => {
 
   return (
     <div>
-      <CustomModal isOpen={isModalOpen}>
+      <Popup isOpen={isModalOpen}>
         <div className="crop-container">
           <Cropper
             image={imageSrc}
@@ -133,7 +133,7 @@ const ImageCrop: React.FC<ImageCropProps> = ({ type, image, setImage }) => {
             Cancel
           </button>
         </div>
-      </CustomModal>
+      </Popup>
     </div>
   );
 };

@@ -1,9 +1,8 @@
 const User = require("../models/user");
+const Post = require("../models/post");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const fs = require("fs");
-const path = require("path");
 const { unlink } = require("node:fs/promises");
 
 async function deletefile(path) {
@@ -39,10 +38,14 @@ exports.getUserDetails = async (req, res, next) => {
       profilePicture: user.profilePicture,
       coverPicture: user.coverPicture,
       isFollowing: false,
+      numberOfFollowers: user.followers.length,
+      numberOfFollowing: user.following.length,
     };
     if (user.followers.includes(req.userData._id)) {
       result.isFollowing = true;
     }
+    const posts = await Post.find({ postOwner: id }).exec();
+    result.numberOfPosts = posts.length;
     res.status(200).json(result);
   } catch (err) {
     console.log(err);
@@ -332,6 +335,30 @@ exports.getFollowing = async (req, res, next) => {
       .exec();
 
     res.status(200).json(following);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getFollowList = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        message: "Invalid user ID",
+      });
+    }
+
+    const following = await User.find({ followers: userId })
+      .select("firstName lastName email profilePicture")
+      .exec();
+
+    const followers = await User.find({ following: userId })
+      .select("firstName lastName email profilePicture")
+      .exec();
+
+    res.status(200).json({ following, followers });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

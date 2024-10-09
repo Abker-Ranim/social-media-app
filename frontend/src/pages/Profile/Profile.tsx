@@ -20,15 +20,20 @@ import { useAuth } from "../../helpers/AuthProvider.tsx";
 import { useParams } from "react-router-dom";
 import ImageCrop from "../../components/ImageCrop/ImageCrop.tsx";
 import toast from "react-hot-toast";
+import People from "./People/People.tsx";
 
 const Profile: React.FC = () => {
   const { auth } = useAuth();
   const { userId } = useParams();
   const [showChat, setShowChat] = useState(false);
-  const [user, setUser] = useState<User | undefined>(auth);
+  const [user, setUser] = useState<User | undefined>();
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [coverPicture, setCoverPicture] = useState<File | null>(null);
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
+  const [numberOfFollowers, setNumberOfFollowers] = useState<number>(0);
+  const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<string>("followers");
+
   const profilePictureRef = useRef<HTMLInputElement>(null);
   const coverPictureRef = useRef<HTMLInputElement>(null);
 
@@ -37,19 +42,15 @@ const Profile: React.FC = () => {
   };
 
   useEffect(() => {
-    if (userId !== auth?._id) {
-      fetchUser();
-    } else {
-      setUser(auth);
-    }
-  }, [userId, auth]);
+    fetchUser();
+  }, [userId]);
 
   const fetchUser = async () => {
     if (userId) {
       const response = await getUserDetails(userId);
       setUser(response);
       setIsFollowing(response.isFollowing);
-      console.log(response.isFollowing);
+      setNumberOfFollowers(response.numberOfFollowers);
     }
   };
 
@@ -75,37 +76,46 @@ const Profile: React.FC = () => {
         if (userId) {
           await followUser(userId);
           setIsFollowing(true);
-          toast.success("User followed successfully.");
+          setNumberOfFollowers((prev) => prev + 1);
+          toast.success("User Followed");
         }
       } catch (error) {
         console.error("Failed to follow user:", error);
-        toast.error("Failed to follow user.");
+        toast.error("Failed to follow user");
       }
     } else {
       try {
         if (userId) {
           await unfollowUser(userId);
           setIsFollowing(false);
-          toast.success("User unfollowed successfully.");
+          setNumberOfFollowers((prev) => prev - 1);
+          toast.success("User Unfollowed");
         }
       } catch (error) {
         console.error("Failed to unfollow user:", error);
-        toast.error("Failed to unfollow user.");
+        toast.error("Failed to unfollow user");
       }
     }
+  };
+
+  const openPopup = (tab: string) => {
+    setActiveTab(tab);
+    setIsPopupOpen(true);
+  };
+
+  const closePopup = () => {
+    setIsPopupOpen(false);
   };
 
   return (
     <div className="profile">
       <div className="user-profile">
         <div className="cover-photo">
-          {auth && (
-            <img
-              src={baseURL + "/" + user?.coverPicture}
-              alt="Profile"
-              className="cover-image"
-            />
-          )}
+          <img
+            src={baseURL + "/" + user?.coverPicture}
+            alt="Profile"
+            className="cover-image"
+          />
           {auth?._id === userId && (
             <>
               <button
@@ -134,13 +144,11 @@ const Profile: React.FC = () => {
         </div>
         <div className="profile-info">
           <div className="profile-photo-container">
-            {auth && (
-              <img
-                src={baseURL + "/" + user?.profilePicture}
-                alt="Profile"
-                className="profile-photo"
-              />
-            )}
+            <img
+              src={baseURL + "/" + user?.profilePicture}
+              alt="Profile"
+              className="profile-photo"
+            />
             {auth?._id === userId && (
               <>
                 <button
@@ -172,6 +180,23 @@ const Profile: React.FC = () => {
               {user?.firstName} {user?.lastName}
             </h2>
             <p className="user-handle">{user?.email}</p>
+            <div className="user-info">
+              <p>
+                <span>{user?.numberOfPosts}</span> Posts
+              </p>
+              <p
+                className="popup-trigger"
+                onClick={() => openPopup("followers")}
+              >
+                <span>{numberOfFollowers}</span> Followers
+              </p>
+              <p
+                className="popup-trigger"
+                onClick={() => openPopup("following")}
+              >
+                <span>{user?.numberOfFollowing}</span> Following
+              </p>
+            </div>
           </div>
           <div className="profile-actions">
             {auth?._id !== userId && (
@@ -200,6 +225,13 @@ const Profile: React.FC = () => {
       </div>
       <Posts userId={user?._id} />
       {showChat && <Conversations closeChat={() => setShowChat(false)} />}
+      <People
+        userId={user?._id}
+        isPopupOpen={isPopupOpen}
+        activeTab={activeTab}
+        closePopup={closePopup}
+        setActiveTab={setActiveTab}
+      />
     </div>
   );
 };

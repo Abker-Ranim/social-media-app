@@ -1,0 +1,65 @@
+.follow-popup {
+  .header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+
+    .title {
+      width: 100%;
+      padding: 10px 0;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .title:hover {
+      cursor: pointer;
+      background-color: #f0f0f0;
+    }
+    .active {
+      background-color: #f0f0f0;
+    }
+  }
+
+  .content {
+    width: 100%;
+    height: 385px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    .follow {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 10px;
+      width: 100%;
+      background-color: #ffffff;
+      transition: background-color 0.3s ease;
+      cursor: pointer;
+    }
+    .follow:hover {
+      background-color: #e9ecef;
+    }
+
+    .username_image {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .username_info {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 5px 0;
+    }
+
+    .username {
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+  }
+}

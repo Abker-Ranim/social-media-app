@@ -98,6 +98,19 @@
   .user-details {
     text-align: center;
     margin-top: 20px;
+
+    .user-info {
+      display: flex;
+      gap: 40px;
+      padding: 20px 0;
+
+      .popup-trigger {
+        cursor: pointer;
+      }
+      span {
+        font-weight: 600;
+      }
+    }
   }
 
   .username {

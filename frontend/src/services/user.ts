@@ -13,6 +13,9 @@ export type User = {
   coverPicture: string;
   followers: User;
   following: User;
+  numberOfFollowers?: number;
+  numberOfFollowing?: number;
+  numberOfPosts?: number;
 };
 
 interface LoginData {
@@ -138,6 +141,16 @@ export const getFollowers = async () => {
 export const getFollowing = async () => {
   const token = localStorage.getItem("token");
   const response = await axios.get(`${url}/following`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+export const getFollowList = async (id: string | undefined) => {
+  const token = localStorage.getItem("token");
+  const response = await axios.get(`${url}/followList/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
