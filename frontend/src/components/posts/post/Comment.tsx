@@ -72,11 +72,7 @@ const Comment = ({
   return (
     <div className="comment">
       {auth && (
-        <img
-          src={baseURL + "/" + commentOwner?.profilePicture}
-          alt="Profile"
-          style={{ cursor: "default" }}
-        />
+        <img src={baseURL + "/" + commentOwner?.profilePicture} alt="Profile" />
       )}
       <div className="info">
         <div className="content">

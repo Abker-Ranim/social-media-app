@@ -28,9 +28,9 @@ const Profile: React.FC = () => {
   const [user, setUser] = useState<User | undefined>(auth);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [coverPicture, setCoverPicture] = useState<File | null>(null);
+  const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const profilePictureRef = useRef<HTMLInputElement>(null);
   const coverPictureRef = useRef<HTMLInputElement>(null);
-  const [isFollowing, setIsFollowing] = useState<boolean>(false);
 
   const toggleChat = () => {
     setShowChat(true);
@@ -48,18 +48,15 @@ const Profile: React.FC = () => {
     if (userId) {
       const response = await getUserDetails(userId);
       setUser(response);
-
-      if (response.followers && Array.isArray(response.followers)) {
-        setIsFollowing(response.followers.includes(auth?._id));
-      } else {
-        setIsFollowing(false);
-      }
+      setIsFollowing(response.isFollowing);
+      console.log(response.isFollowing);
     }
   };
 
   const handleCoverPictureEdit = () => {
     coverPictureRef.current?.click();
   };
+
   const handleProfilePictureEdit = () => {
     profilePictureRef.current?.click();
   };
@@ -67,31 +64,33 @@ const Profile: React.FC = () => {
   const handleImageChange = (e: any) => {
     setProfilePicture(e.target.files[0]);
   };
+
   const handleCoverPictureChange = (e: any) => {
     setCoverPicture(e.target.files[0]);
   };
+
   const handleFollowClick = async () => {
     if (!isFollowing) {
       try {
         if (userId) {
           await followUser(userId);
           setIsFollowing(true);
-          toast.success("Vous suivez cet utilisateur.");
+          toast.success("User followed successfully.");
         }
       } catch (error) {
         console.error("Failed to follow user:", error);
-        toast.error("Échec du suivi de l'utilisateur.");
+        toast.error("Failed to follow user.");
       }
     } else {
       try {
         if (userId) {
           await unfollowUser(userId);
           setIsFollowing(false);
-          toast.success("Vous ne suivez plus cet utilisateur.");
+          toast.success("User unfollowed successfully.");
         }
       } catch (error) {
         console.error("Failed to unfollow user:", error);
-        toast.error("Échec de la désinscription de l'utilisateur.");
+        toast.error("Failed to unfollow user.");
       }
     }
   };
@@ -105,7 +104,6 @@ const Profile: React.FC = () => {
               src={baseURL + "/" + user?.coverPicture}
               alt="Profile"
               className="cover-image"
-              style={{ cursor: "default" }}
             />
           )}
           {auth?._id === userId && (
@@ -141,7 +139,6 @@ const Profile: React.FC = () => {
                 src={baseURL + "/" + user?.profilePicture}
                 alt="Profile"
                 className="profile-photo"
-                style={{ cursor: "default" }}
               />
             )}
             {auth?._id === userId && (

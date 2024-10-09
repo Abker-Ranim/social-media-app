@@ -84,11 +84,7 @@ const Posts = ({ userId }: IProps) => {
           <div className="new_post">
             <div className="user_details">
               {auth && (
-                <img
-                  src={baseURL + "/" + auth?.profilePicture}
-                  alt="Profile"
-                  style={{ cursor: "default" }}
-                />
+                <img src={baseURL + "/" + auth?.profilePicture} alt="Profile" />
               )}
               <h3>
                 {auth?.firstName} {auth?.lastName}
@@ -101,7 +97,6 @@ const Posts = ({ userId }: IProps) => {
                   <img
                     src={URL.createObjectURL(selectedImage)}
                     alt="Selected"
-                    
                   />
                 </div>
               )}

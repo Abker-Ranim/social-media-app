@@ -17,14 +17,12 @@ const Sidebar: React.FC = () => {
   };
   return (
     <div className="sidebar">
-      <div className="usernameCard"
-      onClick={handleProfileClick}>
+      <div className="usernameCard" onClick={handleProfileClick}>
         {auth && (
           <img
             src={baseURL + "/" + auth?.profilePicture}
             alt="Profile"
             className="username_image"
-            style={{ cursor: "pointer" }}
           />
         )}
         <div className="username_info">

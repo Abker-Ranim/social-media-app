@@ -26,23 +26,28 @@ exports.getAllUsers = (req, res, next) => {
     });
 };
 
-exports.getUserDetails = (req, res, next) => {
+exports.getUserDetails = async (req, res, next) => {
   const id = req.params.id;
-  User.findById(id)
-    .exec()
-    .then((user) => {
-      res.status(200).json({
-        _id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        profilePicture: user.profilePicture,
-        coverPicture: user.coverPicture,
-      });
-    })
-    .catch((err) => {
-      res.status(500).json(err);
-    });
+
+  try {
+    const user = await User.findById(id).exec();
+    const result = {
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      profilePicture: user.profilePicture,
+      coverPicture: user.coverPicture,
+      isFollowing: false,
+    };
+    if (user.followers.includes(req.userData._id)) {
+      result.isFollowing = true;
+    }
+    res.status(200).json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
+  }
 };
 
 exports.searchUsers = (req, res, next) => {
@@ -230,7 +235,9 @@ exports.followUser = async (req, res, next) => {
     }
 
     if (userToFollow.followers.includes(currentUserId)) {
-      return res.status(400).json({ message: "You are already following this user." });
+      return res
+        .status(400)
+        .json({ message: "You are already following this user." });
     }
 
     await User.findByIdAndUpdate(
@@ -266,7 +273,9 @@ exports.unfollowUser = async (req, res, next) => {
     }
 
     if (!userToUnfollow.followers.includes(currentUserId)) {
-      return res.status(400).json({ message: "You are not following this user." });
+      return res
+        .status(400)
+        .json({ message: "You are not following this user." });
     }
 
     await User.findByIdAndUpdate(
@@ -288,7 +297,7 @@ exports.unfollowUser = async (req, res, next) => {
   }
 };
 
-exports.getFollowersByUser = async (req, res, next) => {
+exports.getFollowers = async (req, res, next) => {
   try {
     const userId = req.userData._id;
 
@@ -299,15 +308,16 @@ exports.getFollowersByUser = async (req, res, next) => {
     }
 
     const followers = await User.find({ following: userId })
-    .select("firstName lastName email profilePicture") 
-    .exec();
+      .select("firstName lastName email profilePicture")
+      .exec();
 
     res.status(200).json(followers);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
-exports.getFollowingByUser = async (req, res, next) => {
+
+exports.getFollowing = async (req, res, next) => {
   try {
     const userId = req.userData._id;
 
@@ -318,8 +328,8 @@ exports.getFollowingByUser = async (req, res, next) => {
     }
 
     const following = await User.find({ followers: userId })
-    .select("firstName lastName email profilePicture") 
-    .exec();
+      .select("firstName lastName email profilePicture")
+      .exec();
 
     res.status(200).json(following);
   } catch (err) {

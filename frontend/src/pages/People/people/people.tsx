@@ -1,24 +1,29 @@
-import React, { useState } from "react";
+import React from "react";
 import "./people.css";
 import { baseURL } from "../../../api/axios";
 import { useNavigate } from "react-router-dom";
 
 interface PeopleProps {
-    id: string;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
   profilePicture: string;
 }
 
-const People: React.FC<PeopleProps> = ({ id,firstName, lastName, email, profilePicture }) => {
-    const navigate = useNavigate();
+const People: React.FC<PeopleProps> = ({
+  id,
+  firstName,
+  lastName,
+  email,
+  profilePicture,
+}) => {
+  const navigate = useNavigate();
 
+  const handleProfileClick = (id: string) => {
+    navigate(`/profile/${id}`);
+  };
 
-    const handleProfileClick = (id: string) => {
-        navigate(`/profile/${id}`);
-      };
-    
   return (
     <div className="card">
       <div className="usernameCard" onClick={() => handleProfileClick(id)}>
@@ -26,7 +31,6 @@ const People: React.FC<PeopleProps> = ({ id,firstName, lastName, email, profileP
           src={baseURL + "/" + profilePicture}
           alt="Profile"
           className="username_image"
-          style={{ cursor: "default" }}
         />
         <div className="username_info">
           <h3 className="username">

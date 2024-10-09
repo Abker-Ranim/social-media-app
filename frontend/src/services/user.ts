@@ -11,8 +11,8 @@ export type User = {
   password?: string;
   profilePicture: string;
   coverPicture: string;
-  followers :User;
-  following:User;
+  followers: User;
+  following: User;
 };
 
 interface LoginData {
@@ -29,8 +29,13 @@ export const getUsers = async (): Promise<any[]> => {
   return res.data;
 };
 
-export const getUserDetails = async (id: string): Promise<User> => {
-  const res = await axios.get(`${url}/details/${id}`);
+export const getUserDetails = async (id: string): Promise<any> => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(`${url}/details/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return res.data;
 };
 
@@ -96,11 +101,15 @@ export const refreshUser = async (): Promise<any> => {
 export const followUser = async (id: string) => {
   const token = localStorage.getItem("token");
 
-  const response = await axios.post(`${url}/follow/${id}`,{}, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const response = await axios.post(
+    `${url}/follow/${id}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   return response.data;
 };
@@ -116,7 +125,7 @@ export const unfollowUser = async (id: string) => {
   return response.data;
 };
 
-export const getFollowersByUser = async () => {
+export const getFollowers = async () => {
   const token = localStorage.getItem("token");
   const response = await axios.get(`${url}/followers`, {
     headers: {
@@ -126,7 +135,7 @@ export const getFollowersByUser = async () => {
   return response.data;
 };
 
-export const getFollowingByUser = async () => {
+export const getFollowing = async () => {
   const token = localStorage.getItem("token");
   const response = await axios.get(`${url}/following`, {
     headers: {

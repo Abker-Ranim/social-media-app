@@ -135,6 +135,7 @@ nav {
   align-items: center;
   justify-content: center;
   transition: box-shadow 0.3s ease;
+  cursor: pointer;
 
   img {
     width: 100%;
