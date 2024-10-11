@@ -1,5 +1,5 @@
 import {
-  FaEdit,
+  
   FaUserEdit,
   FaEnvelope,
   FaUserPlus,
@@ -21,6 +21,7 @@ import { useParams } from "react-router-dom";
 import ImageCrop from "../../components/ImageCrop/ImageCrop.tsx";
 import toast from "react-hot-toast";
 import People from "./People/People.tsx";
+import { MdPhotoCamera } from "react-icons/md";
 
 const Profile: React.FC = () => {
   const { auth } = useAuth();
@@ -123,7 +124,8 @@ const Profile: React.FC = () => {
                 title="Edit Cover Picture"
                 onClick={handleCoverPictureEdit}
               >
-                <FaEdit />
+                <MdPhotoCamera />
+
               </button>
               <input
                 type="file"
@@ -156,7 +158,8 @@ const Profile: React.FC = () => {
                   title="Edit Profile Picture"
                   onClick={handleProfilePictureEdit}
                 >
-                  <FaEdit />
+                  <MdPhotoCamera />
+
                 </button>
                 <input
                   type="file"

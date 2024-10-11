@@ -52,18 +52,19 @@ exports.getPostsByUser = async (req, res, next) => {
 exports.createPost = async (req, res, next) => {
   try {
     
-    let imageUrl = null;
 
     if (req.file) {
       imageUrl = `/uploads/${req.file.filename}`; 
     }
-
+    if (!req.body.content && !imageUrl) {
+      return res.status(400).json({ error: "Post content or image is required." });
+    }
     const post = new Post({
       _id: new mongoose.Types.ObjectId(),
-      content: req.body.content,
+      content: req.body.content || null, 
       postOwner: req.userData._id,
-      imageUrl: req.file.path,
-    });
+      imageUrl: req.file.path || null, 
+    }); 
 
     const result = await post.save();
 

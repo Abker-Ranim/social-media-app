@@ -42,7 +42,7 @@ const Posts = ({ userId }: IProps) => {
   const handlePostSubmit = async () => {
     if (newPostContent.trim() || selectedImage) {
       const formData = new FormData();
-      formData.append("content", newPostContent);
+      formData.append("content", newPostContent); 
 
       if (selectedImage) {
         formData.append("image", selectedImage);
@@ -92,6 +92,13 @@ const Posts = ({ userId }: IProps) => {
             </div>
 
             <div className="textarea_with_image">
+              <textarea
+                className="new_post_textbox"
+                placeholder="What's in your mind..?"
+                value={newPostContent}
+                onChange={(e) => setNewPostContent(e.target.value)}
+              ></textarea>
+
               {selectedImage && (
                 <div className="image_in_textarea">
                   <img
@@ -100,13 +107,6 @@ const Posts = ({ userId }: IProps) => {
                   />
                 </div>
               )}
-
-              <textarea
-                className="new_post_textbox"
-                placeholder="What's in your mind..?"
-                value={newPostContent}
-                onChange={(e) => setNewPostContent(e.target.value)}
-              ></textarea>
             </div>
 
             <div className="button-container">

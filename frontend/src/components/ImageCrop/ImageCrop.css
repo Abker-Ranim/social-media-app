@@ -19,19 +19,22 @@
     margin: 0 16px;
   }
   button {
-    text-align: center;
-    padding: 10px;
-    margin: 0 5px;
-    font-weight: 500;
-    font-size: 17px;
     border: none;
-    border-radius: 9px;
-    color: white;
     cursor: pointer;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 20px;
+    height: 40px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+    font-family: "Roboto", sans-serif;
+    align-self: flex-end;
   }
-  .save {
-    background-color: rgb(81, 95, 248);
-  }
+ 
   .cancel {
     background-color: #f44336;
   }

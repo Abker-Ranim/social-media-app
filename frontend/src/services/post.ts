@@ -23,7 +23,7 @@ export const createPost = async (body: any) => {
     },
   });
 
-  return response;
+  return response.data;
 };
 
 export const getPosts = async (): Promise<Post[]> => {
