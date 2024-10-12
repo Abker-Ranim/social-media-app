@@ -3,6 +3,7 @@ import {
   FaEnvelope,
   FaUserPlus,
   FaUserCheck,
+  FaCircle,
 } from "react-icons/fa";
 import "./Profile.css";
 import Posts from "../../components/posts/Posts.tsx";
@@ -21,9 +22,11 @@ import ImageCrop from "../../components/ImageCrop/ImageCrop.tsx";
 import toast from "react-hot-toast";
 import People from "./People/People.tsx";
 import { MdPhotoCamera } from "react-icons/md";
+import { useSocketContext } from "../../helpers/SocketContext.tsx";
 
 const Profile: React.FC = () => {
   const { auth } = useAuth();
+  const { onlineUsers } = useSocketContext();
   const { userId } = useParams();
 
   const [showChat, setShowChat] = useState(false);
@@ -37,6 +40,8 @@ const Profile: React.FC = () => {
 
   const profilePictureRef = useRef<HTMLInputElement>(null);
   const coverPictureRef = useRef<HTMLInputElement>(null);
+
+  const isOnline = onlineUsers.some((user) => user === userId);
 
   const toggleChat = () => {
     setShowChat(true);
@@ -150,7 +155,7 @@ const Profile: React.FC = () => {
               alt="Profile"
               className="profile-photo"
             />
-            {auth?._id === userId && (
+            {auth?._id === userId ? (
               <>
                 <button
                   className="edit-profile-btn"
@@ -174,6 +179,8 @@ const Profile: React.FC = () => {
                   />
                 )}
               </>
+            ) : (
+              isOnline && <FaCircle className="online" />
             )}
           </div>
           <div className="user-details">
@@ -228,7 +235,12 @@ const Profile: React.FC = () => {
         </div>
       </div>
       <Posts userId={user?._id} />
-      {showChat && <Conversations closeChat={() => setShowChat(false)} />}
+      {showChat && (
+        <Conversations
+          defaultUser={user}
+          closeChat={() => setShowChat(false)}
+        />
+      )}
       <People
         userId={user?._id}
         isPopupOpen={isPopupOpen}

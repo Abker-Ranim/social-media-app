@@ -37,7 +37,6 @@ export const SocketContextProvider: React.FC<SocketContextProviderProps> = ({
   const { auth } = useAuth();
 
   useEffect(() => {
-    // console.log(onlineUsers);
     if (auth) {
       const socketInstance = io("http://localhost:5000", {
         query: {

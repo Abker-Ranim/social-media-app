@@ -11,7 +11,7 @@
   flex-direction: column;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
   .open {
-    display: flex; 
+    display: flex;
   }
 }
 
@@ -42,26 +42,48 @@
     gap: 10px;
     align-items: center;
     padding: 10px;
+    overflow: hidden;
 
-    img {
-      min-width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
+    .image_container {
+      position: relative;
+      img {
+        min-width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .online {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 13px;
+        height: 13px;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        color: #31a24c;
+      }
     }
 
     .user_info {
       display: flex;
       flex-direction: column;
+      width: 100%;
 
       h4 {
         font-size: 16px;
         margin: 0;
       }
 
-      p {
+      .last_message {
+        display: flex;
+        gap: 4px;
         font-size: 14px;
-        margin: 0;
+        p {
+          margin: 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
       }
     }
   }
