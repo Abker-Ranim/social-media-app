@@ -1,5 +1,5 @@
 import React from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
 import Signup from "./pages/Signup/Signup";
@@ -9,6 +9,7 @@ import { Toaster } from "react-hot-toast";
 import { SocketContextProvider } from "./helpers/SocketContext";
 import Profile from "./pages/Profile/Profile";
 import MainLayout from "./pages/MainLayout/MainLayout";
+import People from "./pages/People/Peoples";
 
 export const App: React.FC = () => {
   return (
@@ -50,6 +51,18 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      {
+        path: "people",
+        element: (
+          <ProtectedRoute>
+            <People />
+          </ProtectedRoute>
+        ),
+      },
     ],
+  },
+  {
+    path: "*",
+    element: <Navigate to="/" />,
   },
 ]);

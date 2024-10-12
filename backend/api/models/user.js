@@ -29,6 +29,18 @@ const userSchema = mongoose.Schema({
     type: String,
     default: "uploads/cover.png",
   },
+  followers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+    },
+  ],
+  following: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+    },
+  ],
 });
 
 module.exports = mongoose.model("user", userSchema);

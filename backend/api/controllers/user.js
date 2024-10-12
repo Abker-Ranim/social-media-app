@@ -1,9 +1,8 @@
 const User = require("../models/user");
+const Post = require("../models/post");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const fs = require("fs");
-const path = require("path");
 const { unlink } = require("node:fs/promises");
 
 async function deletefile(path) {
@@ -26,23 +25,32 @@ exports.getAllUsers = (req, res, next) => {
     });
 };
 
-exports.getUserDetails = (req, res, next) => {
+exports.getUserDetails = async (req, res, next) => {
   const id = req.params.id;
-  User.findById(id)
-    .exec()
-    .then((user) => {
-      res.status(200).json({
-        _id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        profilePicture: user.profilePicture,
-        coverPicture: user.coverPicture,
-      });
-    })
-    .catch((err) => {
-      res.status(500).json(err);
-    });
+
+  try {
+    const user = await User.findById(id).exec();
+    const result = {
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      profilePicture: user.profilePicture,
+      coverPicture: user.coverPicture,
+      isFollowing: false,
+      numberOfFollowers: user.followers.length,
+      numberOfFollowing: user.following.length,
+    };
+    if (user.followers.includes(req.userData._id)) {
+      result.isFollowing = true;
+    }
+    const posts = await Post.find({ postOwner: id }).exec();
+    result.numberOfPosts = posts.length;
+    res.status(200).json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
+  }
 };
 
 exports.searchUsers = (req, res, next) => {
@@ -173,6 +181,7 @@ exports.updateUserImage = (req, res, next) => {
     context: "query",
   })
     .then((data) => {
+      console.log(data);
       const oldImagePath =
         type === "cover" ? data.coverPicture : data.profilePicture;
       if (
@@ -183,13 +192,12 @@ exports.updateUserImage = (req, res, next) => {
       }
 
       return res.status(200).json({
-        message: "Profile image updated successfully",
+        message: "Image updated successfully",
       });
     })
     .catch((err) => {
-      return res.status(500).json({
-        error: "There was an error, try again later.",
-      });
+      console.log(err);
+      return res.status(500).json(err);
     });
 };
 
@@ -214,4 +222,144 @@ exports.refreshUser = (req, res, next) => {
         user: loggedInUser,
       });
     });
+};
+
+exports.followUser = async (req, res, next) => {
+  try {
+    const currentUserId = req.userData._id;
+    const userToFollowId = req.params.id;
+
+    const userToFollow = await User.findById(userToFollowId);
+    if (!userToFollow) {
+      return res.status(404).json({ message: "User to follow not found." });
+    }
+    if (userToFollowId === currentUserId) {
+      return res.status(400).json({ message: "You cannot follow yourself." });
+    }
+
+    if (userToFollow.followers.includes(currentUserId)) {
+      return res
+        .status(400)
+        .json({ message: "You are already following this user." });
+    }
+
+    await User.findByIdAndUpdate(
+      currentUserId,
+      { $push: { following: userToFollowId } },
+      { new: true }
+    );
+
+    await User.findByIdAndUpdate(
+      userToFollowId,
+      { $push: { followers: currentUserId } },
+      { new: true }
+    );
+
+    res.status(200).json({ message: "Following user successfully." });
+  } catch (error) {
+    res.status(500).json({ message: "Error following user." });
+  }
+};
+
+exports.unfollowUser = async (req, res, next) => {
+  try {
+    const currentUserId = req.userData._id;
+    const userToUnfollowId = req.params.id;
+
+    const userToUnfollow = await User.findById(userToUnfollowId);
+    if (!userToUnfollow) {
+      return res.status(404).json({ message: "User to unfollow not found." });
+    }
+
+    if (userToUnfollowId === currentUserId) {
+      return res.status(400).json({ message: "You cannot unfollow yourself." });
+    }
+
+    if (!userToUnfollow.followers.includes(currentUserId)) {
+      return res
+        .status(400)
+        .json({ message: "You are not following this user." });
+    }
+
+    await User.findByIdAndUpdate(
+      currentUserId,
+      { $pull: { following: userToUnfollowId } },
+      { new: true }
+    );
+
+    await User.findByIdAndUpdate(
+      userToUnfollowId,
+      { $pull: { followers: currentUserId } },
+      { new: true }
+    );
+
+    res.status(200).json({ message: "Unfollowed user successfully." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error unfollowing user." });
+  }
+};
+
+exports.getFollowers = async (req, res, next) => {
+  try {
+    const userId = req.userData._id;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        message: "Invalid user ID",
+      });
+    }
+
+    const followers = await User.find({ following: userId })
+      .select("firstName lastName email profilePicture")
+      .exec();
+
+    res.status(200).json(followers);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getFollowing = async (req, res, next) => {
+  try {
+    const userId = req.userData._id;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        message: "Invalid user ID",
+      });
+    }
+
+    const following = await User.find({ followers: userId })
+      .select("firstName lastName email profilePicture")
+      .exec();
+
+    res.status(200).json(following);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getFollowList = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({
+        message: "Invalid user ID",
+      });
+    }
+
+    const following = await User.find({ followers: userId })
+      .select("firstName lastName email profilePicture")
+      .exec();
+
+    const followers = await User.find({ following: userId })
+      .select("firstName lastName email profilePicture")
+      .exec();
+
+    res.status(200).json({ following, followers });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };

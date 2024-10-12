@@ -33,7 +33,7 @@
 
   .new_post_textbox {
     width: 100%;
-    height: 100px;
+    height: 130px;
     border: none;
     resize: none;
     outline: none;
@@ -54,8 +54,7 @@
     color: #acb7c4;
     font-size: 14px;
   }
-  
-  
+
   .navbar_profile_button {
     border: 1px solid var(--primary-color);
     cursor: pointer;
@@ -80,6 +79,10 @@
   .navbar_profile_button:active {
     transform: translateY(0);
   }
+  .button-container {
+    display: flex;
+    gap: 10px;
+  }
 }
 
 .post_list {
@@ -87,4 +90,22 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+.textarea_with_image {
+  position: relative;
+  width: 100%;
+}
+.image_in_textarea {
+  position: absolute;
+  bottom: 5px;
+  left: 10px;
+  height: 70%;
+  border-radius: 8px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }

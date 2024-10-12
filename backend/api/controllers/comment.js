@@ -42,7 +42,7 @@ exports.createComment = async (req, res, next) => {
 
     const populatedComment = await Comment.findById(result._id).populate(
       "commentOwner",
-      "-password"
+      "id firstName lastName profilePicture"
     );
 
     res.status(201).json({
@@ -73,7 +73,7 @@ exports.getCommentsByPost = (req, res, next) => {
   }
 
   Comment.find({ post: postId })
-    .populate("commentOwner", "-password")
+    .populate("commentOwner", "id firstName lastName profilePicture")
     .exec()
     .then((comments) => {
       res.status(200).json(comments);

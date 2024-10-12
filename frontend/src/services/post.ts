@@ -7,6 +7,7 @@ export type Post = {
   _id: string;
   content: string;
   postOwner: User;
+  image: string;
   createdAt: string;
   likesCount: number;
   commentsCount: number;
@@ -15,14 +16,12 @@ export type Post = {
 
 export const createPost = async (body: any) => {
   const token = localStorage.getItem("token");
-
-  const response = await axios.post(`${url}/`, body, {
+  const response = await axios.post(`${url}`, body, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-
-  return response;
+  return response.data;
 };
 
 export const getPosts = async (): Promise<Post[]> => {
@@ -49,7 +48,6 @@ export const getPostsByUser = async (userId: string): Promise<Post[]> => {
 
 export const updatePost = async (id: string, content: string) => {
   const token = localStorage.getItem("token");
-
   const response = await axios.put(
     `${url}/${id}`,
     { content },
@@ -64,7 +62,6 @@ export const updatePost = async (id: string, content: string) => {
 };
 export const deletePost = async (id: string) => {
   const token = localStorage.getItem("token");
-
   const response = await axios.delete(`${url}/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,

@@ -1,6 +1,7 @@
 .crop-container {
   position: relative;
   width: 100%;
+  height: 400px;
 }
 
 .crop-button {
@@ -11,27 +12,25 @@
 .controls {
   padding: 16px;
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
+  align-items: center;
+  gap: 10px;
 
   .slider {
     width: 100%;
-    margin: 0 16px;
+    margin: 0 10px;
   }
+
   button {
-    text-align: center;
-    padding: 10px;
-    margin: 0 5px;
-    font-weight: 500;
-    font-size: 17px;
     border: none;
-    border-radius: 9px;
+    background-color: var(--primary-color);
     color: white;
+    border-radius: 20px;
+    height: 40px;
+    padding: 0 16px;
+    font-weight: bold;
     cursor: pointer;
   }
-  .save {
-    background-color: rgb(81, 95, 248);
-  }
+
   .cancel {
     background-color: #f44336;
   }
@@ -46,19 +45,4 @@
 .slider {
   padding: 22px 0px;
   margin-left: 32px;
-}
-
-@media (min-width: 600px) {
-  .crop-container {
-    height: 400px;
-  }
-  .controls {
-    flex-direction: row;
-    align-items: center;
-  }
-  .slider {
-    flex-direction: row;
-    align-items: center;
-    margin: 0 16px;
-  }
 }

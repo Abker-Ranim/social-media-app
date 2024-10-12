@@ -3,13 +3,19 @@ import axios from "../api/axios";
 const url = "/user";
 
 export type User = {
-  _id?: string;
+  includes(_id: string | undefined): import("react").SetStateAction<boolean>;
+  _id: string;
   firstName: string;
   lastName: string;
   email: string;
   password?: string;
   profilePicture: string;
   coverPicture: string;
+  followers: User;
+  following: User;
+  numberOfFollowers?: number;
+  numberOfFollowing?: number;
+  numberOfPosts?: number;
 };
 
 interface LoginData {
@@ -26,8 +32,13 @@ export const getUsers = async (): Promise<any[]> => {
   return res.data;
 };
 
-export const getUserDetails = async (id: string): Promise<User> => {
-  const res = await axios.get(`${url}/details/${id}`);
+export const getUserDetails = async (id: string): Promise<any> => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(`${url}/details/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return res.data;
 };
 
@@ -88,5 +99,61 @@ export const refreshUser = async (): Promise<any> => {
     },
   });
   localStorage.setItem("token", response.data.token);
+  return response.data;
+};
+export const followUser = async (id: string) => {
+  const token = localStorage.getItem("token");
+
+  const response = await axios.post(
+    `${url}/follow/${id}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+};
+export const unfollowUser = async (id: string) => {
+  const token = localStorage.getItem("token");
+
+  const response = await axios.delete(`${url}/unfollow/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+};
+
+export const getFollowers = async () => {
+  const token = localStorage.getItem("token");
+  const response = await axios.get(`${url}/followers`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+export const getFollowing = async () => {
+  const token = localStorage.getItem("token");
+  const response = await axios.get(`${url}/following`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+export const getFollowList = async (id: string | undefined) => {
+  const token = localStorage.getItem("token");
+  const response = await axios.get(`${url}/followList/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return response.data;
 };

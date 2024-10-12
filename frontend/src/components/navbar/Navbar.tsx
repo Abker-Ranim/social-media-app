@@ -1,4 +1,4 @@
-import { FaPlus, FaSignOutAlt } from "react-icons/fa";
+import { FaSignOutAlt } from "react-icons/fa";
 import { IoIosSearch } from "react-icons/io";
 import "./navbar.css";
 import { logout, searchUsers } from "../../services/user";
@@ -30,7 +30,7 @@ const Navbar = () => {
     setUsers(searchedUsers);
   };
 
-  const handleProfileClick = (id: string) => {
+  const handleProfileClick = (id: string | undefined) => {
     navigate(`/profile/${id}`);
     setSearchInput("");
   };
@@ -72,20 +72,15 @@ const Navbar = () => {
               </div>
             )}
           </div>
-
-          <button className="navbar_profile_button">
-            <FaPlus />
-            <span className="text">Create</span>
-          </button>
-
-          {auth && (
-            <img
-              src={baseURL + "/" + auth?.profilePicture}
-              alt="Profile"
-              className="navbar_profile_image"
-              style={{ cursor: "default" }}
-            />
-          )}
+          <div onClick={() => handleProfileClick(auth?._id)}>
+            {auth && (
+              <img
+                src={baseURL + "/" + auth?.profilePicture}
+                alt="Profile"
+                className="navbar_profile_image"
+              />
+            )}
+          </div>
           <button className="navbar_logout_button" onClick={handleLogout}>
             <FaSignOutAlt />
           </button>
