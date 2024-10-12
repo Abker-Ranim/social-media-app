@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { FaPlus } from "react-icons/fa";
+import { FaCircle, FaPlus } from "react-icons/fa";
 import {
   createPost,
   getPosts,
@@ -12,12 +12,15 @@ import toast from "react-hot-toast";
 import { useAuth } from "../../helpers/AuthProvider";
 import { baseURL } from "../../api/axios";
 import { MdAddPhotoAlternate } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {
   userId?: string;
 }
 
 const Posts = ({ userId }: IProps) => {
+  const navigate = useNavigate();
+
   const { auth } = useAuth();
 
   const [posts, setPosts] = useState<PostType[]>([]);
@@ -79,14 +82,23 @@ const Posts = ({ userId }: IProps) => {
     }
   };
 
+  const handleProfileClick = () => {
+    navigate(`/profile/${auth?._id}`);
+  };
+
   return (
     <div className="posts">
       {(auth?._id === userId || userId == undefined) && (
         <div className="new_post">
           <div className="user_details">
-            {auth && (
-              <img src={baseURL + "/" + auth?.profilePicture} alt="Profile" />
-            )}
+            <div className="image_container">
+              <img
+                src={baseURL + "/" + auth?.profilePicture}
+                alt="Profile"
+                onClick={handleProfileClick}
+              />
+              <FaCircle className="online" />
+            </div>
             <h3>
               {auth?.firstName} {auth?.lastName}
             </h3>

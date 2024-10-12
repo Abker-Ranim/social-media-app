@@ -5,6 +5,7 @@ import {
   FaRegComment,
   FaEllipsisH,
   FaPaperPlane,
+  FaCircle,
 } from "react-icons/fa";
 import { createLike, deleteLike, Like } from "../../../services/like";
 import { formatDistanceToNow } from "date-fns";
@@ -20,6 +21,7 @@ import { User } from "../../../services/user";
 import { useAuth } from "../../../helpers/AuthProvider";
 import { baseURL } from "../../../api/axios";
 import { useNavigate } from "react-router-dom";
+import { useSocketContext } from "../../../helpers/SocketContext";
 
 interface PostProps {
   content: string;
@@ -47,6 +49,7 @@ const Post = ({
   const navigate = useNavigate();
 
   const { auth } = useAuth();
+  const { onlineUsers } = useSocketContext();
 
   const [content, setContent] = useState(initialContent);
   const [counts, setCounts] = useState({
@@ -63,6 +66,8 @@ const Post = ({
 
   const commentInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const isOnline = onlineUsers.some((user) => user === postOwner?._id);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -221,11 +226,14 @@ const Post = ({
   return (
     <div className="post">
       <div className="post_user_details">
-        <img
-          src={baseURL + "/" + postOwner?.profilePicture}
-          alt="Profile"
-          onClick={() => handleProfileClick(postOwner?._id)}
-        />
+        <div className="image_container">
+          <img
+            src={baseURL + "/" + postOwner?.profilePicture}
+            alt="Profile"
+            onClick={() => handleProfileClick(postOwner?._id)}
+          />
+          {isOnline && <FaCircle className="online" />}
+        </div>
         <div className="user_name">
           <h4 onClick={() => handleProfileClick(postOwner?._id)}>
             {postOwner?.firstName} {postOwner?.lastName}

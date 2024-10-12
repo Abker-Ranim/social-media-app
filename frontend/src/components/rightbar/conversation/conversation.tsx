@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { AiOutlineSend } from "react-icons/ai";
+import { FaCircle } from "react-icons/fa";
 import { sendMessage, Message as MessageType } from "../../../services/message";
 import { useAuth } from "../../../helpers/AuthProvider";
 import toast from "react-hot-toast";
@@ -11,19 +12,13 @@ import { FaTimes } from "react-icons/fa";
 
 interface props {
   user: any;
-  receiverId: string;
   closeChat: () => void;
-  setInConversation: (value: boolean) => void;
+  handleBack: () => void;
 }
 
-const Conversation = ({
-  user,
-  receiverId,
-  closeChat,
-  setInConversation,
-}: props) => {
+const Conversation = ({ user, closeChat, handleBack }: props) => {
   const { auth } = useAuth();
-  const { socket } = useSocketContext();
+  const { socket, onlineUsers } = useSocketContext();
 
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [newMessageContent, setNewMessageContent] = useState("");
@@ -31,6 +26,9 @@ const Conversation = ({
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const typingTimeoutRef = useRef<any>(null);
+
+  const receiverId = user?._id;
+  const isOnline = onlineUsers.some((user) => user === receiverId);
 
   useEffect(() => {
     if (messages) {
@@ -55,12 +53,12 @@ const Conversation = ({
   }, [socket, messages, setMessages]);
 
   useEffect(() => {
-    socket?.on("typing", (receiver) => {
-      if (receiver === auth?._id) setIsTyping(true);
+    socket?.on("typing", (receiver, sender) => {
+      if (receiver === auth?._id && sender == user?._id) setIsTyping(true);
     });
 
-    socket?.on("stopTyping", (receiver) => {
-      if (receiver === auth?._id) setIsTyping(false);
+    socket?.on("stopTyping", (receiver, sender) => {
+      if (receiver === auth?._id && sender == user?._id) setIsTyping(false);
     });
 
     return () => {
@@ -86,18 +84,13 @@ const Conversation = ({
   const handleMessageChange = (e: any) => {
     setNewMessageContent(e.target.value);
     if (e.target.value.trim() !== "") {
-      socket?.emit("typing", receiverId);
+      socket?.emit("typing", receiverId, auth?._id);
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
       }
       typingTimeoutRef.current = setTimeout(() => {
-        socket?.emit("stopTyping", receiverId);
-      }, 2000);
-    } else {
-      socket?.emit("stopTyping", receiverId);
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
-      }
+        socket?.emit("stopTyping", receiverId, auth?._id);
+      }, 1000);
     }
   };
 
@@ -109,6 +102,7 @@ const Conversation = ({
         setIsTyping(false);
         setMessages((prevMessages) => [...prevMessages, response]);
         setNewMessageContent("");
+        socket?.emit("stopTyping", receiverId, auth?._id);
       } catch (error) {
         toast.error("Error sending message. Please try again later.");
         console.error("Failed to send message:", error);
@@ -121,12 +115,12 @@ const Conversation = ({
   return (
     <>
       <div className="chat-header">
-        <IoMdArrowRoundBack
-          className="return"
-          onClick={() => setInConversation(false)}
-        />
+        <IoMdArrowRoundBack className="return" onClick={handleBack} />
 
-        <h3>{user?.firstName + " " + user?.lastName}</h3>
+        <div className="username">
+          <h3>{user?.firstName + " " + user?.lastName}</h3>
+          {isOnline && <FaCircle className="online" />}
+        </div>
         <FaTimes className="close-chat" onClick={closeChat} />
       </div>
       <div className="chat-messages">

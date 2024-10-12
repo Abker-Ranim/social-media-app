@@ -27,17 +27,17 @@ io.on("connection", (socket) => {
 
   io.emit("getOnlineUsers", Object.keys(user));
 
-  socket.on("typing", (data) => {
-    const receiverSocketId = getReceiverSocketId(data);
-    if (user[data]) {
-      io.to(receiverSocketId).emit("typing", data);
+  socket.on("typing", (receiver, sender) => {
+    const receiverSocketId = getReceiverSocketId(receiver);
+    if (user[receiver]) {
+      io.to(receiverSocketId).emit("typing", receiver, sender);
     }
   });
 
-  socket.on("stopTyping", (data) => {
-    const receiverSocketId = getReceiverSocketId(data);
-    if (receiverSocketId) {
-      io.to(receiverSocketId).emit("stopTyping", data);
+  socket.on("stopTyping", (receiver, sender) => {
+    const receiverSocketId = getReceiverSocketId(receiver);
+    if (user[receiver]) {
+      io.to(receiverSocketId).emit("stopTyping", receiver, sender);
     }
   });
 

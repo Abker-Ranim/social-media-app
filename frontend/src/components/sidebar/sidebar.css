@@ -19,13 +19,26 @@
     align-items: center;
     gap: 15px;
     cursor: pointer;
-  }
 
-  .username_image {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 50%;
+    .image_container {
+      position: relative;
+      img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .online {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 15px;
+        height: 15px;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        color: #31a24c;
+      }
+    }
   }
 
   .username_info {

@@ -1,6 +1,6 @@
 import React from "react";
 import { GoHome } from "react-icons/go";
-import { FaRegUser } from "react-icons/fa";
+import { FaCircle, FaRegUser } from "react-icons/fa";
 import { MdOutlinePermMedia } from "react-icons/md";
 import { IoPeopleOutline, IoSettingsOutline } from "react-icons/io5";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -21,11 +21,10 @@ const Sidebar: React.FC = () => {
     <div className="sidebar">
       <div className="usernameCard" onClick={handleProfileClick}>
         {auth && (
-          <img
-            src={baseURL + "/" + auth?.profilePicture}
-            alt="Profile"
-            className="username_image"
-          />
+          <div className="image_container">
+            <img src={baseURL + "/" + auth?.profilePicture} alt="Profile" />
+            <FaCircle className="online" />
+          </div>
         )}
         <div className="username_info">
           <h3 className="username">
