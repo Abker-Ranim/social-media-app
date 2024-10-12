@@ -12,9 +12,11 @@ const Sidebar: React.FC = () => {
   const navigate = useNavigate();
 
   const { auth } = useAuth();
+
   const handleProfileClick = () => {
     navigate(`/profile/${auth?._id}`);
   };
+
   return (
     <div className="sidebar">
       <div className="usernameCard" onClick={handleProfileClick}>

@@ -181,6 +181,7 @@ exports.updateUserImage = (req, res, next) => {
     context: "query",
   })
     .then((data) => {
+      console.log(data);
       const oldImagePath =
         type === "cover" ? data.coverPicture : data.profilePicture;
       if (
@@ -191,13 +192,12 @@ exports.updateUserImage = (req, res, next) => {
       }
 
       return res.status(200).json({
-        message: "Profile image updated successfully",
+        message: "Image updated successfully",
       });
     })
     .catch((err) => {
-      return res.status(500).json({
-        error: "There was an error, try again later.",
-      });
+      console.log(err);
+      return res.status(500).json(err);
     });
 };
 

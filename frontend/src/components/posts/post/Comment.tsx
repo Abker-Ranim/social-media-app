@@ -104,10 +104,18 @@ const Comment = ({
 
         {commentOwner._id === auth?._id && (
           <div className="comment_options">
-            <button className="edit" onClick={() => setUpdatingComment(true)}>
+            <button
+              className="edit"
+              title="Edit"
+              onClick={() => setUpdatingComment(true)}
+            >
               <FaEdit />
             </button>
-            <button className="delete" onClick={handleDeleteComment}>
+            <button
+              className="delete"
+              title="Delete"
+              onClick={handleDeleteComment}
+            >
               <FaTrashAlt />
             </button>
           </div>

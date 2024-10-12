@@ -14,7 +14,7 @@
 
 .chat-header {
   padding: 10px;
-  background-color: #121e61;
+  background-color: var(--primary-color);
   color: #ffffff;
   display: flex;
   justify-content: space-between;
@@ -78,7 +78,7 @@
 .send-icon {
   cursor: pointer;
   font-size: 24px;
-  color: #121e61;
+  color: var(--primary-color);
   margin-left: 10px;
 }
 

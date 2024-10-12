@@ -67,7 +67,6 @@ const ImageCrop: React.FC<ImageCropProps> = ({ type, image, setImage }) => {
       if (image) {
         formData.append("image", image);
         await updateUserImage(formData, type);
-
         const newUser = await refreshUser();
         setAuth(newUser.user);
         setImage(null);
@@ -85,7 +84,7 @@ const ImageCrop: React.FC<ImageCropProps> = ({ type, image, setImage }) => {
 
   return (
     <div>
-      <Popup isOpen={isModalOpen}>
+      <Popup isOpen={isModalOpen} width="80%">
         <div className="crop-container">
           <Cropper
             image={imageSrc}

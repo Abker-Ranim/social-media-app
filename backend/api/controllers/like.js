@@ -97,7 +97,7 @@ exports.getLikesByPost = (req, res, next) => {
   }
 
   Like.find({ post: postId })
-    .populate("user", "-password")
+    .populate("user", "id firstName lastName profilePicture")
     .exec()
     .then((likes) => {
       res.status(200).json(likes);

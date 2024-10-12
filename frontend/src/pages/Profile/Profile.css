@@ -36,7 +36,7 @@
     position: absolute;
     bottom: 10px;
     right: 10px;
-    color: #121e61;
+    color: var(--primary-color);
     border: none;
     font-size: 25px;
     cursor: pointer;
@@ -76,7 +76,7 @@
     position: absolute;
     bottom: 10px;
     right: 10px;
-    color: #121e61;
+    color: var(--primary-color);
     border: none;
     font-size: 25px;
     cursor: pointer;
@@ -84,7 +84,6 @@
     align-items: center;
     justify-content: center;
     border-radius: 50px;
-
     transition: transform 0.3s ease;
   }
 
@@ -133,8 +132,8 @@
   .profile-actions button {
     padding: 12px 24px;
     background-color: #f5f5f5;
-    color: #121e61;
-    border: 1px solid #121e61;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
     border-radius: 50px;
     cursor: pointer;
     font-size: 16px;
@@ -145,7 +144,7 @@
   }
 
   .profile-actions button:hover {
-    background-color: #121e61; 
+    background-color: var(--primary-color);
     color: white;
     transform: translateY(-2px);
   }
@@ -154,36 +153,5 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-  }
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .user-profile {
-    width: calc(100% - 30px);
-    /* 15px de marge de chaque côté sur mobile */
-    padding: 15px;
-  }
-
-  .cover-image {
-    height: 150px;
-  }
-
-  .profile-photo {
-    width: 100px;
-    height: 100px;
-  }
-
-  .profile-actions button {
-    padding: 10px 16px;
-    font-size: 14px;
-  }
-
-  .username {
-    font-size: 22px;
-  }
-
-  .user-handle {
-    font-size: 14px;
   }
 }

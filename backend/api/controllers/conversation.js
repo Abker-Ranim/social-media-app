@@ -8,7 +8,7 @@ exports.getConversations = async (req, res) => {
       participants: {
         $in: [userId],
       },
-    }).populate("participants", "-password");
+    }).populate("participants", "id firstName lastName profilePicture");
 
     const result = conversations.map((conversation) => {
       conversation.participants = conversation.participants.filter(

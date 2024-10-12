@@ -19,10 +19,12 @@ interface IProps {
 
 const Posts = ({ userId }: IProps) => {
   const { auth } = useAuth();
+
   const [posts, setPosts] = useState<PostType[]>([]);
   const [newPostContent, setNewPostContent] = useState("");
-  const PictureRef = useRef<HTMLInputElement>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+
+  const PictureRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -37,12 +39,12 @@ const Posts = ({ userId }: IProps) => {
     };
 
     fetchPosts();
-  }, [userId]);
+  }, [userId, auth]);
 
   const handlePostSubmit = async () => {
     if (newPostContent.trim() || selectedImage) {
       const formData = new FormData();
-      formData.append("content", newPostContent); 
+      formData.append("content", newPostContent);
 
       if (selectedImage) {
         formData.append("image", selectedImage);
@@ -50,9 +52,9 @@ const Posts = ({ userId }: IProps) => {
 
       try {
         const response = await createPost(formData);
-        if (response.data && response.data.createdPost) {
+        if (response && response.createdPost) {
           toast.success("Post Created Successfully");
-          setPosts((prevPosts) => [...prevPosts, response.data.createdPost]);
+          setPosts((prevPosts) => [...prevPosts, response.createdPost]);
         }
         setNewPostContent("");
         setSelectedImage(null);
@@ -79,60 +81,56 @@ const Posts = ({ userId }: IProps) => {
 
   return (
     <div className="posts">
-      {auth?._id === userId ||
-        (userId === undefined && (
-          <div className="new_post">
-            <div className="user_details">
-              {auth && (
-                <img src={baseURL + "/" + auth?.profilePicture} alt="Profile" />
-              )}
-              <h3>
-                {auth?.firstName} {auth?.lastName}
-              </h3>
-            </div>
-
-            <div className="textarea_with_image">
-              <textarea
-                className="new_post_textbox"
-                placeholder="What's in your mind..?"
-                value={newPostContent}
-                onChange={(e) => setNewPostContent(e.target.value)}
-              ></textarea>
-
-              {selectedImage && (
-                <div className="image_in_textarea">
-                  <img
-                    src={URL.createObjectURL(selectedImage)}
-                    alt="Selected"
-                  />
-                </div>
-              )}
-            </div>
-
-            <div className="button-container">
-              <button
-                className="navbar_profile_button"
-                onClick={handlPostPicture}
-              >
-                <MdAddPhotoAlternate />
-                <input
-                  type="file"
-                  ref={PictureRef}
-                  style={{ display: "none" }}
-                  accept="image/jpeg, image/png, image/jpg"
-                  onChange={handleImageChange}
-                />
-              </button>
-              <button
-                className="navbar_profile_button"
-                onClick={handlePostSubmit}
-              >
-                <FaPlus />
-                <span className="text">Post</span>
-              </button>
-            </div>
+      {(auth?._id === userId || userId == undefined) && (
+        <div className="new_post">
+          <div className="user_details">
+            {auth && (
+              <img src={baseURL + "/" + auth?.profilePicture} alt="Profile" />
+            )}
+            <h3>
+              {auth?.firstName} {auth?.lastName}
+            </h3>
           </div>
-        ))}
+
+          <div className="textarea_with_image">
+            <textarea
+              className="new_post_textbox"
+              placeholder="What's in your mind..?"
+              value={newPostContent}
+              onChange={(e) => setNewPostContent(e.target.value)}
+            ></textarea>
+
+            {selectedImage && (
+              <div className="image_in_textarea">
+                <img src={URL.createObjectURL(selectedImage)} alt="Selected" />
+              </div>
+            )}
+          </div>
+
+          <div className="button-container">
+            <button
+              className="navbar_profile_button"
+              onClick={handlPostPicture}
+            >
+              <MdAddPhotoAlternate />
+              <input
+                type="file"
+                ref={PictureRef}
+                style={{ display: "none" }}
+                accept="image/jpeg, image/png, image/jpg"
+                onChange={handleImageChange}
+              />
+            </button>
+            <button
+              className="navbar_profile_button"
+              onClick={handlePostSubmit}
+            >
+              <FaPlus />
+              <span className="text">Post</span>
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="post_list">
         {posts
@@ -150,7 +148,7 @@ const Posts = ({ userId }: IProps) => {
               likesCount={post.likesCount}
               commentsCount={post.commentsCount}
               postOwner={post.postOwner}
-              imageUrl={post.imageUrl}
+              image={post.image}
               onDelete={handleDeletePost}
             />
           ))}

@@ -1,5 +1,4 @@
 import {
-  
   FaUserEdit,
   FaEnvelope,
   FaUserPlus,
@@ -26,6 +25,7 @@ import { MdPhotoCamera } from "react-icons/md";
 const Profile: React.FC = () => {
   const { auth } = useAuth();
   const { userId } = useParams();
+
   const [showChat, setShowChat] = useState(false);
   const [user, setUser] = useState<User | undefined>();
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
@@ -44,7 +44,7 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     fetchUser();
-  }, [userId]);
+  }, [userId, auth]);
 
   const fetchUser = async () => {
     if (userId) {
@@ -125,7 +125,6 @@ const Profile: React.FC = () => {
                 onClick={handleCoverPictureEdit}
               >
                 <MdPhotoCamera />
-
               </button>
               <input
                 type="file"
@@ -159,7 +158,6 @@ const Profile: React.FC = () => {
                   onClick={handleProfilePictureEdit}
                 >
                   <MdPhotoCamera />
-
                 </button>
                 <input
                   type="file"
@@ -185,16 +183,19 @@ const Profile: React.FC = () => {
             <p className="user-handle">{user?.email}</p>
             <div className="user-info">
               <p>
-                <span>{user?.numberOfPosts}</span> Posts
+                <span>{user?.numberOfPosts}</span> Post
+                {user?.numberOfPosts !== 1 && "s"}
               </p>
               <p
                 className="popup-trigger"
+                title="Show Followers"
                 onClick={() => openPopup("followers")}
               >
                 <span>{numberOfFollowers}</span> Followers
               </p>
               <p
                 className="popup-trigger"
+                title="Show Following"
                 onClick={() => openPopup("following")}
               >
                 <span>{user?.numberOfFollowing}</span> Following

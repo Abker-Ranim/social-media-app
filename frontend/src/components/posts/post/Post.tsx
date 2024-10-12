@@ -19,6 +19,7 @@ import Comment from "./Comment";
 import { User } from "../../../services/user";
 import { useAuth } from "../../../helpers/AuthProvider";
 import { baseURL } from "../../../api/axios";
+import { useNavigate } from "react-router-dom";
 
 interface PostProps {
   content: string;
@@ -28,7 +29,7 @@ interface PostProps {
   likesCount: number;
   commentsCount: number;
   postOwner: User;
-  imageUrl: string;
+  image: string;
   onDelete: (_id: string) => void;
 }
 
@@ -40,9 +41,11 @@ const Post = ({
   commentsCount,
   likesCount,
   postOwner,
-  imageUrl,
+  image,
   onDelete,
 }: PostProps) => {
+  const navigate = useNavigate();
+
   const { auth } = useAuth();
 
   const [content, setContent] = useState(initialContent);
@@ -211,14 +214,20 @@ const Post = ({
     }));
   };
 
+  const handleProfileClick = (id: string) => {
+    navigate(`/profile/${id}`);
+  };
+
   return (
     <div className="post">
       <div className="post_user_details">
-        {auth && (
-          <img src={baseURL + "/" + postOwner?.profilePicture} alt="Profile" />
-        )}
+        <img
+          src={baseURL + "/" + postOwner?.profilePicture}
+          alt="Profile"
+          onClick={() => handleProfileClick(postOwner?._id)}
+        />
         <div className="user_name">
-          <h4>
+          <h4 onClick={() => handleProfileClick(postOwner?._id)}>
             {postOwner?.firstName} {postOwner?.lastName}
           </h4>
           <span>{postDate}</span>
@@ -234,9 +243,9 @@ const Post = ({
                     setShowOptions(false);
                   }}
                 >
-                  Update
+                  Edit
                 </div>
-                <div onClick={handleDeletePost}>delete</div>
+                <div onClick={handleDeletePost}>Delete</div>
               </div>
             )}
           </div>
@@ -264,11 +273,11 @@ const Post = ({
         ) : (
           <>
             <p>{content}</p>
-            {imageUrl && (
+            {image && (
               <img
-                src={baseURL + "/" + imageUrl}
-                alt="Post"
                 className="post_image"
+                src={baseURL + "/" + image}
+                alt="Post"
               />
             )}
           </>
@@ -276,14 +285,14 @@ const Post = ({
       </div>
 
       <div className="post_actions">
-        <div className="icon_info">
+        <div className="icon_info" title={like ? "Dislike" : "Like"}>
           <FaHeart
             className={`action_icon like_icon ${like ? "liked" : ""}`}
             onClick={handleLikeClick}
           />
           <span>{counts.likes}</span>
         </div>
-        <div className="icon_info">
+        <div className="icon_info" title="Comment">
           <FaRegComment
             className="action_icon comment_icon"
             onClick={handleCommentIconClick}

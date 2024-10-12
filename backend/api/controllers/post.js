@@ -2,10 +2,22 @@ const Like = require("../models/like");
 const Post = require("../models/post");
 const Comment = require("../models/comment");
 const mongoose = require("mongoose");
+const { unlink } = require("node:fs/promises");
+
+async function deletefile(path) {
+  try {
+    await unlink(path);
+    console.log(`successfully deleted ${path}`);
+  } catch (error) {
+    console.error("there was an error:", error.message);
+  }
+}
 
 exports.getAllPosts = async (req, res, next) => {
   try {
-    const posts = await Post.find().populate("postOwner", "-password").exec();
+    const posts = await Post.find()
+      .populate("postOwner", "id firstName lastName profilePicture")
+      .exec();
 
     const newPosts = await Promise.all(
       posts.map(async (post) => {
@@ -30,7 +42,7 @@ exports.getPostsByUser = async (req, res, next) => {
     const posts = await Post.find({
       postOwner: userId,
     })
-      .populate("postOwner", "-password")
+      .populate("postOwner", "id firstName lastName profilePicture")
       .exec();
 
     const newPosts = await Promise.all(
@@ -51,22 +63,25 @@ exports.getPostsByUser = async (req, res, next) => {
 
 exports.createPost = async (req, res, next) => {
   try {
-    
+    if (!req.body.content && !req.file) {
+      return res
+        .status(400)
+        .json({ error: "Post content or image is required." });
+    }
+
+    const post = {
+      _id: new mongoose.Types.ObjectId(),
+      content: req.body.content,
+      postOwner: req.userData._id,
+    };
 
     if (req.file) {
-      imageUrl = `/uploads/${req.file.filename}`; 
+      post.image = req.file.path;
     }
-    if (!req.body.content && !imageUrl) {
-      return res.status(400).json({ error: "Post content or image is required." });
-    }
-    const post = new Post({
-      _id: new mongoose.Types.ObjectId(),
-      content: req.body.content || null, 
-      postOwner: req.userData._id,
-      imageUrl: req.file.path || null, 
-    }); 
 
-    const result = await post.save();
+    const postInstance = new Post(post);
+
+    const result = await postInstance.save();
 
     res.status(201).json({
       message: "Post created successfully",
@@ -75,13 +90,14 @@ exports.createPost = async (req, res, next) => {
         createdAt: result.createdAt,
         postOwner: req.userData,
         content: result.content,
-        imageUrl: result.imageUrl,
+        image: result.image,
         liked: false,
         likesCount: 0,
         commentsCount: 0,
       },
     });
   } catch (err) {
+    console.log(err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -89,7 +105,7 @@ exports.createPost = async (req, res, next) => {
 exports.getPostById = (req, res, next) => {
   const id = req.params.postId;
   Post.findById(id)
-    .populate("postOwner")
+    .populate("postOwner", "id firstName lastName profilePicture")
     .exec()
     .then((post) => {
       if (post) {
@@ -157,6 +173,10 @@ exports.deletePost = (req, res, next) => {
         return res
           .status(403)
           .json({ message: "You are not authorized to delete this post" });
+      }
+
+      if (post.image) {
+        deletefile(post.image);
       }
 
       Post.findByIdAndDelete(postId)
