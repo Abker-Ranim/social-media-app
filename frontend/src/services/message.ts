@@ -5,17 +5,17 @@ const url = "/message";
 export type Message = {
   _id: string;
   content: string;
-  senderId: string;
-  receiverId: string;
+  sender: string;
+  receiver: string;
   createdAt: string;
 };
 
-export const sendMessage = async (content: string, receiverId: string) => {
+export const sendMessage = async (content: string, receiverIds: string[]) => {
   const token = localStorage.getItem("token");
 
   const response = await axios.post(
-    `${url}/${receiverId}`,
-    { content },
+    `${url}`,
+    { content, receiverIds },
     {
       headers: {
         Authorization: `Bearer ${token}`,

@@ -8,17 +8,19 @@ import { getConversation } from "../../../services/conversation";
 import { useSocketContext } from "../../../helpers/SocketContext";
 import "./conversation.css";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaMinus } from "react-icons/fa";
+import { useChat } from "../../../helpers/ChatContext";
 
 interface props {
-  user: any;
+  minimizeChat: () => void;
   closeChat: () => void;
   handleBack: () => void;
 }
 
-const Conversation = ({ user, closeChat, handleBack }: props) => {
+const Conversation = ({ minimizeChat, closeChat, handleBack }: props) => {
   const { auth } = useAuth();
   const { socket, onlineUsers } = useSocketContext();
+  const { chatUser } = useChat();
 
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [newMessageContent, setNewMessageContent] = useState("");
@@ -27,7 +29,7 @@ const Conversation = ({ user, closeChat, handleBack }: props) => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const typingTimeoutRef = useRef<any>(null);
 
-  const receiverId = user?._id;
+  const receiverId = chatUser?._id;
   const isOnline = onlineUsers.some((user) => user === receiverId);
 
   useEffect(() => {
@@ -43,7 +45,7 @@ const Conversation = ({ user, closeChat, handleBack }: props) => {
   useEffect(() => {
     socket?.on("newMessage", (newMessage) => {
       console.log(newMessage);
-      if (newMessage.senderId === receiverId)
+      if (newMessage.sender === receiverId)
         setMessages([...messages, newMessage]);
     });
 
@@ -54,11 +56,11 @@ const Conversation = ({ user, closeChat, handleBack }: props) => {
 
   useEffect(() => {
     socket?.on("typing", (receiver, sender) => {
-      if (receiver === auth?._id && sender == user?._id) setIsTyping(true);
+      if (receiver === auth?._id && sender == chatUser?._id) setIsTyping(true);
     });
 
     socket?.on("stopTyping", (receiver, sender) => {
-      if (receiver === auth?._id && sender == user?._id) setIsTyping(false);
+      if (receiver === auth?._id && sender == chatUser?._id) setIsTyping(false);
     });
 
     return () => {
@@ -79,11 +81,11 @@ const Conversation = ({ user, closeChat, handleBack }: props) => {
     };
 
     fetchMessages();
-  }, []);
+  }, [chatUser]);
 
   const handleMessageChange = (e: any) => {
     setNewMessageContent(e.target.value);
-    if (e.target.value.trim() !== "") {
+    if (e.target.value.trim() !== "" && receiverId !== auth?._id) {
       socket?.emit("typing", receiverId, auth?._id);
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
@@ -98,11 +100,13 @@ const Conversation = ({ user, closeChat, handleBack }: props) => {
     e.preventDefault();
     if (newMessageContent.trim() !== "") {
       try {
-        const response = await sendMessage(newMessageContent, receiverId);
-        setIsTyping(false);
+        const response = await sendMessage(newMessageContent, [receiverId]);
         setMessages((prevMessages) => [...prevMessages, response]);
         setNewMessageContent("");
-        socket?.emit("stopTyping", receiverId, auth?._id);
+        if (receiverId !== auth?._id) {
+          setIsTyping(false);
+          socket?.emit("stopTyping", receiverId, auth?._id);
+        }
       } catch (error) {
         toast.error("Error sending message. Please try again later.");
         console.error("Failed to send message:", error);
@@ -115,50 +119,55 @@ const Conversation = ({ user, closeChat, handleBack }: props) => {
   return (
     <>
       <div className="chat-header">
-        <IoMdArrowRoundBack className="return" onClick={handleBack} />
-
         <div className="username">
-          <h3>{user?.firstName + " " + user?.lastName}</h3>
+          <IoMdArrowRoundBack className="return" onClick={handleBack} />
+          <h3>{chatUser?.firstName + " " + chatUser?.lastName}</h3>
           {isOnline && <FaCircle className="online" />}
         </div>
-        <FaTimes className="close-chat" onClick={closeChat} />
+        <div className="icons">
+          <FaMinus className="close-chat" onClick={minimizeChat} />
+          <FaTimes className="close-chat" onClick={closeChat} />
+        </div>
       </div>
-      <div className="chat-messages">
-        {messages
-          .sort(
-            (a, b) =>
-              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          )
-          .map((msg, i) => (
-            <div
-              key={i}
-              className={`chat-message ${
-                msg.senderId === auth?._id ? "sender" : "receiver"
-              }`}
-            >
-              <p className="message-content">{msg.content}</p>
+      <div className="chats">
+        <div className="chat-messages">
+          {messages
+            .sort(
+              (a, b) =>
+                new Date(a.createdAt).getTime() -
+                new Date(b.createdAt).getTime()
+            )
+            .map((msg, i) => (
+              <div
+                key={i}
+                className={`chat-message ${
+                  msg.sender === auth?._id ? "sender" : "receiver"
+                }`}
+              >
+                <p className="message-content">{msg.content}</p>
+              </div>
+            ))}
+          {isTyping && (
+            <div className="chat-message receiver">
+              <p className="message-content">
+                <div className="typing__dot"></div>
+                <div className="typing__dot"></div>
+                <div className="typing__dot"></div>
+              </p>
             </div>
-          ))}
-        {isTyping && (
-          <div className="chat-message receiver">
-            <p className="message-content">
-              <div className="typing__dot"></div>
-              <div className="typing__dot"></div>
-              <div className="typing__dot"></div>
-            </p>
-          </div>
-        )}
-        <div ref={messagesEndRef} />
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+        <form className="chat-input" onSubmit={handleSendMessage}>
+          <input
+            type="text"
+            value={newMessageContent}
+            onChange={handleMessageChange}
+            placeholder="Type a message..."
+          />
+          <AiOutlineSend className="send-icon" onClick={handleSendMessage} />
+        </form>
       </div>
-      <form className="chat-input" onSubmit={handleSendMessage}>
-        <input
-          type="text"
-          value={newMessageContent}
-          onChange={handleMessageChange}
-          placeholder="Type a message..."
-        />
-        <AiOutlineSend className="send-icon" onClick={handleSendMessage} />
-      </form>
     </>
   );
 };

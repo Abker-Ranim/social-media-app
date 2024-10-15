@@ -12,14 +12,12 @@ import toast from "react-hot-toast";
 import { useAuth } from "../../helpers/AuthProvider";
 import { baseURL } from "../../api/axios";
 import { MdAddPhotoAlternate } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-interface IProps {
-  userId?: string;
-}
-
-const Posts = ({ userId }: IProps) => {
+const Posts = () => {
   const navigate = useNavigate();
+  const { userId } = useParams();
+  console.log(userId);
 
   const { auth } = useAuth();
 
@@ -42,7 +40,7 @@ const Posts = ({ userId }: IProps) => {
     };
 
     fetchPosts();
-  }, [userId, auth]);
+  }, [userId]);
 
   const handlePostSubmit = async () => {
     if (newPostContent.trim() || selectedImage) {
