@@ -1,8 +1,9 @@
 .sidebar {
-  width: 100%;
+   width: 250px;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  transition: transform 0.3s ease-in-out;
 
   .usernameCard,
   .sidebar_menu {
@@ -104,5 +105,45 @@
   .sidebar_menu a:hover .margin,
   .sidebar_menu a.active .margin {
     color: #1c2a48;
+  }
+}
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -100%; 
+    top: 0;
+    height: 100vh;
+    z-index: 1000;
+    transition: left 0.3s ease-in-out;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+}
+
+.hamburger {
+  display: none;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1100;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+.hamburger div {
+  width: 30px;
+  height: 3px;
+  background-color: #333;
+  margin: 5px 0;
+  transition: 0.4s;
+}
+
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
   }
 }
