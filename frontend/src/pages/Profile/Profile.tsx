@@ -51,7 +51,7 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     fetchUser();
-  }, [userId, auth]);
+  }, [userId]);
 
   const fetchUser = async () => {
     if (userId) {
@@ -236,7 +236,7 @@ const Profile: React.FC = () => {
           </div>
         </div>
       </div>
-      <Posts userId={user?._id} />
+      <Posts />
       <People
         userId={user?._id}
         isPopupOpen={isPopupOpen}
