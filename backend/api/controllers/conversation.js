@@ -10,14 +10,7 @@ exports.getConversations = async (req, res) => {
       },
     }).populate("participants", "id firstName lastName profilePicture");
 
-    const result = conversations.map((conversation) => {
-      conversation.participants = conversation.participants.filter(
-        (participant) => participant._id.toString() !== userId
-      );
-      return conversation;
-    });
-
-    return res.json(result);
+    return res.json(conversations);
   } catch (err) {
     console.log(err);
     return res.status(400).json({ error: err.message });
@@ -26,12 +19,25 @@ exports.getConversations = async (req, res) => {
 
 exports.getConversation = async (req, res) => {
   try {
-    const { id: userToChatId } = req.params;
+    const { id: receiverId } = req.params;
     const senderId = req.userData._id;
 
-    const conversation = await Conversation.findOne({
-      participants: { $all: [senderId, userToChatId] },
-    }).populate("messages");
+    let participants = [senderId];
+    if (senderId !== receiverId) {
+      participants.push(receiverId);
+    }
+    participants.sort();
+
+    let conversations = await Conversation.find().populate("messages");
+    let conversation = null;
+    for (let conv of conversations) {
+      let convParticipants = [...conv.participants];
+      convParticipants.sort();
+      if (JSON.stringify(convParticipants) === JSON.stringify(participants)) {
+        conversation = conv;
+        break;
+      }
+    }
 
     if (!conversation) return res.status(200).json([]);
 

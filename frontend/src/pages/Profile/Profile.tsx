@@ -7,7 +7,6 @@ import {
 } from "react-icons/fa";
 import "./Profile.css";
 import Posts from "../../components/posts/Posts.tsx";
-import Conversations from "../../components/rightbar/conversations/conversations.tsx";
 import { useEffect, useRef, useState } from "react";
 import { baseURL } from "../../api/axios.ts";
 import {
@@ -23,13 +22,15 @@ import toast from "react-hot-toast";
 import People from "./People/People.tsx";
 import { MdPhotoCamera } from "react-icons/md";
 import { useSocketContext } from "../../helpers/SocketContext.tsx";
+import { useChat } from "../../helpers/ChatContext.tsx";
 
 const Profile: React.FC = () => {
   const { auth } = useAuth();
   const { onlineUsers } = useSocketContext();
+  const { setShowChat, setChatUser } = useChat();
+
   const { userId } = useParams();
 
-  const [showChat, setShowChat] = useState(false);
   const [user, setUser] = useState<User | undefined>();
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [coverPicture, setCoverPicture] = useState<File | null>(null);
@@ -45,6 +46,7 @@ const Profile: React.FC = () => {
 
   const toggleChat = () => {
     setShowChat(true);
+    setChatUser(user);
   };
 
   useEffect(() => {
@@ -235,12 +237,6 @@ const Profile: React.FC = () => {
         </div>
       </div>
       <Posts userId={user?._id} />
-      {showChat && (
-        <Conversations
-          defaultUser={user}
-          closeChat={() => setShowChat(false)}
-        />
-      )}
       <People
         userId={user?._id}
         isPopupOpen={isPopupOpen}
