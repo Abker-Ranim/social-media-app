@@ -44,7 +44,7 @@ const People: React.FC<PeopleProps> = ({
   };
 
   return (
-    <Popup isOpen={isPopupOpen} onRequestClose={closePopup} width="20%">
+    <Popup isOpen={isPopupOpen} onRequestClose={closePopup} width="80%">
       <div className="follow-popup">
         <div className="header">
           <span

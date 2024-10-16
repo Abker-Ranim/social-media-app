@@ -9,7 +9,7 @@ import { Toaster } from "react-hot-toast";
 import { SocketContextProvider } from "./helpers/SocketContext";
 import Profile from "./pages/Profile/Profile";
 import MainLayout from "./pages/MainLayout/MainLayout";
-import People from "./pages/People/Peoples";
+import About from "./pages/About/about";
 import { ChatProvider } from "./helpers/ChatContext";
 
 export const App: React.FC = () => {
@@ -55,10 +55,10 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "people",
+        path: "about",
         element: (
           <ProtectedRoute>
-            <People />
+            <About />
           </ProtectedRoute>
         ),
       },

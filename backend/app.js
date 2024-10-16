@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 3000;
 
 // MongoDB Connection
 mongoose
-  .connect("mongodb://127.0.0.1:27017/social_media")
+  .connect(process.env.MONGO_URL)
   .then(() => {
     console.log("Database Connected");
   })

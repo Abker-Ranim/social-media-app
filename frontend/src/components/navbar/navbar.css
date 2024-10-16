@@ -39,6 +39,7 @@ nav {
   padding: 10px;
   box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  flex-grow: 1;
 
   input {
     margin-left: 10px;
@@ -48,6 +49,8 @@ nav {
     color: #333;
     font-size: 14px;
     font-family: "Roboto", sans-serif;
+    width: 100%;
+    max-width: 300px;
   }
 
   .navbar_search_results {
@@ -160,6 +163,7 @@ nav {
   font-weight: bold;
   transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
   font-family: "Roboto", sans-serif;
+  flex-shrink: 0;
 }
 
 .navbar_logout_button:hover {
@@ -170,4 +174,23 @@ nav {
 
 .navbar_logout_button:active {
   transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .navbar_right {
+    gap: 10px;
+  }
+
+  .navbar_profile_search input {
+    width: 100%;
+  }
+
+  .navbar_profile_image {
+    display: none;
+  }
 }
