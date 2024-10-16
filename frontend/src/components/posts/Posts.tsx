@@ -17,7 +17,6 @@ import { useNavigate, useParams } from "react-router-dom";
 const Posts = () => {
   const navigate = useNavigate();
   const { userId } = useParams();
-  console.log(userId);
 
   const { auth } = useAuth();
 

@@ -23,7 +23,7 @@ interface LoginData {
   password: string;
 }
 
-export const signup = async (body: User): Promise<any> => {
+export const signup = async (body: any): Promise<any> => {
   return await axios.post(`${url}/signup`, body);
 };
 

@@ -1,6 +1,6 @@
-import { PropsWithChildren, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { isLoggedIn } from '../services/user';
+import { PropsWithChildren, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { isLoggedIn } from "../services/user";
 
 type ProtectedRouteProps = PropsWithChildren;
 
@@ -10,7 +10,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   useEffect(() => {
     if (!loggedIn) {
-      navigate('/login', { replace: true });
+      navigate("/login", { replace: true });
     }
   }, [navigate, loggedIn]);
 
