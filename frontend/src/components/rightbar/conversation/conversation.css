@@ -1,17 +1,3 @@
-.chat {
-  width: 350px;
-  height: 500px;
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  background-color: #ffffff;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-}
-
 .chat-header {
   padding: 10px;
   background-color: var(--primary-color);

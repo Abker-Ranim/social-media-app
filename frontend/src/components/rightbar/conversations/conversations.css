@@ -1,34 +1,50 @@
 .chat {
-  width: 350px;
+  width: 320px;
   height: 500px;
   position: fixed;
   bottom: 0;
   right: 0;
   background-color: #ffffff;
   border: 1px solid #ccc;
-  border-radius: 10px;
-  display: none;
+  border-radius: 10px 10px 0 0;
+  display: flex;
   flex-direction: column;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-  .open {
-    display: flex;
-  }
+  transition: height 0.3s ease;
+}
+.chat.minimized {
+  height: 42px;
+  cursor: pointer;
+}
+.chat.closed {
+  height: 0;
+  border: none;
+  box-shadow: none;
 }
 
 .chat-header {
   padding: 10px;
   background-color: var(--primary-color);
-  color: #ffffff;
+  color: #fff;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-radius: 10px 10px 0 0;
+  transition: all 0.3s ease;
 
   .close-chat,
   .return {
     cursor: pointer;
     font-size: 18px;
   }
+  .icons {
+    display: flex;
+    gap: 10px;
+  }
+}
+.chat-header.minimized {
+  color: #000;
+  background-color: #fff;
 }
 
 .chats {
@@ -90,5 +106,11 @@
   .user_details:hover {
     cursor: pointer;
     background-color: #e9ecef;
+  }
+}
+
+@media (max-width: 320px) {
+  .chat {
+    width: 100%;
   }
 }

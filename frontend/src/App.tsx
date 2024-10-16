@@ -10,13 +10,16 @@ import { SocketContextProvider } from "./helpers/SocketContext";
 import Profile from "./pages/Profile/Profile";
 import MainLayout from "./pages/MainLayout/MainLayout";
 import About from "./pages/About/about";
+import { ChatProvider } from "./helpers/ChatContext";
 
 export const App: React.FC = () => {
   return (
     <AuthProvider>
       <SocketContextProvider>
-        <Toaster />
-        <MainLayout />
+        <ChatProvider>
+          <Toaster />
+          <MainLayout />
+        </ChatProvider>
       </SocketContextProvider>
     </AuthProvider>
   );
@@ -59,7 +62,6 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
- 
     ],
   },
   {

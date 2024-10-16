@@ -141,3 +141,9 @@
     display: block;
   }
 }
+
+@media (max-width: 400px) {
+  .menu_icon {
+    top: 10px;
+  }
+}
