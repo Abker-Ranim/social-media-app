@@ -171,37 +171,6 @@
   .user-profile {
     padding: 10px;
   }
-
-  .cover-image {
-    height: 200px; 
-  }
-
-  .profile-photo-container {
-    margin-top: -40px; 
-  }
-
-  .profile-photo {
-    width: 120px; 
-    height: 120px; 
-  }
-
-  .username {
-    font-size: 22px; 
-  }
-
-  .user-handle {
-    font-size: 14px; 
-  }
-
-  .profile-actions button {
-    padding: 10px 20px; 
-    font-size: 14px; 
-  }
-
-  .user-info {
-    flex-direction: column; 
-    gap: 20px; 
-  }
 }
 
 @media (max-width: 480px) {
@@ -209,24 +178,8 @@
     padding: 5px;
   }
 
-  .cover-image {
-    height: 150px; 
-  }
-
-  .profile-photo {
-    width: 100px; 
-    height: 100px; 
-  }
-
-  .username {
-    font-size: 20px; 
-  }
-  .user-handle {
-    font-size: 12px; 
-  }
-
-  .profile-actions button {
-    padding: 8px 16px; 
-    font-size: 12px; 
+  .user-info {
+    flex-direction: column;
+    gap: 20px !important;
   }
 }

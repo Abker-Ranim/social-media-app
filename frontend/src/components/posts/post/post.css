@@ -224,6 +224,7 @@
   border-radius: 20px;
   outline: none;
   margin-right: 10px;
+  width: 100%;
 }
 
 .comment_input button {
@@ -294,59 +295,7 @@
 }
 
 @media (max-width: 768px) {
-  .comment {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .comment_options {
-    top: 5px;
-    right: 5px;
-  }
-
-  .comment_input {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .comment_input input {
-    width: 100%;
-    margin-bottom: 10px; 
-  }
-
-  .post_content_details p {
-    font-size: 13px; 
-  }
-
-  .post_actions {
-    flex-direction: column; 
-    gap: 10px; 
-  }
-
-  .post_options {
-    margin-left: 0; 
-  }
-
-  .options_menu {
-    right: 0;
-    left: auto; 
-  }
-  .comment_options button {
-    font-size: 12px; 
-  }
-
-  .comment_options button svg {
-    font-size: 14px;
-  }
-
   .post {
-    padding: 15px; 
-    border-radius: 8px; 
-  }
-}
-
-@media (max-width: 576px) {
-  .comment img {
-    width: 30px; 
-    height: 30px;
+    padding: 15px;
   }
 }
