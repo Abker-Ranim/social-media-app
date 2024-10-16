@@ -44,7 +44,6 @@ const Conversation = ({ minimizeChat, closeChat, handleBack }: props) => {
 
   useEffect(() => {
     socket?.on("newMessage", (newMessage) => {
-      console.log(newMessage);
       if (newMessage.sender === receiverId)
         setMessages([...messages, newMessage]);
     });

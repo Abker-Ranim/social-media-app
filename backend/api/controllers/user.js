@@ -181,7 +181,6 @@ exports.updateUserImage = (req, res, next) => {
     context: "query",
   })
     .then((data) => {
-      console.log(data);
       const oldImagePath =
         type === "cover" ? data.coverPicture : data.profilePicture;
       if (

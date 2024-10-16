@@ -16,7 +16,6 @@ exports.createComment = async (req, res, next) => {
   await Post.findById(postId)
     .then((post) => {
       exixstingPost = post;
-      console.log(exixstingPost);
     })
     .catch((err) => {
       console.error("Error finding post:", err);

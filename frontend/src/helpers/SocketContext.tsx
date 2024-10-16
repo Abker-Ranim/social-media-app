@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import io, { Socket } from "socket.io-client";
 import { useAuth } from "./AuthProvider";
+import { baseURL } from "../api/axios";
 
 interface SocketContextType {
   socket: Socket | null;
@@ -38,7 +39,7 @@ export const SocketContextProvider: React.FC<SocketContextProviderProps> = ({
 
   useEffect(() => {
     if (auth) {
-      const socketInstance = io("http://localhost:5000", {
+      const socketInstance = io(baseURL, {
         query: {
           userId: auth._id,
         },

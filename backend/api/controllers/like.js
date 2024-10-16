@@ -16,7 +16,6 @@ exports.createLike = async (req, res, next) => {
   await Post.findById(postId)
     .then((post) => {
       exixstingPost = post;
-      console.log(exixstingPost);
     })
     .catch((err) => {
       console.error("Error finding post:", err);
@@ -33,7 +32,6 @@ exports.createLike = async (req, res, next) => {
   await Like.findOne({ post: postId, user: userId })
     .then((Like) => {
       existingLike = Like;
-      console.log(existingLike);
     })
     .catch((err) => {
       console.error("Error finding like:", err);
