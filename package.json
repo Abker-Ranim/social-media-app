@@ -1,0 +1,18 @@
+{
+  "name": "social-media-app",
+  "version": "1.0.0",
+  "description": "Social Media App",
+  "main": "server.js",
+  "scripts": {
+    "frontend-install": "cd frontend && npm install",
+    "backend-install": "cd backend && npm install",
+    "backend": "npm start --prefix backend",
+    "frontend": "npm run dev --prefix frontend",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\""
+  },
+  "author": "Ranim Abker",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^3.5.1"
+  }
+}

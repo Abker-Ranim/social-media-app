@@ -1,0 +1,37 @@
+.main-layout {
+  display: flex;
+  flex-direction: column;
+
+  .main-content {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+  }
+  .sidebar_container {
+    width: 25%;
+  }
+  .middle {
+    width: 50%;
+  }
+  .right {
+    width: 25%;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-layout {
+    .main-content {
+      flex-direction: column;
+      gap: 20px;
+    }
+    .sidebar_container {
+      width: 100%;
+    }
+    .middle {
+      width: 100%;
+    }
+    .right {
+      width: 100%;
+    }
+  }
+}

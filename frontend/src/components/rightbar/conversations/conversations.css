@@ -1,0 +1,116 @@
+.chat {
+  width: 320px;
+  height: 500px;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 10px 10px 0 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  transition: height 0.3s ease;
+}
+.chat.minimized {
+  height: 42px;
+  cursor: pointer;
+}
+.chat.closed {
+  height: 0;
+  border: none;
+  box-shadow: none;
+}
+
+.chat-header {
+  padding: 10px;
+  background-color: var(--primary-color);
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px 10px 0 0;
+  transition: all 0.3s ease;
+
+  .close-chat,
+  .return {
+    cursor: pointer;
+    font-size: 18px;
+  }
+  .icons {
+    display: flex;
+    gap: 10px;
+  }
+}
+.chat-header.minimized {
+  color: #000;
+  background-color: #fff;
+}
+
+.chats {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+
+  .user_details {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 10px;
+    overflow: hidden;
+
+    .image_container {
+      position: relative;
+      img {
+        min-width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .online {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 13px;
+        height: 13px;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        color: #31a24c;
+      }
+    }
+
+    .user_info {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+
+      h4 {
+        font-size: 16px;
+        margin: 0;
+      }
+
+      .last_message {
+        display: flex;
+        gap: 4px;
+        font-size: 14px;
+        p {
+          margin: 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+  }
+  .user_details:hover {
+    cursor: pointer;
+    background-color: #e9ecef;
+  }
+}
+
+@media (max-width: 320px) {
+  .chat {
+    width: 100%;
+  }
+}
