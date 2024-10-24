@@ -1,5 +1,4 @@
 import {
-  FaUserEdit,
   FaEnvelope,
   FaUserPlus,
   FaUserCheck,
