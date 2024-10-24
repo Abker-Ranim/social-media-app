@@ -228,11 +228,11 @@ const Profile: React.FC = () => {
             >
               <FaEnvelope />
             </button>
-            {auth?._id === userId && (
+            {/* {auth?._id === userId && (
               <button className="edit-info-btn" title="Edit Profile">
                 <FaUserEdit />
               </button>
-            )}
+            )} */}
           </div>
         </div>
       </div>
