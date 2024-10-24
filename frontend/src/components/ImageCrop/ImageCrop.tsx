@@ -34,6 +34,7 @@ const ImageCrop: React.FC<ImageCropProps> = ({ type, image, setImage }) => {
   }, [image, isCoverImage]);
 
   const onCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
+    console.log(croppedArea);
     setCroppedAreaPixels(croppedAreaPixels);
   };
 
