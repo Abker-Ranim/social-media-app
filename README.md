@@ -98,4 +98,4 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 ## Authors
 
 - [Ranim Abker](https://github.com/Abker-Ranim)
-- [Mohamed Rami Jebali](https://github.com/jebalirami7)
+
